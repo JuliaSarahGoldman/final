@@ -87,9 +87,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="source\App.h" />
+    <ClInclude Include="Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\App.cpp" />
+    <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources.rc" />
