@@ -10,18 +10,18 @@ Introduction
 ================================
 
 
-
 Specification
 ============================================================================================
 
-1. Code:
-	1. Write a planet generator that generates a low-poly planet with the following heightfields:
+1. Generate a procedurally generated, tesselated planet by implementing the following:
+	1. Generate a low-poly planet with the following heightfields:
 		1. Sea
 		2. Low-Level Terrain
 		3. Mountains
 	2. Use a noise function to generate these heightfields based on the planet's radius
 	3. Use an edge-collapse algorithm to reduce the number of triangles
 	4. Bevel the edges of the heightfields' triangles for smoother transitions
+	5. Color each position on the heightfield's based on their distance away from the center of the planet
 	5. Add low-poly objects on the planet:
 		1. Small Cars
 		2. Fir Trees
@@ -29,18 +29,32 @@ Specification
 	6. Make the planet rotate on its axis
 	7. Make the cars and birds move along predetermined paths 
 	8. Use a gradient background for better aesthetic.
- 
-2. Correctness Results:
-    1. Show a low-poly planet with no terrain
-    2. Show a planet with only one terrain
-	3. Show one example of a planet with various terrains
 
-3. Quality Results:
+2. Provide the capability to change the planet's following paramenters:
+	1. Water heightfield's minimum and maximum height
+	2. Love-level terrain heightfield's maximum height
+	3. Mountain heightfield's maximum height
+	4. The planet's theme:
+		1. Water Planet
+		2. Ice Planet
+		3. Mountaineous Planet
+		4. Desert Planet
+		5. City Planet
+		
+3. Save the following images to prove correctness:
+    1. Change the color of each triangle as follows:
+		1. World-space surface normals of the triangle visualized as colors by $\vec{c} = (\n + 1) / 2$ 
+		2. World-space hit positions of the triangle visualized as colors by $\vec{c} = P$
+	2. Show a low-poly planet with no terrain
+    3. Show a planet with only one terrain
+	4. Show one example of a planet with various terrains
+
+4. Quality Results:
 	1. A scene of a planet with some models and an interesting background
 	2. A scene of a planet with a moon rotating around it
 	3. A unique scene emphasizing our planets' beauty
   
-4. Stretch Goals
+5. Stretch Goals
 	1. Add detailed buildings to the planets
 	2. Have one planet revolve around another like a moon
   
