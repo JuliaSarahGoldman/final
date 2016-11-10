@@ -11,8 +11,14 @@
 class App : public GApp {
 protected:
 
+    //variables for makeHeightfield()
+    float m_heightfieldYScale;
+    float m_heightfieldXZScale;
+    String m_heightfieldSource;
+
     /** Called from onInit */
     void makeGUI();
+    void makeHeightfield();
 
 public:
     

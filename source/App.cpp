@@ -75,6 +75,58 @@ void App::onInit() {
         );
 }
 
+//Creates a GUI that allows a user to generate a heightfield with a given xz and y scale based on a given image
+void App::makeHeightfield() {
+
+    GuiPane* heightfieldPane = debugPane->addPane("Heightfield");
+
+    heightfieldPane->setNewChildSize(240);
+    heightfieldPane->addNumberBox("Max Y", &m_heightfieldYScale, "m", 
+        GuiTheme::LOG_SLIDER, 0.0f, 100.0f)->setUnitsSize(30);
+        
+    heightfieldPane->addNumberBox("XZ Scale", &m_heightfieldXZScale, "m/px", 
+        GuiTheme::LOG_SLIDER, 0.001f, 10.0f)->setUnitsSize(30);
+ 
+    heightfieldPane->beginRow(); {
+        heightfieldPane->addTextBox("Input Image", &m_heightfieldSource)->setWidth(210);
+        heightfieldPane->addButton("...", [this]() {
+            FileDialog::getFilename(m_heightfieldSource, "png", false);
+        })->setWidth(30);
+    } heightfieldPane->endRow();
+    
+    heightfieldPane->addButton("Generate", [this](){
+        shared_ptr<G3D::Image> image;
+        try {
+            drawMessage("Generating Heightfield.");
+            image = Image::fromFile(m_heightfieldSource);
+
+            TextOutput output ("model/heightfield.off");
+            output.writeSymbol("OFF\n");
+            output.printf("%d %d 0\n", image->width() * image->height(), (image->width() - 1) * (image->height() - 1));
+
+            for(int x = 0; x < image->width(); ++x){
+                for(int z = 0; z < image->height(); ++z){
+                    Color3 color;
+                    image->get(Point2int32(x, z), color);
+                    float y = color.average();
+                    output.printf("%f %f %f\n", ((float)x)*m_heightfieldXZScale, y*m_heightfieldYScale, ((float)z)*m_heightfieldXZScale);
+                }
+            }
+
+            for(int i = 1; i < image->height(); ++i){
+                for(int j = 1; j < image->width(); ++j){
+                    output.printf("4 %d %d %d %d\n", i + ((image->height())*j), i + ((image->height())*j) - 1, i + ((image->height())*(j-1)) - 1, i + ((image->height())*(j-1)));
+                }
+            }
+
+            output.commit(true);
+            G3D::ArticulatedModel::clearCache();
+        } catch (...) {
+            msgBox("Unable to load the image.", m_heightfieldSource);
+        }
+    });
+}
+
 void App::makeGUI() {
     // Initialize the developer HUD
     createDeveloperHUD();
@@ -90,6 +142,7 @@ void App::makeGUI() {
     infoPane->addButton("Exit", [this]() { m_endProgram = true; });
     infoPane->pack();
 
+    makeHeightfield();
     // More examples of debugging GUI controls:
     // debugPane->addCheckBox("Use explicit checking", &explicitCheck);
     // debugPane->addTextBox("Name", &myName);
