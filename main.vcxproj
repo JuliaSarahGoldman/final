@@ -95,11 +95,6 @@
     <ResourceCompile Include="resources.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="data-files\scene\CornellBox.Scene.Any" />
-    <None Include="data-files\scene\Custom.Scene.Any" />
-    <None Include="data-files\scene\staircase.Scene.Any" />
-    <None Include="data-files\scene\whiteCube.Scene.Any" />
-    <None Include="data-files\test.Scene.Any" />
     <None Include="doc-files\report.md.html" />
     <None Include="Doxyfile" />
     <None Include="journal\journal.md.html" />
