@@ -33,8 +33,6 @@ public:
    
     void computeAdjacency(); 
 
-    void
-
     void collapseEdges(const std::function<void (Array<MeshAlg::Edge>&)>& sort); 
 
     void bevelEdges();

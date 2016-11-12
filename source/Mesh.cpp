@@ -16,7 +16,6 @@ void Mesh::addIndex(int index){
     m_indexArray.append(index);    
 };
 
-
 void Mesh::addIndex(const Array<int>& indexList){
     m_indexArray.append(indexList);
 };
