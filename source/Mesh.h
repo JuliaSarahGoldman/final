@@ -12,10 +12,30 @@
 #pragma once
 #include <G3D/G3DAll.h>
 
-class Transformer { 
+
+class Mesh{ 
+protected:
+    Array<Vector3> m_vertexPositions;
+    Array<int> m_indexArray;
+    Array<MeshAlg::Face> m_faceArray; 
+    Array<MeshAlg::Edge> m_edgeArray; 
+    Array<MeshAlg::Vertex> m_vertexArray;
+
 public:
-    Transformer(); 
-    ~Transformer();
+    void addVertex(const Vector3& vertex); 
+    void addVertex(const Array<Vector3>& vertexList); 
+    
+    void addIndex(int index);
+    void addIndex(Array<int> indexList);
+    
+    void createMesh(); 
+
+    void collapseEdges(const std::function<void (Array<MeshAlg::Edge>&)>& sort); 
+
+    void bevelEdges();
+
+    Mesh(); 
+    ~Mesh();
 
 
 };
