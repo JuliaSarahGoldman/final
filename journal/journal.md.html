@@ -6,6 +6,27 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
+2016-11-12: Planning Our Mesh Class
+===================================================================
+We will use the static functions in the MeshAlg Class to build our own Mesh class. This class will hold the functions needed to create a mesh, and functions for manipulating and mutating the Mesh.
+We need to be able to create objs from our Mesh.
+
+As of right now, our design is as follows:
+
+Triangle Parsing:
+    - Take the TriTree of the scene containing a prespecified sphere OBJ Model;
+    - Parse the TriTree; 
+    - Add each triangle to a MeshBuilder; 
+    - Create a vertexArray and indexArray using MeshBuilder::commit(), and feed them into our Mesh class
+
+Mesh Class:
+    - Instantiated arrays for: vertex positions, vertex indices, MeshAlg::Faces, MeshAlg::Edges, MeshAlg::Vertex;
+    - methods to explicitly add to vertex position and vertex index arrays;
+    - computeAdjacency() method to set the  MeshAlg::Faces, MeshAlg::Edges, MeshAlg::Vertex arryas through MeshAlg::computeAdjacency;
+    - collapseEdges(), bevelEdges() to manipulate the mesh;
+    - outputOBJ() method to output the OBJ file;
+
+We wonder if there's a better way to output an OBJ file than to explicitly feed strings into TextOutput.
 
 <!-- Markdeep: -->
 <style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace;}</style><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
