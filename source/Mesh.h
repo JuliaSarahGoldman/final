@@ -26,9 +26,14 @@ public:
     void addVertex(const Array<Vector3>& vertexList); 
     
     void addIndex(int index);
-    void addIndex(Array<int> indexList);
-    
-    void createMesh(); 
+    void addIndex(const Array<int>& indexList);
+   
+    void addVertex(const Vector3& vertex, int index);
+    void addVertex(const Array<Vector3>& vertexList, const Array<int>& indexList); 
+   
+    void computeAdjacency(); 
+
+    void
 
     void collapseEdges(const std::function<void (Array<MeshAlg::Edge>&)>& sort); 
 
