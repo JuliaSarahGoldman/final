@@ -19,6 +19,8 @@ protected:
     /** Called from onInit */
     void makeGUI();
     void makeHeightfield();
+    void makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3>>& faces);
+    void writeSphere(shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3>>& faces);
 
 public:
     
