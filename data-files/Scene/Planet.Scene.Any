@@ -4,17 +4,17 @@
     
     models = {
        cubeModel = ArticulatedModel::Specification {
-            filename = "test.off";
+            filename = "sphere.obj";
             preprocess = {
                 setMaterial(all(), Color3(1, 0, 0));
-                transformGeometry(all(), Matrix4::scale(1.0, 1.0, 1.0));
+                transformGeometry(all(), Matrix4::scale(15, 15, 15));
             };
        };
     };
     
     entities = {
        skybox = Skybox {
-            texture = "cubemap/whiteroom/whiteroom-*.png";
+            texture = "space.png";
        };
 
         cube0 = VisibleEntity {
@@ -23,7 +23,7 @@
         };
 
         camera = Camera {
-            frame = CFrame::fromXYZYPRDegrees(0, 0, 5);
+            frame = CFrame::fromXYZYPRDegrees(0.37504, 2.6446, 58.434, 1.1459, -2.2918, 0);
         };
     };
 };
