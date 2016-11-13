@@ -4,7 +4,7 @@
 using namespace G3D;
 
 float sampleFloat(int x, int y, int numOctaves = 1){
-    
+    return 1.0;
 }
 
 float NoiseGen::noise2(float nx, float ny){
