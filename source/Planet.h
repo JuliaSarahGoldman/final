@@ -2,6 +2,7 @@
   \file Planet.h
  */
 #pragma once
+#include <G3D/G3DAll.h>
 
 /** \brief Application framework. */
 class Planet{
