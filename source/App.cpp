@@ -75,7 +75,7 @@ void App::onInit() {
         );
 }
 
-void App::writeSphere(shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3>>& faces) {
+void App::writeSphere(String filename, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3>>& faces) {
     makeIcohedron(5.0f, vertices, faces);
 
     int numVert = vertices->size();
@@ -94,7 +94,7 @@ void App::writeSphere(shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vec
         sphere += "3 " + (String) std::to_string(face[0]) + " " + (String) std::to_string(face[1]) + " " + (String) std::to_string(face[2]) + "\n";
     }
 
-    TextOutput output ("model/test.off");
+    TextOutput output ("model/" + filename + ".off");
     output.writeSymbol(sphere);
     output.commit(true);
     G3D::ArticulatedModel::clearCache();
@@ -208,7 +208,7 @@ void App::makeGUI() {
 
     shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
     shared_ptr<Array<Vector3>> faces = std::make_shared<Array<Vector3>>();
-    writeSphere(vertices, faces);
+    writeSphere("test", vertices, faces);
     makeHeightfield();
     // More examples of debugging GUI controls:
     // debugPane->addCheckBox("Use explicit checking", &explicitCheck);
