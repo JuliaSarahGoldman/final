@@ -1,5 +1,6 @@
 /** \file App.cpp */
 #include "App.h"
+#include "NoiseGen.h"
 
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
 G3D_START_AT_MAIN();
@@ -15,7 +16,7 @@ int main(int argc, const char* argv[]) {
 
     // Change the window and other startup parameters by modifying the
     // settings class.  For example:
-    settings.window.caption             = argv[0];
+    settings.window.caption = argv[0];
 
     // Set enable to catch more OpenGL errors
     // settings.window.debugContext     = true;
@@ -23,21 +24,21 @@ int main(int argc, const char* argv[]) {
     // Some common resolutions:
     // settings.window.width            =  854; settings.window.height       = 480;
     // settings.window.width            = 1024; settings.window.height       = 768;
-    settings.window.width               = 1280; settings.window.height       = 720;
+    settings.window.width = 1280; settings.window.height = 720;
     //settings.window.width             = 1920; settings.window.height       = 1080;
     // settings.window.width            = OSWindow::primaryDisplayWindowSize().x; settings.window.height = OSWindow::primaryDisplayWindowSize().y;
-    settings.window.fullScreen          = false;
-    settings.window.resizable           = ! settings.window.fullScreen;
-    settings.window.framed              = ! settings.window.fullScreen;
+    settings.window.fullScreen = false;
+    settings.window.resizable = !settings.window.fullScreen;
+    settings.window.framed = !settings.window.fullScreen;
 
     // Set to true for a significant performance boost if your app can't render at 60fps, or if
     // you *want* to render faster than the display.
-    settings.window.asynchronous        = false;
+    settings.window.asynchronous = false;
 
     settings.hdrFramebuffer.depthGuardBandThickness = Vector2int16(64, 64);
     settings.hdrFramebuffer.colorGuardBandThickness = Vector2int16(0, 0);
-    settings.dataDir                    = FileSystem::currentDirectory();
-    settings.screenshotDirectory        = "../journal/";
+    settings.dataDir = FileSystem::currentDirectory();
+    settings.screenshotDirectory = "../journal/";
 
     settings.renderer.deferredShading = true;
     settings.renderer.orderIndependentTransparency = false;
@@ -59,8 +60,8 @@ void App::onInit() {
 
     // Call setScene(shared_ptr<Scene>()) or setScene(MyScene::create()) to replace
     // the default scene here.
-    
-    showRenderingStats      = false;
+
+    showRenderingStats = false;
 
     makeGUI();
 
@@ -72,7 +73,7 @@ void App::onInit() {
         //"G3D Sponza"
         "G3D Cornell Box" // Load something simple
         //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
-        );
+    );
 }
 
 void App::writeSphere(String filename, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3>>& faces) {
@@ -145,31 +146,39 @@ void App::makeHeightfield() {
     GuiPane* heightfieldPane = debugPane->addPane("Heightfield");
 
     heightfieldPane->setNewChildSize(240);
-    heightfieldPane->addNumberBox("Max Y", &m_heightfieldYScale, "m", 
+    heightfieldPane->addNumberBox("Max Y", &m_heightfieldYScale, "m",
         GuiTheme::LOG_SLIDER, 0.0f, 100.0f)->setUnitsSize(30);
-        
-    heightfieldPane->addNumberBox("XZ Scale", &m_heightfieldXZScale, "m/px", 
+
+    heightfieldPane->addNumberBox("XZ Scale", &m_heightfieldXZScale, "m/px",
         GuiTheme::LOG_SLIDER, 0.001f, 10.0f)->setUnitsSize(30);
- 
+
     heightfieldPane->beginRow(); {
         heightfieldPane->addTextBox("Input Image", &m_heightfieldSource)->setWidth(210);
         heightfieldPane->addButton("...", [this]() {
             FileDialog::getFilename(m_heightfieldSource, "png", false);
         })->setWidth(30);
     } heightfieldPane->endRow();
-    
-    heightfieldPane->addButton("Generate", [this](){
+
+    heightfieldPane->addButton("Generate", [this]() {
         shared_ptr<G3D::Image> image;
+        Noise noise = G3D::Noise::common();
         try {
             drawMessage("Generating Heightfield.");
-            image = Image::fromFile(m_heightfieldSource);
+            Noise n;
+            image = Image::create(640, 640, ImageFormat::RGBA8());
+            for (int y = 0; y < image->height(); ++y) {
+                for (int x = 0; x < image->width(); ++x) {
+                    image->set(x, y, lerp(Color3(0.2f, 0.3f, 0.7f), Color3(1.0f), noise.sampleFloat(x, y, x+y, 3)));
+                }
+            }
+            image->save("../data-files/noise.png");
 
-            TextOutput output ("model/heightfield.off");
+            TextOutput output("model/heightfield.off");
             output.writeSymbol("OFF\n");
             output.printf("%d %d 0\n", image->width() * image->height(), (image->width() - 1) * (image->height() - 1));
 
-            for(int x = 0; x < image->width(); ++x){
-                for(int z = 0; z < image->height(); ++z){
+            for (int x = 0; x < image->width(); ++x) {
+                for (int z = 0; z < image->height(); ++z) {
                     Color3 color;
                     image->get(Point2int32(x, z), color);
                     float y = color.average();
@@ -177,15 +186,16 @@ void App::makeHeightfield() {
                 }
             }
 
-            for(int i = 1; i < image->height(); ++i){
-                for(int j = 1; j < image->width(); ++j){
-                    output.printf("4 %d %d %d %d\n", i + ((image->height())*j), i + ((image->height())*j) - 1, i + ((image->height())*(j-1)) - 1, i + ((image->height())*(j-1)));
+            for (int i = 1; i < image->height(); ++i) {
+                for (int j = 1; j < image->width(); ++j) {
+                    output.printf("4 %d %d %d %d\n", i + ((image->height())*j), i + ((image->height())*j) - 1, i + ((image->height())*(j - 1)) - 1, i + ((image->height())*(j - 1)));
                 }
             }
 
             output.commit(true);
             G3D::ArticulatedModel::clearCache();
-        } catch (...) {
+        }
+        catch (...) {
             msgBox("Unable to load the image.", m_heightfieldSource);
         }
     });
@@ -199,7 +209,7 @@ void App::makeGUI() {
     developerWindow->videoRecordDialog->setEnabled(true);
 
     GuiPane* infoPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
-    
+
     // Example of how to add debugging controls
     infoPane->addLabel("You can add GUI controls");
     infoPane->addLabel("in App::onInit().");
@@ -342,4 +352,37 @@ void App::onGraphics2D(RenderDevice* rd, Array<shared_ptr<Surface2D> >& posed2D)
 void App::onCleanup() {
     // Called after the application loop ends.  Place a majority of cleanup code
     // here instead of in the constructor so that exceptions can be caught.
+}
+
+void App::getMiddle(float radius, Vector3& v1, Vector3& v2, Vector3& newVector){
+    float t = (1+sqrt(5.0f))/2;
+
+    newVector = (v2-v1)*0.5+v1;
+
+    newVector.unit();
+    
+    newVector *= (sqrt(t * t + 1) * radius)/t;
+}
+
+void App::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3>>& faces){
+    float t = (1+sqrt(5))/2;
+    shared_ptr<Array<Vector3>>& vertices = std::make_shared<Array<Vector3>>();
+
+    Vector3 newVec1;
+    Vector3 newVec2;
+    Vector3 newVec3;
+
+    for (int i(0); i < vertices->length(); i += 3){
+        
+        //Find the midpoints
+        getMiddle(radius, vertices->operator[](i    ), vertices->operator[](i + 1), newVec1);
+        getMiddle(radius, vertices->operator[](i + 1), vertices->operator[](i + 2), newVec1);
+        getMiddle(radius, vertices->operator[](i + 2), vertices->operator[](i + 3), newVec1);
+
+        vertices->append(newVec1, newVec2, newVec3);
+
+        //add the new faces
+        Vector3 temp;
+        faces->append(Vector3(0.0f,0.0f,0.0f));
+    }
 }
