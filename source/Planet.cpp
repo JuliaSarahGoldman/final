@@ -78,7 +78,6 @@ void Planet::getMiddle(float radius, Vector3& v1, Vector3& v2, Vector3& newVecto
 
 void Planet::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3>>& faces){
     float t = (1+sqrt(5))/2;
-    shared_ptr<Array<Vector3>>& vertices = std::make_shared<Array<Vector3>>();
 
     std::unordered_map<Vector3, int> vertexPositions;
     for (int i(0); i < vertices->length; ++i) {
@@ -92,7 +91,7 @@ void Planet::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertic
     for (int i(0); i < faces->length(); i += 3){
         
         //Find the midpoints
-        getMiddle(radius, vertices->operator[](i), vertices->operator[](i + 1), newVec1);
+        getMiddle(radius, vertices->operator[](i    ), vertices->operator[](i + 1), newVec1);
         getMiddle(radius, vertices->operator[](i + 1), vertices->operator[](i + 2), newVec1);
         getMiddle(radius, vertices->operator[](i + 2), vertices->operator[](i + 3), newVec1);
 
