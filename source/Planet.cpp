@@ -1,8 +1,7 @@
 #include "Planet.h"
 #include <unordered_map>
-#include <G3D/G3DAll.h>
 
-void Planet::writeSphere(String filename, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3>>& faces) {
+void Planet::writeSphere(String filename, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
     makeIcohedron(5.0f, vertices, faces);
 
     int numVert = vertices->size();
@@ -76,9 +75,9 @@ void Planet::getMiddle(float radius, Vector3& v1, Vector3& v2, Vector3& newVecto
 void Planet::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces){
     float t = (1+sqrt(5))/2;
 
-    std::unordered_map<Vector3, int> vertexPositions;
-    for (int i(0); i < vertices->length; ++i) {
-        vertexPositions[vertices->operator[](i)] = i;
+    std::unordered_map<size_t, int> vertexPositions;
+    for (int i(0); i < vertices->length(); ++i) {
+        vertexPositions[vertices->operator[](i).hashCode()] = i;
     }
 
     Vector3 newVec1;
@@ -94,9 +93,9 @@ void Planet::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertic
         Vector3 vert3 = vertices->operator[](face.z);
 
         try{
-            int pos1 = vertexPositions.at(vert1);
-            int pos2 = vertexPositions.at(vert2);
-            int pos3 = vertexPositions.at(vert3);
+            int pos1 = vertexPositions.at(vert1.hashCode());
+            int pos2 = vertexPositions.at(vert2.hashCode());
+            int pos3 = vertexPositions.at(vert3.hashCode());
         } catch(...){
             printf("Undefined face in face array at position %d", i);
             return;
