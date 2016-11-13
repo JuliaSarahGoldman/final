@@ -13,7 +13,7 @@
 #include <G3D/G3DAll.h>
 
 
-class Mesh{ 
+class Mesh { 
 protected:
     Array<Vector3> m_vertexPositions;
     Array<int> m_indexArray;
@@ -37,7 +37,7 @@ public:
 
     void bevelEdges();
 
-    Mesh(); 
+    Mesh(const shared_ptr<TriTree>& triTree); 
     ~Mesh();
 
 

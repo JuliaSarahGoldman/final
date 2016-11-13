@@ -1,7 +1,13 @@
 /** \file Mesh.cpp */
 #include "Mesh.h"
 
-Mesh::Mesh() {};
+Mesh::Mesh(const shared_ptr<TriTree>& triTree) {
+    MeshBuilder builder;
+    for(int i = 0; i < triTree->size(); ++i){
+        builder.addTriangle(triTree->operator[](i).toTriangle(triTree->vertexArray()));
+    }
+    builder.commit(String("myMesh"), m_indexArray, m_vertexPositions);
+};
 Mesh::~Mesh() {};
 
 void Mesh::addVertex(const Vector3& vertex) {
