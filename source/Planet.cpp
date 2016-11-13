@@ -27,7 +27,7 @@ void Planet::writeSphere(String filename, shared_ptr<Array<Vector3>>& vertices, 
     G3D::ArticulatedModel::clearCache();
 }
 
-void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3>>& faces) {
+void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
     float t = (1.0 + sqrt(5.0)) / 2.0;
     float s = sqrt(1 + square(t));
 
@@ -44,39 +44,36 @@ void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, s
     vertices->append(radius * Vector3(0, t, -1) / s);
     vertices->append(radius * Vector3(0, -t, -1) / s);
 
-    faces->append(Vector3(0, 8, 4));
-    faces->append(Vector3(1, 10, 7));
-    faces->append(Vector3(2, 9, 11));
-    faces->append(Vector3(7, 3, 1));
-    faces->append(Vector3(0, 5, 10));
-    faces->append(Vector3(3, 9, 6));
-    faces->append(Vector3(3, 11, 9));
-    faces->append(Vector3(8, 6, 4));
-    faces->append(Vector3(2, 4, 9));
-    faces->append(Vector3(3, 7, 11));
-    faces->append(Vector3(4, 2, 0));
-    faces->append(Vector3(9, 4, 6));
-    faces->append(Vector3(2, 11, 5));
-    faces->append(Vector3(0, 10, 8));
-    faces->append(Vector3(5, 0, 2));
-    faces->append(Vector3(10, 5, 7));
-    faces->append(Vector3(1, 6, 8));
-    faces->append(Vector3(1, 8, 10));
-    faces->append(Vector3(6, 1, 3));
-    faces->append(Vector3(11, 7, 5));
+    faces->append(Vector3int32(0, 8, 4));
+    faces->append(Vector3int32(1, 10, 7));
+    faces->append(Vector3int32(2, 9, 11));
+    faces->append(Vector3int32(7, 3, 1));
+    faces->append(Vector3int32(0, 5, 10));
+    faces->append(Vector3int32(3, 9, 6));
+    faces->append(Vector3int32(3, 11, 9));
+    faces->append(Vector3int32(8, 6, 4));
+    faces->append(Vector3int32(2, 4, 9));
+    faces->append(Vector3int32(3, 7, 11));
+    faces->append(Vector3int32(4, 2, 0));
+    faces->append(Vector3int32(9, 4, 6));
+    faces->append(Vector3int32(2, 11, 5));
+    faces->append(Vector3int32(0, 10, 8));
+    faces->append(Vector3int32(5, 0, 2));
+    faces->append(Vector3int32(10, 5, 7));
+    faces->append(Vector3int32(1, 6, 8));
+    faces->append(Vector3int32(1, 8, 10));
+    faces->append(Vector3int32(6, 1, 3));
+    faces->append(Vector3int32(11, 7, 5));
 }
 
 void Planet::getMiddle(float radius, Vector3& v1, Vector3& v2, Vector3& newVector){
     float t = (1+sqrt(5.0f))/2;
-
     newVector = (v2-v1)*0.5+v1;
-
     newVector.unit();
-    
     newVector *= (sqrt(t * t + 1) * radius)/t;
 }
 
-void Planet::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3>>& faces){
+void Planet::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces){
     float t = (1+sqrt(5))/2;
 
     std::unordered_map<Vector3, int> vertexPositions;
@@ -90,8 +87,22 @@ void Planet::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertic
 
     for (int i(0); i < faces->length(); i += 3){
         
+        Vector3int32 face = faces->operator[](i);
+
+        Vector3 vert1 = vertices->operator[](face.x);
+        Vector3 vert2 = vertices->operator[](face.y);
+        Vector3 vert3 = vertices->operator[](face.z);
+
+        try{
+            int pos1 = vertexPositions.at(vert1);
+            int pos2 = vertexPositions.at(vert2);
+            int pos3 = vertexPositions.at(vert3);
+        } catch(...){
+            printf("Undefined face in face array at position %d", i);
+            return;
+        }
         //Find the midpoints
-        getMiddle(radius, vertices->operator[](i    ), vertices->operator[](i + 1), newVec1);
+        getMiddle(radius, vertices->operator[](faces->operator[](i).x), vertices->operator[](i + 1), newVec1);
         getMiddle(radius, vertices->operator[](i + 1), vertices->operator[](i + 2), newVec1);
         getMiddle(radius, vertices->operator[](i + 2), vertices->operator[](i + 3), newVec1);
 
@@ -99,6 +110,6 @@ void Planet::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertic
 
         //add the new faces
         Vector3 temp;
-        faces->append(Vector3(0.0f,0.0f,0.0f));
+        faces->append(Vector3int32(0,0,0));
     }
 }
