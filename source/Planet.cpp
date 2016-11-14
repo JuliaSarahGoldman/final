@@ -1,7 +1,7 @@
 #include "Planet.h"
 
 void Planet::writeSphere(String filename, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
-    makeIcohedron(15.0f, vertices, faces);
+    makeIcohedron(5.0f, vertices, faces);
 
     int numVert = vertices->size();
     int numFace = faces->size();
@@ -62,7 +62,7 @@ void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, s
     faces->append(Vector3int32(6, 1, 3));
     faces->append(Vector3int32(11, 7, 5));
 
-    for(int i(0); i < 5; ++i){
+    for(int i(0); i < 1; ++i){
         subdivideIcoHedron(radius, vertices, faces);
     }
     
@@ -88,9 +88,9 @@ void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, s
         faces->append(Vector3int32(indices[i], indices[i+1], indices[i+2]));
     }
 
-    for(int i(0); i < verts.size(); ++i) {
-        verts[i] += normals[i] * Random::threadCommon().uniform(1.0, 1.2);
-    }
+   // for(int i(0); i < verts.size(); ++i) {
+        //verts[i] += normals[i] * Random::threadCommon().uniform(1.0, 1.2);
+   // }
     vertices = std::make_shared<Array<Vector3>>(verts);
 }
 
