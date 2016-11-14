@@ -9,7 +9,7 @@ SimpleMesh::SimpleMesh(Array<Vector3> vertices, Array<Vector3int32> triangles){
 
 void SimpleMesh::toObj(String filename){
     TextOutput file(filename);
-    file.printf("g name\n");
+    //file.printf("g name\n");
         //loop to make vertices
     //debugPrintf(STR(%d\n), sizeof(m_vertexArray));
     for(int i = 0; i < m_vertexArray.size(); ++i){

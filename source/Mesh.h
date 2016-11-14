@@ -1,49 +1,45 @@
 /**
   \file Mesh.h
-   
+
    Defines mesh and its operators, including edge collapse and beveling.
  */
-/*
-    John Freeman 
-    Jose Rivas-Garcia 
-    Julia Goldman 
-    Matheus de Carvalho Souza
-*/
+ /*
+     John Freeman
+     Jose Rivas-Garcia
+     Julia Goldman
+     Matheus de Carvalho Souza
+ */
 #pragma once
 #include <G3D/G3DAll.h>
 
-
-class Mesh { 
+class Mesh {
 protected:
     Array<Vector3> m_vertexPositions;
     Array<int> m_indexArray;
-    Array<MeshAlg::Face> m_faceArray; 
-    Array<MeshAlg::Edge> m_edgeArray; 
-    Array<MeshAlg::Vertex> m_vertexArray;
+    Array<Vector3int32> m_triArray;
 
 public:
-    void addVertex(const Vector3& vertex); 
-    void addVertex(const Array<Vector3>& vertexList); 
-    
+    void addVertex(const Vector3& vertex);
+    void addVertex(const Array<Vector3>& vertexList);
+
     void addIndex(int index);
     void addIndex(const Array<int>& indexList);
-   
-    void addVertex(const Vector3& vertex, int index);
-    void addVertex(const Array<Vector3>& vertexList, const Array<int>& indexList); 
-   
-    void computeAdjacency(); 
 
-    void collapseEdges(const std::function<void (Array<MeshAlg::Edge>&)>& sort); 
+    void addVertex(const Vector3& vertex, int index);
+    void addVertex(const Array<Vector3>& vertexList, const Array<int>& indexList);
+
+    void computeAdjacency(Array<MeshAlg::Face>& faceArray, Array<MeshAlg::Edge>& edgeArray, Array<MeshAlg::Vertex>& vertexArray);
+
+    void computeNormals(const Array<MeshAlg::Face>& faceArray, const Array<MeshAlg::Edge>& edgeArray, const Array<MeshAlg::Vertex>& vertexArray,
+    Array<Vector3>& vertexNormalArray, Array<Vector3>& faceNormalArray);
+
+    void collapseEdges();
 
     void bevelEdges();
 
-    //Does this create an obj file?
-    void save();
+    void toObj(String filename);
 
-    //Do we have to first save the mesh? How does this work???? 
-    void toArticulatedModel();
-
-    Mesh(const shared_ptr<TriTree>& triTree); 
+    Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
     ~Mesh();
 
 
