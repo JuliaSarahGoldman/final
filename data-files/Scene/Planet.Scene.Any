@@ -4,8 +4,7 @@
     
     models = {
        cubeModel = ArticulatedModel::Specification {
-            //filename = "test.obj";
-            filename = "test.off";
+            filename = "wtf.obj";
             preprocess = {
                 setMaterial(all(), Color3(1, 0, 0));
                 transformGeometry(all(), Matrix4::scale(1, 1, 1));

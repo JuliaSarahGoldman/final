@@ -6,6 +6,11 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
+2016-11-14: Obj files working
+=============================================================
+Got .obj files to work.  Problem was that .off files start at index 0, but .obj files start at index 1.  The solution to this was to add 1 to each of our vertex indexes in our faces.
+
+
 2016-11-13: Obj file as an OFF file
 
 ![](2016-11-13_014_starter_r2322_g3d_r977__.jpg)

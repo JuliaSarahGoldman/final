@@ -1,26 +1,44 @@
 #include "Planet.h"
 
 void Planet::writeSphere(String filename, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
-    makeIcohedron(5.0f, vertices, faces);
+    makeIcohedron(10.0f, vertices, faces);
 
-    int numVert = vertices->size();
+    /*int numVert = vertices->size();
     int numFace = faces->size();
 
-    String sphere = "OFF\n";
-    sphere += (String)std::to_string(numVert) + " " + (String)std::to_string(numFace) + " 0\n\n";
+    //String sphere = "OFF\n";
+    //sphere += (String)std::to_string(numVert) + " " + (String)std::to_string(numFace) + " 0\n\n";
+    String sphere = "";
 
     for (int i = 0; i < numVert; ++i) {
         Vector3 vertex = vertices->operator[](i);
-        sphere += (String)std::to_string(vertex[0]) + " " + (String)std::to_string(vertex[1]) + " " + (String)std::to_string(vertex[2]) + "\n";
+        sphere += "v " + (String)std::to_string(vertex[0]) + " " + (String)std::to_string(vertex[1]) + " " + (String)std::to_string(vertex[2]) + "\n";
     }
 
     for (int i = 0; i < numFace; ++i) {
         Vector3 face = faces->operator[](i);
-        sphere += "3 " + (String)std::to_string(face[0]) + " " + (String)std::to_string(face[1]) + " " + (String)std::to_string(face[2]) + "\n";
+        sphere += "f " + (String)std::to_string(face[0]+1) + " " + (String)std::to_string(face[1]+1) + " " + (String)std::to_string(face[2]+1) + "\n";
     }
 
-    TextOutput output("model/" + filename + ".off");
+    TextOutput output("model/" + filename + ".obj");
     output.writeSymbol(sphere);
+    output.commit(true);
+    G3D::ArticulatedModel::clearCache();*/
+
+    int numVert = vertices->size();
+    int numFace = faces->size();
+
+    TextOutput output("model/" + filename + ".obj");
+
+    for (int i = 0; i < numVert; ++i) {
+        Vector3 vertex = vertices->operator[](i);
+        output.printf("v %f %f %f\n", vertex[0], vertex[1], vertex[2]);
+    }
+
+    for (int i = 0; i < numFace; ++i) {
+        Vector3int32 face = faces->operator[](i);
+        output.printf("f %d %d %d\n", face[0]+1, face[1]+1, face[2]+1);
+    }
     output.commit(true);
     G3D::ArticulatedModel::clearCache();
 }
@@ -62,10 +80,9 @@ void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, s
     faces->append(Vector3int32(6, 1, 3));
     faces->append(Vector3int32(11, 7, 5));
 
-    for(int i(0); i < 1; ++i){
+    for(int i(0); i < 6; ++i){
         subdivideIcoHedron(radius, vertices, faces);
     }
-    
     //const G3D::Welder::Settings settings;
     Array<Vector3> normals;
     Array<Vector2> texture;
@@ -84,13 +101,13 @@ void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, s
     Welder::weld(verts, texture, normals, indices, G3D::Welder::Settings());
 
     faces = std::make_shared<Array<Vector3int32>>();
-    for(int i(0); i < indices.size(); i += 3) {
+    for(int i(0); i < indices.size()-3; i += 3) {
         faces->append(Vector3int32(indices[i], indices[i+1], indices[i+2]));
     }
 
-   // for(int i(0); i < verts.size(); ++i) {
-        //verts[i] += normals[i] * Random::threadCommon().uniform(1.0, 1.2);
-   // }
+    for(int i(0); i < verts.size(); ++i) {
+        verts[i] += normals[i] * Random::threadCommon().uniform(1.0, 1.2);
+    }
     vertices = std::make_shared<Array<Vector3>>(verts);
 }
 
