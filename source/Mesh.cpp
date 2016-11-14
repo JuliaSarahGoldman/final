@@ -40,6 +40,7 @@ void Mesh::addVertex(const Array<Vector3>& vertexList, const Array<int>& indexLi
 };
 
 void Mesh::computeAdjacency(Array<MeshAlg::Face>& faceArray, Array<MeshAlg::Edge>& edgeArray, Array<MeshAlg::Vertex>& vertexArray) {
+    debugPrintf(STR(%d %d \n), m_indexArray.size(), m_vertexPositions.size());
     MeshAlg::computeAdjacency(m_vertexPositions, m_indexArray, faceArray, edgeArray, vertexArray);
 };
 
@@ -97,6 +98,36 @@ void Mesh::collapseEdges(Array<MeshAlg::Edge>& edges) {
 
 };
 
+void Mesh::bevelEdges(float bump){
+    //Step 1: Explode the planet
+    Array<Vector3> newVertices;
+    Array<int> newIndices;
+
+    //We need normals.
+    Array<MeshAlg::Face> faceArray;
+    Array<MeshAlg::Edge> edgeArray;
+    Array<MeshAlg::Vertex> vertexArray;
+    computeAdjacency(faceArray, edgeArray, vertexArray);
+
+    Array<Vector3> vertexNormalArray;
+    Array<Vector3> faceNormalArray;
+    computeNormals(faceArray, edgeArray, vertexArray, vertexNormalArray, faceNormalArray);
+
+    //Iterate through the face, creating new vertices and a new face using those vertices for each one
+    for (int i = 0; i < m_indexArray.size(); i+=3) {
+       Vector3 normal( faceNormalArray[i/3]);
+       Vector3 v1(m_vertexPositions[m_indexArray[i]] + bump*normal);
+       Vector3 v2(m_vertexPositions[m_indexArray[i+1]] + bump*normal);
+       Vector3 v3(m_vertexPositions[m_indexArray[i+2]] + bump*normal);
+       newVertices.append(v1, v2, v3);
+       newIndices.append(i, i+1, i+2);
+    }
+
+    //Temporary code for testing
+    m_vertexPositions = newVertices;
+    m_indexArray = newIndices;
+}
+
 void Mesh::toObj(String filename) {
     TextOutput file(filename);
     //file.printf("g name\n");
@@ -107,9 +138,16 @@ void Mesh::toObj(String filename) {
     }
 
     //Loop for faces
+    //using m_triArray
+    /*
     for (int i = 0; i < m_triArray.size(); ++i) {
         file.printf(STR(f %d %d %d\n), m_triArray[i].x, m_triArray[i].y, m_triArray[i].z);
+    }*/
+    //using m_indexArray
+    for (int i = 0; i < m_indexArray.size(); i+=3) {
+        file.printf(STR(f %d %d %d\n), m_indexArray[i]+1, m_indexArray[i+1]+1, m_indexArray[i+2]+1);
     }
     file.printf(STR(\n));
     file.commit();
 }
+

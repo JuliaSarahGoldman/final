@@ -159,13 +159,14 @@ void App::makeGUI() {
     shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
     shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();
     planet.writeSphere("test", 0.1f, 3, vertices, faces);
-    SimpleMesh mesh1(*vertices, *faces);
+    Mesh mesh1(*vertices, *faces);
+    mesh1.bevelEdges(.1);
     mesh1.toObj("ocean.obj");
 
     vertices = std::make_shared<Array<Vector3>>();
     faces = std::make_shared<Array<Vector3int32>>();
     planet.writeSphere("test", 3.5f, 5, vertices, faces);
-    SimpleMesh mesh2(*vertices, *faces);
+    Mesh mesh2(*vertices, *faces);
     mesh2.toObj("land.obj");
 
     makeHeightfield();
@@ -176,11 +177,19 @@ void App::makeGUI() {
     // button = debugPane->addButton("Run Simulator");
     // debugPane->addButton("Generate Heightfield", [this](){ generateHeightfield(); });
     // debugPane->addButton("Generate Heightfield", [this](){ makeHeightfield(imageName, scale, "model/heightfield.off"); });
-    
+  /*  Array<MeshAlg::Face> faceArray;
+    Array<MeshAlg::Edge> edgeArray;
+    Array<MeshAlg::Vertex> vertexArray; */
+  /*  Array<Vector3> vs(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
+    Array<int> is(0, 1, 2, 2, 3, 1);
+    MeshAlg tester = MeshAlg();
+    tester.computeAdjacency(vs, is, faceArray, edgeArray, vertexArray);*/
     
     Array<Vector3> verticeArray(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
-    Array<Vector3int32> triangles(Vector3int32(4,2,1), Vector3int32(2,3,1), Vector3int32(4,3,2), Vector3int32(4,1,3));
-    SimpleMesh mesh(*vertices, *faces);
+    Array<Vector3int32> triangles(Vector3int32(3,1,0), Vector3int32(1,2,0), Vector3int32(3,2,1), Vector3int32(3,0,2));
+    Mesh mesh(verticeArray, triangles);
+    //mesh.computeAdjacency(faceArray, edgeArray, vertexArray);
+    mesh.bevelEdges(.1);
     mesh.toObj("wtf.obj");
 
     debugWindow->pack();

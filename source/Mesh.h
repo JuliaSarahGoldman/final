@@ -43,7 +43,8 @@ public:
 
     void collapseEdges(Array<MeshAlg::Edge>& edges);
 
-    void bevelEdges();
+    //bump is how much we expand the panet's radius by
+    void bevelEdges(float bump);
 
     void toObj(String filename);
 
