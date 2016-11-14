@@ -37,6 +37,12 @@ public:
 
     void bevelEdges();
 
+    //Does this create an obj file?
+    void save();
+
+    //Do we have to first save the mesh? How does this work???? 
+    void toArticulatedModel();
+
     Mesh(const shared_ptr<TriTree>& triTree); 
     ~Mesh();
 

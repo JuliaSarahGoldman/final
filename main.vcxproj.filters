@@ -10,7 +10,7 @@
     <ClCompile Include="source\NoiseGen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Planet.cpp">
+    <ClCompile Include="source\SimpleMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -25,6 +25,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\Planet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SimpleMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

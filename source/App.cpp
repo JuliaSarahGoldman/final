@@ -2,6 +2,8 @@
 #include "App.h"
 #include "NoiseGen.h"
 #include "Planet.h"
+#include "Mesh.h"
+#include "SimpleMesh.h"
 
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
 G3D_START_AT_MAIN();
@@ -153,10 +155,10 @@ void App::makeGUI() {
     infoPane->addButton("Exit", [this]() { m_endProgram = true; });
     infoPane->pack();
 
-    Planet planet;
+    //Planet planet;
     shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
     shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();
-    planet.writeSphere("test", vertices, faces);
+    //planet.writeSphere("test", vertices, faces);
     makeHeightfield();
     // More examples of debugging GUI controls:
     // debugPane->addCheckBox("Use explicit checking", &explicitCheck);
@@ -165,6 +167,10 @@ void App::makeGUI() {
     // button = debugPane->addButton("Run Simulator");
     // debugPane->addButton("Generate Heightfield", [this](){ generateHeightfield(); });
     // debugPane->addButton("Generate Heightfield", [this](){ makeHeightfield(imageName, scale, "model/heightfield.off"); });
+    Array<Vector3> verticeArray(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
+    Array<Vector3int32> triangles(Vector3int32(2,3,0), Vector3int32(3,4,2), Vector3int32(0,4,3), Vector3int32(0,2,4));
+    SimpleMesh mesh(verticeArray, triangles);
+    mesh.toObj("test.obj");
 
     debugWindow->pack();
     debugWindow->setRect(Rect2D::xywh(0, 0, (float)window()->width(), debugWindow->rect().height()));

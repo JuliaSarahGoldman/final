@@ -4,7 +4,7 @@
     
     models = {
        cubeModel = ArticulatedModel::Specification {
-            filename = "sphere.obj";
+            filename = "test.obj";
             preprocess = {
                 setMaterial(all(), Color3(1, 0, 0));
                 transformGeometry(all(), Matrix4::scale(15, 15, 15));

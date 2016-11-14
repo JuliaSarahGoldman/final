@@ -7,6 +7,7 @@ Mesh::Mesh(const shared_ptr<TriTree>& triTree) {
         builder.addTriangle(triTree->operator[](i).toTriangle(triTree->vertexArray()));
     }
     builder.commit(String("myMesh"), m_indexArray, m_vertexPositions);
+    computeAdjacency();
 };
 Mesh::~Mesh() {};
 
@@ -39,3 +40,4 @@ void Mesh::addVertex(const Array<Vector3>& vertexList, const Array<int>& indexLi
 void Mesh::computeAdjacency(){
     MeshAlg::computeAdjacency(m_vertexPositions, m_indexArray, m_faceArray, m_edgeArray, m_vertexArray);
 };
+

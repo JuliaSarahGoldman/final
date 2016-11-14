@@ -90,12 +90,13 @@
     <ClInclude Include="source\Mesh.h" />
     <ClInclude Include="source\NoiseGen.h" />
     <ClInclude Include="source\Planet.h" />
+    <ClInclude Include="source\SimpleMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\App.cpp" />
     <ClCompile Include="source\Mesh.cpp" />
     <ClCompile Include="source\NoiseGen.cpp" />
-    <ClCompile Include="source\Planet.cpp" />
+    <ClCompile Include="source\SimpleMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources.rc" />
