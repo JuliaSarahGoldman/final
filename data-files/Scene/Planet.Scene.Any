@@ -3,18 +3,10 @@
     name = "Planet";
     
     models = {
-       oceanModel = ArticulatedModel::Specification {
-            filename = "ocean.obj";
+       cubeModel = ArticulatedModel::Specification {
+            filename = "wtf.obj";
             preprocess = {
-                setMaterial(all(), Color3(0, 0, 1));
-                transformGeometry(all(), Matrix4::scale(1, 1, 1));
-            };
-       };
-
-        landModel = ArticulatedModel::Specification {
-            filename = "land.obj";
-            preprocess = {
-                setMaterial(all(), Color3(0, 1, 0));
+                setMaterial(all(), Color3(1, 0, 0));
                 transformGeometry(all(), Matrix4::scale(1, 1, 1));
             };
        };
@@ -25,18 +17,13 @@
             texture = "cubemap/whiteroom/whiteroom-*.png";
        };
 
-        ocean = VisibleEntity {
-            model = "oceanModel";
-            frame = CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 0, 0);
-        };
-
-        land = VisibleEntity {
-            model = "landModel";
-            frame = CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 0, 0);
+        cube0 = VisibleEntity {
+            model = "cubeModel";
+            frame = CFrame::fromXYZYPRDegrees(0, 0, -2, 45, 0, 0);
         };
 
         camera = Camera {
-            frame = CFrame::fromXYZYPRDegrees(0.37504, 2.6446, 58.434, 1.1459, -2.2918, 0);
+            frame = CFrame::fromXYZYPRDegrees(8.4593, 1.9692, -0.10269, 76.203, -9.7402, 0);
         };
     };
 };
