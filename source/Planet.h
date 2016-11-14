@@ -1,6 +1,7 @@
 /**
   \file Planet.h
- */
+http://blog.coredumping.com/subdivision-of-icosahedrons/
+  */
 #pragma once
 #include <G3D/G3DAll.h>
 
