@@ -169,7 +169,7 @@ void App::makeGUI() {
     // debugPane->addButton("Generate Heightfield", [this](){ makeHeightfield(imageName, scale, "model/heightfield.off"); });
     Array<Vector3> verticeArray(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
     Array<Vector3int32> triangles(Vector3int32(1,2,4), Vector3int32(2,3,1), Vector3int32(4,3,2), Vector3int32(4,1,3));
-    SimpleMesh mesh(verticeArray, triangles);
+    Mesh mesh(verticeArray, triangles);
     mesh.toObj("testing.obj");
 
     debugWindow->pack();

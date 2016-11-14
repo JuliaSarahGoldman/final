@@ -6,16 +6,30 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
+2016-11-13: BevelEdges
+=============================================================
+Plan:
+Split up triangles- blow out. (So add to vertices in direction of face normal? But make every vertex multiple vertices. So, for each triangle of ints, construct an actual triangle, change the ints, (make a new vertex array and index array when testing).) (Should probably get this working before anything else.)
+
+Then, fill in the gaps. So, need way to iterate. Iterate over the edges, and
+
+2016-11-13: Generate meshes
 2016-11-13: ???
 =============================================================
 
 ![MARS with Wireframe](2016-11-13_013_starter_r2322_g3d_r977__MARS_with_Wireframe.jpg)
 
+Can generate obj file from tri array and vertex array. (Currently, we don't specify the normals in the OBJ file, but we can easily edit our toObj code to include them.)
 
+Our mesh class now has most of the functions we think we'll need to begin with. Currently, the initial heightfield is being generated prior to being given to our mesh class, but it will probably happen within our mesh class eventually.
 
+We still are usnure as to how to get an articulated model froma mesh class.
 2016-11-13: ???
 =============================================================
 
+
+
+2016-11-13: Mesh
 ![MARS](2016-11-13_012_starter_r2322_g3d_r977__MARS.jpg)
 
 
