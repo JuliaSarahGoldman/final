@@ -18,5 +18,5 @@ protected:
 
 public:
     //Writes a sphere to a given off file
-    void writeSphere(String filename, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces);
+    void writeSphere(String filename, float radius, int depths, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces);
 };

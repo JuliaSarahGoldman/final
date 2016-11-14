@@ -1,31 +1,45 @@
 #include "Planet.h"
 
-void Planet::writeSphere(String filename, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
-    makeIcohedron(10.0f, vertices, faces);
+void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
+    
+    makeIcohedron(radius, vertices, faces);
+
+    for(int i(0); i < depths; ++i){
+        subdivideIcoHedron(radius, vertices, faces);
+    }
+
+    //const G3D::Welder::Settings settings;
+    Array<Vector3> normals;
+    Array<Vector2> texture;
+    Array<int> indices;
+    Array<Vector3> verts;
+    
+    for (int i(0); i < vertices->length(); ++i) {
+        verts.append(vertices->operator[](i));
+    }
+
+    for(int i(0); i < faces->length(); ++i){
+        Vector3int32 face = faces->operator[](i);
+        indices.append(face.x, face.y, face.z);
+    }
+
+    Welder::weld(verts, texture, normals, indices, G3D::Welder::Settings());
+
+    faces = std::make_shared<Array<Vector3int32>>();
+    for(int i(0); i < indices.size()-2; i += 3) {
+        faces->append(Vector3int32(indices[i], indices[i+1], indices[i+2]));
+    }
+
+    Noise noise;
+    for(int i(0); i < verts.size(); ++i) {
+        Vector3 vertex = verts[i];
+        float n = noise.sampleFloat(vertex.x, vertex.y, vertex.z, 1) * radius * 1000;
+        debugPrintf("%f\n", n);
+        verts[i] += normals[i] * n;
+    }
+    vertices = std::make_shared<Array<Vector3>>(verts);
 
     /*int numVert = vertices->size();
-    int numFace = faces->size();
-
-    //String sphere = "OFF\n";
-    //sphere += (String)std::to_string(numVert) + " " + (String)std::to_string(numFace) + " 0\n\n";
-    String sphere = "";
-
-    for (int i = 0; i < numVert; ++i) {
-        Vector3 vertex = vertices->operator[](i);
-        sphere += "v " + (String)std::to_string(vertex[0]) + " " + (String)std::to_string(vertex[1]) + " " + (String)std::to_string(vertex[2]) + "\n";
-    }
-
-    for (int i = 0; i < numFace; ++i) {
-        Vector3 face = faces->operator[](i);
-        sphere += "f " + (String)std::to_string(face[0]+1) + " " + (String)std::to_string(face[1]+1) + " " + (String)std::to_string(face[2]+1) + "\n";
-    }
-
-    TextOutput output("model/" + filename + ".obj");
-    output.writeSymbol(sphere);
-    output.commit(true);
-    G3D::ArticulatedModel::clearCache();*/
-
-    int numVert = vertices->size();
     int numFace = faces->size();
 
     TextOutput output("model/" + filename + ".obj");
@@ -40,7 +54,7 @@ void Planet::writeSphere(String filename, shared_ptr<Array<Vector3>>& vertices, 
         output.printf("f %d %d %d\n", face[0]+1, face[1]+1, face[2]+1);
     }
     output.commit(true);
-    G3D::ArticulatedModel::clearCache();
+    G3D::ArticulatedModel::clearCache();*/
 }
 
 void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
@@ -80,7 +94,7 @@ void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, s
     faces->append(Vector3int32(6, 1, 3));
     faces->append(Vector3int32(11, 7, 5));
 
-    for(int i(0); i < 6; ++i){
+    /*for(int i(0); i < 6; ++i){
         subdivideIcoHedron(radius, vertices, faces);
     }
     //const G3D::Welder::Settings settings;
@@ -108,7 +122,7 @@ void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, s
     for(int i(0); i < verts.size(); ++i) {
         verts[i] += normals[i] * Random::threadCommon().uniform(1.0, 1.2);
     }
-    vertices = std::make_shared<Array<Vector3>>(verts);
+    vertices = std::make_shared<Array<Vector3>>(verts);*/
 }
 
 void Planet::getMiddle(float radius, Vector3& v1, Vector3& v2, Vector3& newVector) {

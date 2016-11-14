@@ -158,8 +158,16 @@ void App::makeGUI() {
     Planet planet;
     shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
     shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();
-    planet.writeSphere("test", vertices, faces);
-    
+    planet.writeSphere("test", 0.1f, 3, vertices, faces);
+    SimpleMesh mesh1(*vertices, *faces);
+    mesh1.toObj("ocean.obj");
+
+    vertices = std::make_shared<Array<Vector3>>();
+    faces = std::make_shared<Array<Vector3int32>>();
+    planet.writeSphere("test", 3.5f, 5, vertices, faces);
+    SimpleMesh mesh2(*vertices, *faces);
+    mesh2.toObj("land.obj");
+
     makeHeightfield();
     // More examples of debugging GUI controls:
     // debugPane->addCheckBox("Use explicit checking", &explicitCheck);
