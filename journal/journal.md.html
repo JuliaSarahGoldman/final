@@ -6,18 +6,87 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
-2016-11-13: Generate meshes
+2016-11-13: We have texture
 =============================================================
 
-![](2016-11-13_002_starter_r2316_g3d_r977__.jpg)
+![](2016-11-13_011_starter_r2313_g3d_r977__.jpg)
 
-Can generate obj file from tri array and vertex array.
+We got weld to work finally! We now are able to actually bump the vertices with
+noise! Right now it's just random nums, but good enough.
 
 
 
-2016-11-13: Mesh
+2016-11-13: First attempt at using weld
 =============================================================
-Trying to make simple mesh class.
+
+![](2016-11-13_010_starter_r2313_g3d_r977__.jpg)
+
+
+
+2016-11-13: Sphere with Wireframe and 8 recursion levels
+=============================================================
+
+![](2016-11-13_009_starter_r2313_g3d_r977__.jpg)
+
+
+
+2016-11-13: Attempt at noise function
+=============================================================
+
+![](2016-11-13_008_starter_r2313_g3d_r977__.jpg)
+
+Trying to add detail to the planet. Using a random function and adding the
+normal to each midpoint position.
+
+
+
+2016-11-13: IT IS DONE!
+=============================================================
+
+![](2016-11-13_007_starter_r2313_g3d_r977__.jpg)
+
+Turns out... Vector3.unit() does NOT manipulate the vector itself, but returns
+the manipulated Vector :(. So, when I used it originally, I wasn't getting it
+back.
+
+
+
+2016-11-13: Midpoint Works, Bumping them does not
+=============================================================
+
+![](2016-11-13_006_starter_r2313_g3d_r977__.jpg)
+
+Our midpoint formula is correct. We knew that really, but it is not bumping the
+midpoints correctly so we can get a sphere shape
+
+
+
+2016-11-13: The Big Bang
+=============================================================
+
+![](2016-11-13_005_starter_r2313_g3d_r977__.jpg)
+
+Still trying to debug and find the midpoints correctly.
+
+
+
+2016-11-13: Buggy Sphere with Wireframe
+=============================================================
+
+![](2016-11-13_004_starter_r2313_g3d_r977__.jpg)
+
+
+
+2016-11-13: Spherical... Sort of
+=============================================================
+
+![](2016-11-13_003_starter_r2313_g3d_r977__.jpg)
+
+Simple fix, I was doing i+=3 instead of ++i when iterating through the faces. It
+looks as though I need to bump the original vertices or something similar. Will
+work on it.
+
+
 
 2016-11-13: Continue to Debug
 =============================================================
