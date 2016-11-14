@@ -53,49 +53,32 @@ int Mesh::edgeLength(const MeshAlg::Edge& edge) {
     return length(m_vertexPositions[edge.vertexIndex[0]] - m_vertexPositions[edge.vertexIndex[1]]);
 };
 
-void Mesh::merge(Array<MeshAlg::Edge>& data, Array<MeshAlg::Edge>& temp, int low, int high, int mid) { 
-    int di = mid; 
-    int ti = low;
-    int ri = low;
+MeshAlg::Edge Mesh::findMinEdge(const Array<MeshAlg::Edge>& data) {
+    MeshAlg::Edge min(data[0]);
 
-    while( ti < mid && di <= high) { 
-        if(edgeLength(data[di]) < edgeLength(temp[ti])){ 
-            data[ri++] = data[di++];
-        } else { 
-            data[ri++] = temp[ti++];
+    for (MeshAlg::Edge e : data) {
+        if (edgeLength(min) < edgeLength(e)) {
+            min = e;
         }
     }
-
-    while(ti < mid) { 
-        data[ri++] = temp[ti++];
-    }
+    return min;
 }
 
-void Mesh::mergeSort(Array<MeshAlg::Edge>& data){ 
-    Array<MeshAlg::Edge> temp;
-    mergeSortRec(data, temp, 0, data.size()-1);
-}
+void Mesh::collapseEdges(int numCollapsed) {
+    Array<MeshAlg::Edge> edges;
+    for (int i(1); i < numCollapsed; ++i) {
+        computeAdjacency(Array<MeshAlg::Face>(), edges, Array<MeshAlg::Vertex>());
 
-void Mesh::mergeSortRec(Array<MeshAlg::Edge>& data,Array<MeshAlg::Edge>& temp, int low, int high) { 
-    int n = high - low; 
-    int mid = low + n/2; 
+        MeshAlg::Edge minEdge(findMinEdge(edges));
+        int newIndex(minEdge.vertexIndex[0]);
+        int toCollapse(minEdge.vertexIndex[1]);
 
-    if(n <= 2) { 
-        return;
+        for (int j(0); j < m_indexArray.size(); ++j) {
+            if (m_indexArray[j] == toCollapse) {
+                m_indexArray[j] = newIndex;
+            }
+        }
     }
-    
-    for(int i = low; i < mid; ++i){ 
-        temp.append(data[i]);
-    }
-
-    mergeSortRec(data,temp, low, mid); 
-    mergeSortRec(temp,data, mid+1, high);
-    merge(data,temp,low, high, mid);
-}
-
-
-void Mesh::collapseEdges(Array<MeshAlg::Edge>& edges) {
-
 };
 
 void Mesh::bevelEdges(float bump){

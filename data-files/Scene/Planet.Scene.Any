@@ -4,7 +4,7 @@
     
     models = {
        cubeModel = ArticulatedModel::Specification {
-            filename = "wtf.obj";
+            filename = "ocean.obj";
             preprocess = {
                 setMaterial(all(), Color3(1, 0, 0));
                 transformGeometry(all(), Matrix4::scale(1, 1, 1));

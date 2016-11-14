@@ -18,12 +18,11 @@ protected:
     Array<int> m_indexArray;
     Array<Vector3int32> m_triArray;
 
-        int edgeLength(const MeshAlg::Edge& edge);
-
-    void merge(Array<MeshAlg::Edge>& data, Array<MeshAlg::Edge>& temp, int low, int high, int mid);
-    void mergeSortRec(Array<MeshAlg::Edge>& data,Array<MeshAlg::Edge>& temp, int low, int high);
-    void mergeSort(Array<MeshAlg::Edge>& data);
+    int edgeLength(const MeshAlg::Edge& edge);
     
+    MeshAlg::Edge findMinEdge(const Array<MeshAlg::Edge>& edges);
+
+
 public:
     void addVertex(const Vector3& vertex);
     void addVertex(const Array<Vector3>& vertexList);
@@ -39,9 +38,9 @@ public:
     /** pre: faceArray, edgeArray and vertexArray computed by computeAdjacency
     post: vertexNormalArray and faceNormalArray filled with appropriate normal values */
     void computeNormals(const Array<MeshAlg::Face>& faceArray, const Array<MeshAlg::Edge>& edgeArray, const Array<MeshAlg::Vertex>& vertexArray,
-    Array<Vector3>& vertexNormalArray, Array<Vector3>& faceNormalArray);
+        Array<Vector3>& vertexNormalArray, Array<Vector3>& faceNormalArray);
 
-    void collapseEdges(Array<MeshAlg::Edge>& edges);
+    void collapseEdges(int numCollapsed);
 
     //bump is how much we expand the panet's radius by
     void bevelEdges(float bump);
