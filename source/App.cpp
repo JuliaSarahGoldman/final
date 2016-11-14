@@ -74,7 +74,7 @@ void App::onInit() {
     developerWindow->cameraControlWindow->moveTo(Point2(developerWindow->cameraControlWindow->rect().x0(), 0));
     loadScene(
         //"G3D Sponza"
-        "Planet" // Load something simple
+        "G3D Cornell Box" // Load something simple
         //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
     );
 }
@@ -168,9 +168,9 @@ void App::makeGUI() {
     // debugPane->addButton("Generate Heightfield", [this](){ generateHeightfield(); });
     // debugPane->addButton("Generate Heightfield", [this](){ makeHeightfield(imageName, scale, "model/heightfield.off"); });
     Array<Vector3> verticeArray(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
-    Array<Vector3int32> triangles(Vector3int32(2,3,0), Vector3int32(3,4,2), Vector3int32(0,4,3), Vector3int32(0,2,4));
+    Array<Vector3int32> triangles(Vector3int32(1,2,4), Vector3int32(2,3,1), Vector3int32(4,3,2), Vector3int32(4,1,3));
     SimpleMesh mesh(verticeArray, triangles);
-    mesh.toObj("test.obj");
+    mesh.toObj("testing.obj");
 
     debugWindow->pack();
     debugWindow->setRect(Rect2D::xywh(0, 0, (float)window()->width(), debugWindow->rect().height()));

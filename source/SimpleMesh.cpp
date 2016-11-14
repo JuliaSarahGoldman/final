@@ -6,6 +6,7 @@ SimpleMesh::SimpleMesh(Array<Vector3> vertices, Array<Vector3int32> triangles){
     m_vertexArray = vertices;
     m_triArray = triangles;
 }
+
 void SimpleMesh::toObj(String filename){
     TextOutput file(filename);
     file.printf("g name\n");
