@@ -5,17 +5,17 @@
     models = {
        cubeModel = ArticulatedModel::Specification {
             //filename = "test.obj";
-            filename = "../data-files/testing.obj";
+            filename = "test.off";
             preprocess = {
                 setMaterial(all(), Color3(1, 0, 0));
-                transformGeometry(all(), Matrix4::scale(15, 15, 15));
+                transformGeometry(all(), Matrix4::scale(1, 1, 1));
             };
        };
     };
     
     entities = {
        skybox = Skybox {
-            texture = "space.png";
+            texture = "cubemap/whiteroom/whiteroom-*.png";
        };
 
         cube0 = VisibleEntity {

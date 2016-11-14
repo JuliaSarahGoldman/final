@@ -96,6 +96,7 @@
     <ClCompile Include="source\App.cpp" />
     <ClCompile Include="source\Mesh.cpp" />
     <ClCompile Include="source\NoiseGen.cpp" />
+    <ClCompile Include="source\Planet.cpp" />
     <ClCompile Include="source\SimpleMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
