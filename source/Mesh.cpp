@@ -40,7 +40,7 @@ void Mesh::addVertex(const Array<Vector3>& vertexList, const Array<int>& indexLi
 };
 
 void Mesh::computeAdjacency(Array<MeshAlg::Face>& faceArray, Array<MeshAlg::Edge>& edgeArray, Array<MeshAlg::Vertex>& vertexArray) {
-    debugPrintf(STR(%d %d \n), m_indexArray.size(), m_vertexPositions.size());
+    //debugPrintf(STR(%d %d \n), m_indexArray.size(), m_vertexPositions.size());
     MeshAlg::computeAdjacency(m_vertexPositions, m_indexArray, faceArray, edgeArray, vertexArray);
 };
 
@@ -53,15 +53,30 @@ int Mesh::edgeLength(const MeshAlg::Edge& edge) {
     return length(m_vertexPositions[edge.vertexIndex[0]] - m_vertexPositions[edge.vertexIndex[1]]);
 };
 
-MeshAlg::Edge Mesh::findMinEdge(const Array<MeshAlg::Edge>& data) {
-    MeshAlg::Edge min(data[0]);
 
-    for (MeshAlg::Edge e : data) {
-        if (edgeLength(min) < edgeLength(e)) {
-            min = e;
+Array<int> randomIntList(int min, int max) { 
+    Array<int> toReturn;
+    int iters(max); 
+    while(iters >= min) { 
+        int r = Random::threadCommon().integer(min,max); 
+        if(!toReturn.contains(r)) {
+            toReturn.append(r);
+            --iters;
+        }    
+    }
+    return toReturn;
+}
+
+MeshAlg::Edge Mesh::findMinEdge(const Array<MeshAlg::Edge>& data) {
+    MeshAlg::Edge minEdge(data[Random::threadCommon().integer(0,data.size()-1)]);
+    Array<int> ind(randomIntList(0, data.size()-1));
+  
+    for (int i(0); i < ind.size(); ++i) {
+        if (edgeLength(minEdge) < edgeLength(data[ind[i]])) {
+            minEdge = data[ind[i]];
         }
     }
-    return min;
+    return minEdge;
 }
 
 void Mesh::collapseEdges(int numCollapsed) {

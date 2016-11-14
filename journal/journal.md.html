@@ -8,6 +8,7 @@
 
 2016-11-14: Edge Collapsing
 =============================================================
+At first we thought we might need to sort the edges by length so we can pick an arbitrary n smallest edges to collapse. So we defined a merge sort procedure based on edge length. However, we realized we should probably take the new formed edges into account everytime we collapse an old edge. So we defined a simple linear time iterating procedure to find the min length edge for each collapsing round. 
 
 ![Edge Collapsing](2016-11-14_006_starter_r2350_g3d_r977__Edge_Collapsing.jpg)
 
@@ -16,6 +17,22 @@ mininum lenght edge to be collapsed. Since most edges are the same length, it
 always ends up choosing roughly the same edge to collapse. We need a way to
 check every edge length in random access order
 
+![Sort of fixed](2016-11-14_007_starter_r2352_g3d_r977__Fixed_edge_collapsing.jpg)
+
+By setting the initial minEdge within findMinEdge to a random edge in the array
+
+![With more collapsing](2016-11-14_008_starter_r2352_g3d_r977__More_collapse_edges.jpg)
+
+Our first fix does not really work when we collapse more edges. There must be a
+way to iterate through edges randomly so we can fix that.
+
+
+![Random iteration](2016-11-14_010_starter_r2352_g3d_r977__Random_iteration.jpg)
+
+Accomplished by creating a list of all edge list indices, but in random order,
+then using that list to iterate through the edge list randomly. The results
+don't look that much better. Maybe the solution would just be ignoring vertices
+that were already used in an edge collapse.
 
 
 2016-11-14: Exploded Sphere
