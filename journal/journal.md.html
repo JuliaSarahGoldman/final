@@ -135,7 +135,6 @@ Split up triangles- blow out. (So add to vertices in direction of face normal? B
 Then, fill in the gaps. So, need way to iterate. Iterate over the edges, and
 
 2016-11-13: Generate meshes
-2016-11-13: ???
 =============================================================
 
 ![MARS with Wireframe](2016-11-13_013_starter_r2322_g3d_r977__MARS_with_Wireframe.jpg)
@@ -144,13 +143,12 @@ Can generate obj file from tri array and vertex array. (Currently, we don't spec
 
 Our mesh class now has most of the functions we think we'll need to begin with. Currently, the initial heightfield is being generated prior to being given to our mesh class, but it will probably happen within our mesh class eventually.
 
-We still are usnure as to how to get an articulated model froma mesh class.
-2016-11-13: ???
-=============================================================
-
+We still are unsure as to how to get an articulated model froma mesh class.
 
 
 2016-11-13: Mesh
+=============================================================
+
 ![MARS](2016-11-13_012_starter_r2322_g3d_r977__MARS.jpg)
 
 
@@ -160,7 +158,7 @@ We still are usnure as to how to get an articulated model froma mesh class.
 
 ![](2016-11-13_011_starter_r2313_g3d_r977__.jpg)
 
-We got weld to work finally! We now are able to actually bump the vertices with
+We got weld to work finally! The problem we fixed is that we were defining faces using the vertices we had before the weld insted of the new vertices we got back from weld. We now are able to actually bump the vertices with
 noise! Right now it's just random nums, but good enough.
 
 
