@@ -1,30 +1,57 @@
 /** \file SimpleMesh.cpp */
 #include "SimpleMesh.h"
 
-SimpleMesh::SimpleMesh(Array<Vector3> vertices, Array<Vector3int32> triangles){
-    //not how you set stuff in constructor- fix
-    m_vertexArray = vertices;
-    m_triArray = triangles;
+SimpleMesh::SimpleMesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray, Array<Vector3> normals, Array<Vector2> texture){
+    MeshBuilder builder;
+    for (int i = 0; i < triArray.size(); ++i) {
+        Vector3int32 v = triArray[i];
+        m_indexArray.append(v.x, v.y, v.z);
+    }
+    m_vertexPositions = vertexPositions;
+    m_triArray = triArray;
+    m_normals = normals;
+    m_texture = texture;
 }
 
 void SimpleMesh::toObj(String filename){
 
-    int numVert = m_vertexArray.size();
-    int numFace = m_triArray.size();
-
-    TextOutput output(filename);
-
-    for (int i(0); i < numVert; ++i) {
-        Vector3 vertex = m_vertexArray[i];
-        output.printf("v %f %f %f\n", vertex[0], vertex[1], vertex[2]);
+    TextOutput file(filename);
+    
+    for (int i = 0; i < m_vertexPositions.size(); ++i) {
+        file.printf(STR(v %f %f %f\n), m_vertexPositions[i].x, m_vertexPositions[i].y, m_vertexPositions[i].z);
     }
 
-    for (int i(0); i < numFace; ++i) {
-        Vector3int32 face = m_triArray[i];
-        output.printf("f %d %d %d\n", face[0]+1, face[1]+1, face[2]+1);
+    for (int i = 0; i < m_normals.size(); ++i) {
+        file.printf(STR(vn %f %f %f\n), m_normals[i].x, m_normals[i].y, m_normals[i].z);
     }
-    output.commit(true);
-    G3D::ArticulatedModel::clearCache();
+
+    for (int i = 0; i < m_texture.size(); ++i) {
+        file.printf(STR(vt %f %f 0\n), m_texture[i].x, m_texture[i].y);
+    }
+
+    //using m_indexArray
+    for (int i = 0; i < m_indexArray.size(); i+=3) {
+        file.printf(STR(f %d %d %d \n), m_indexArray[i]+1, m_indexArray[i+1]+1, m_indexArray[i+2]+1);
+    }
+
+    debugPrintf("%d   length = %d   length=  %d", m_vertexPositions.size(), m_texture.size(), m_normals.size());
+
+    file.printf(STR(\n));
+    file.commit();
+
+}
+
+
+    //file.printf("g name\n");
+        //loop to make vertices
+    //debugPrintf(STR(%d\n), sizeof(m_vertexArray));
+
+    //Loop for faces
+    //using m_triArray
+    /*
+    for (int i = 0; i < m_triArray.size(); ++i) {
+        file.printf(STR(f %d %d %d\n), m_triArray[i].x, m_triArray[i].y, m_triArray[i].z);
+    }*/
 
     /*TextOutput file(filename);
     //file.printf("g name\n");
@@ -40,4 +67,3 @@ void SimpleMesh::toObj(String filename){
     }
     file.printf(STR(\n));
     file.commit();*/
-}
