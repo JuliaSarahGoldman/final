@@ -10,7 +10,7 @@
 Introduction
 ============================================================================================
 
-Despite their lack of realism, low-poly planets have the ability to be aesthetically beautiful and awe-inspiring. 
+Despite their lack of realism, low-poly planets, such as the one above, have the ability to be aesthetically beautiful and awe-inspiring. There are a plethora of different styles that these planets can take, but for this project, we endeavored to create a low-poly planet generator that can procedurally generate cartoon-like planets reminiscent of those from Super Mario Galaxy. The cartoon-like feel of these planets allowed us to generate planets that do not have to conform to "real-world" physics, but still have an aesthetically pleasing feel to them.
 
 Specification
 ============================================================================================
@@ -74,6 +74,62 @@ Meshes
 ----------------------------------------------------------
 Thes heightfields are stored as meshes. To create a low-poly planet, we use an edge collapsing algorithm. Smoothing is performe dthrough beveling.
 
+Design
+=====================================================================================
+
+The following is a description of our design.
+
+Flowchart
+-------------------------------------------------------------------------------------
+*****************************************************************************************************************************************
+*                                                                                                                                       *
+*   .---------.                  .------------.        .-------------.                                                                  *
+*  |   GAPP    |                 | Rasterizer +------>+ drawThickLine |           .----------------------.     .------------------.     *
+*   '----+----'                  '-----+------'        '-----+-------'            |  CoralSceneGenerator +---->| writeTankScene   |     *
+*        |                             ^                     | draw quadrant      '------+---------------'     | or writeSeaScene |     *
+*        v                             |                     | bump and                  ^                     '-------+----------'     *
+*   .----+---.                  .------+---.                 v lambertian                |                             |                * 
+*   | onInit |                 | writeCoral |          .-----+--------.                  |                             v                *
+*   '----+---'                  '------+---'           | GAPP::onInit |          .-------+-------------.        .------+------.         *
+*        |                             ^               '-----+--------'          | GAPP::generateScene |        | writeModels |         *
+*        v                             |                     | 4 map             '-------+-------------'        '-+--------+--'         *
+*    .------------------.         .----+-------.             | quadrants                 ^                        | tank   | sea        *
+*   /  Planet          /         / Subdivide  /              v bump & lambertian         |                        v sceme  v scene      *
+*  '-----+------------'         '-----+------'          .----+---------.                 |               .--------+--.  .--+-------.    *
+*        |                            ^                | Rasterizer     |  2 maps    .---+--------.      | writeTank |  | writeSea |    *
+*        v                            |                | mergeQuadrants +---------->| GAPP::onInit |     | Entities  |  | Entities |    *
+*  .------------.                 .---+----------.      '--------------'             '--+-------+-'      '--------+--'  '--------+-'    *
+*  | writePlanet+---------------->| makeIcohedron|                                      | save  | save            ^  load bump   ^      *
+*  '------------'                 '--------------'                                      v bump  v lambertian      | & lambertian |      *
+*****************************************************************************************************************************************
+
+
+Class Descriptions
+-----------------------------------------------------------------------------------------------------------------------------
+
+|[Planet](class_planet.html): | |
+|------------|---|
+|[]() |  |
+|[]() |  |
+|[]() |  |
+|[]() |  |
+|[]() |  |
+
+|[Mesh](class_mesh.html): | |
+|------------|---|
+|[]() |  |
+|[]() |  |
+|[]() |  |
+|[]() |  |
+|[]() |  |
+
+Justification
+------------------------------------------------------------------------------------------------------------------------------
+
+Planet is responsible for building the actual layout of the planet and uses our Mesh class to create its 3D mesh.
+
+Mesh is responsible for building and editting the planet's mesh.
+
 Quality Results
 =====================================================================================
 Here, we show high quality images that show both the advantages and limitations of our project.  
@@ -88,7 +144,7 @@ Evocative Results
 -------------------------------------------------------------------------------------
 Here, we demonstrate how our planets could be used to create with various models to create interesting scenes and beautiful images. 
 
-![.](moon.png)
+![.](moon.jpg)
 
 ![.](low-poly_planet.jpg)
 
