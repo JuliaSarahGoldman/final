@@ -159,7 +159,6 @@ void App::makeGUI() {
     shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
     shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();
     planet.writeSphere("test", 0.1f, 3, vertices, faces);
-    mesh1.toObj("ocean.obj");
 
 
     vertices = std::make_shared<Array<Vector3>>();
