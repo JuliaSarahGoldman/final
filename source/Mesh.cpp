@@ -104,14 +104,16 @@ void Mesh::bevelEdges(float bump){
     //We need normals.
     Array<MeshAlg::Face> faceArray;
     Array<MeshAlg::Edge> edgeArray;
+
     Array<MeshAlg::Vertex> vertexArray;
     computeAdjacency(faceArray, edgeArray, vertexArray);
+
 
     Array<Vector3> vertexNormalArray;
     Array<Vector3> faceNormalArray;
     computeNormals(faceArray, edgeArray, vertexArray, vertexNormalArray, faceNormalArray);
 
-    //Iterate through the face, creating new vertices and a new face using those vertices for each one
+    //Iterate through the faces, creating new vertices and a new face using those vertices for each one
     for (int i = 0; i < m_indexArray.size(); i+=3) {
        Vector3 normal( faceNormalArray[i/3]);
        Vector3 v1(m_vertexPositions[m_indexArray[i]] + bump*normal);
@@ -119,7 +121,21 @@ void Mesh::bevelEdges(float bump){
        Vector3 v3(m_vertexPositions[m_indexArray[i+2]] + bump*normal);
        newVertices.append(v1, v2, v3);
        newIndices.append(i, i+1, i+2);
+
     }
+
+    //Iterate through edges. For each edge, find the 4 points associated with it, via indexing. Construct 2 new triangles. 
+    for (int i = 0; i < edgeArray.size(); ++i) {
+        int face1start = newIndices[3*edgeArray[i].faceIndex[0]];
+        debugPrintf(STR(%d face1start\n), face1start);
+        int face2start = newIndices[3*edgeArray[i].faceIndex[1]];
+        debugPrintf(STR(%d face2start\n), face2start);
+
+        edgeArray[i].vertexIndex[0];
+        edgeArray[i].vertexIndex[1];
+        
+    }
+
 
     //Temporary code for testing
     m_vertexPositions = newVertices;
