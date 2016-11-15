@@ -113,6 +113,16 @@ void Mesh::bevelEdges(float bump){
     Array<Vector3> faceNormalArray;
     computeNormals(faceArray, edgeArray, vertexArray, vertexNormalArray, faceNormalArray);
 
+    //Map from vertex index to all new indices
+    Array<SmallArray<int,6>> indexMap;
+
+    indexMap.resize(m_vertexPositions.size());
+
+    //Map from face and old index to new index
+    Array<Table<int,int>> faceIndexMap;
+
+    faceIndexMap.resize(m_indexArray.size());
+
     //Iterate through the faces, creating new vertices and a new face using those vertices for each one
     for (int i = 0; i < m_indexArray.size(); i+=3) {
        Vector3 normal( faceNormalArray[i/3]);
@@ -122,20 +132,49 @@ void Mesh::bevelEdges(float bump){
        newVertices.append(v1, v2, v3);
        newIndices.append(i, i+1, i+2);
 
+       //Save vertex mapping
+       indexMap[m_indexArray[i]].append(i);
+       indexMap[m_indexArray[i+1]].append(i+1);
+       indexMap[m_indexArray[i+2]].append(i+2);
+
+       //Face index is i%3
+       debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i/3, m_indexArray[i], i);
+       faceIndexMap[i/3].set(m_indexArray[i], i);
+       debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i/3, m_indexArray[i+1], i+1);
+       faceIndexMap[i/3].set(m_indexArray[i+1],i+1);
+       debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i/3, m_indexArray[i+2], i+2);
+       faceIndexMap[i/3].set(m_indexArray[i+2], i+2);
     }
 
     //Iterate through edges. For each edge, find the 4 points associated with it, via indexing. Construct 2 new triangles. 
     for (int i = 0; i < edgeArray.size(); ++i) {
-        int face1start = newIndices[3*edgeArray[i].faceIndex[0]];
-        debugPrintf(STR(%d face1start\n), face1start);
-        int face2start = newIndices[3*edgeArray[i].faceIndex[1]];
-        debugPrintf(STR(%d face2start\n), face2start);
+        
+        //get the faceIndexes:
+         int face1 = edgeArray[i].faceIndex[0];
+         int face2 = edgeArray[i].faceIndex[1];
 
-        edgeArray[i].vertexIndex[0];
-        edgeArray[i].vertexIndex[1];
+         debugPrintf(STR(Checking face %d at original vertex %d\n), face1, edgeArray[i].vertexIndex[0]);
+         //Problem- we have the vertex index, not the index index. Oh, vertexIndex is the index index.... That's hwo they're labeled
+         int v1 = faceIndexMap[face1][edgeArray[i].vertexIndex[0]];
+         int v2 = faceIndexMap[face1][edgeArray[i].vertexIndex[1]];
+         int v3 = faceIndexMap[face2][edgeArray[i].vertexIndex[0]];
+         int v4 = faceIndexMap[face2][edgeArray[i].vertexIndex[1]];
+
+         newIndices.append(v3, v2, v1);
+         newIndices.append(v4, v2, v3);
         
     }
 
+   //Now iterate through the vertices
+    //Assume that we're working with a topologicalically closed shape, and every vertex is in at leats 3 triangles.
+   for (int i = 0; i < vertexArray.size(); ++i) {
+       //use indexMap[i]
+       int startPoint = indexMap[i][0];
+       for (int j = 1; j < indexMap[i].size()-1; ++j){
+           //Need to be counterclockwise....
+           newIndices.append( startPoint, indexMap[i][j+1], indexMap[i][j]);
+       }
+   }
 
     //Temporary code for testing
     m_vertexPositions = newVertices;
