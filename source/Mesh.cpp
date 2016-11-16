@@ -165,14 +165,24 @@ void Mesh::bevelEdges(float bump){
         
     }
 
+
    //Now iterate through the vertices
-    //Assume that we're working with a topologicalically closed shape, and every vertex is in at leats 3 triangles.
+    //Assume that we're working with a topologicalically closed shape, and every vertex is in at least 3 triangles.
    for (int i = 0; i < vertexArray.size(); ++i) {
        //use indexMap[i]
-       int startPoint = indexMap[i][0];
-       for (int j = 1; j < indexMap[i].size()-1; ++j){
-           //Need to be counterclockwise....
-           newIndices.append( startPoint, indexMap[i][j+1], indexMap[i][j]);
+       //compute radius of sphere cap
+       Vector3 f1n(faceNormalArray[indexMap[i][0]/3]);
+       Vector3 f2n(faceNormalArray[indexMap[i][0]/3]);
+       float mag = f1n.magnitude()*f1n.magnitude();
+       float angle = acosf(dot(f1n,f2n)/mag)/2.0;
+       float radius = sin(angle)*bump;
+
+       //Draw polygon
+       int iOff = newIndices.size();
+
+       for (int j = 0; j <indexMap[i].size(); ++j){
+            //newVertices.append();
+            newIndices.append(iOff, iOff+1, iOff+2);
        }
    }
 

@@ -8,7 +8,7 @@ http://blog.coredumping.com/subdivision-of-icosahedrons/
 /** \brief Application framework. */
 class Planet{
 
-protected:
+public:
 
     //Creates an initial icohedron with the given radius to be tessellated to create a sphere
     void makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces);
