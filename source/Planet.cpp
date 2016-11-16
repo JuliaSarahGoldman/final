@@ -1,5 +1,6 @@
 #include "Planet.h"
 #include "SimpleMesh.h"
+#include "NoiseGen.h"
 
 void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
 
@@ -18,26 +19,8 @@ void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<A
     }
 
     Array<Vector2> texture;
-    /*
-    for(int i(0); i < textPos->length(); ++i){
-        Vector3int32 pos = textPos->operator[](i);
-
-        Vector2 first  = textVerts->operator[](pos.x);
-        Vector2 second = textVerts->operator[](pos.y);
-        Vector2 third  = textVerts->operator[](pos.z);
-
-        texture.append(first, second, third);
-    }
-    */
-
     Array<Vector3> normals;
     Array<Vector3> verts = *vertices;
-
-    /*
-    for (int i(0); i < vertices->length(); ++i) {
-        verts.append(vertices->operator[](i));
-    }
-    */
 
     Array<int> indices;
     for (int i(0); i < faces->length(); ++i) {
@@ -54,9 +37,13 @@ void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<A
         faces->append(Vector3int32(indices[i], indices[i + 1], indices[i + 2]));
     }
 
-    Noise noise;
-    float freq = 10.0f;
-    shared_ptr<Image> image = Image::fromFile("noise.jpg");  //Image::create(1024, 1024, ImageFormat::RGBA8());
+    NoiseGen noise;
+    float freq = Random::threadCommon().uniform(10.0f, 20.0f);
+    shared_ptr<Image> image = Image::create(1024, 1024, ImageFormat::RGBA8()); //Image::fromFile("noise.jpg"); 
+    
+    noise.generateNoisyImage(image, Random::threadCommon().integer(0,2), freq);
+
+    image->save(filename + ".png");
 
     for (int i(0); i < verts.size(); ++i) {
         Vector3 vertex = verts[i];
@@ -87,6 +74,8 @@ void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<A
     mesh2.toObj(filename);
 }
 
+
+//Creates an initial icohedron with the given radius to be tessellated to create a sphere
 void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
     float t = (1.0f + sqrt(5.0f)) / 2.0f;
 
@@ -171,6 +160,10 @@ void Planet::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertic
     }
     faces = newFaces;
 }
+
+
+
+
 
 //Creates an initial icohedron with the given radius to be tessellated to create a sphere
 void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector2>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
