@@ -22,7 +22,7 @@
         };
 
         camera = Camera {
-            frame = CFrame::fromXYZYPRDegrees(8.4593, 1.9692, -0.10269, 76.203, -9.7402, 0);
+            frame = CFrame::fromXYZYPRDegrees(34.516, 2.508, 6.3544, 68.755, 6.8756, 0);
         };
     };
 };

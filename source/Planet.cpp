@@ -18,7 +18,7 @@ void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<A
     }
     
     Array<Vector2> texture;
-
+    /*
     for(int i(0); i < textPos->length(); ++i){
         Vector3int32 pos = textPos->operator[](i);
 
@@ -28,39 +28,53 @@ void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<A
 
         texture.append(first, second, third);
     }
+    */
 
     Array<Vector3> normals;
-    Array<int> indices;
-    Array<Vector3> verts;
+    Array<Vector3> verts = *vertices;
 
+    /*
     for (int i(0); i < vertices->length(); ++i) {
         verts.append(vertices->operator[](i));
     }
+    */
 
+    Array<int> indices;
     for (int i(0); i < faces->length(); ++i) {
         Vector3int32 face = faces->operator[](i);
         indices.append(face.x, face.y, face.z);
     }
 
+    // # WELDING
     Welder::weld(verts, texture, normals, indices, G3D::Welder::Settings());
 
     faces = std::make_shared<Array<Vector3int32>>();
+
     for (int i(0); i < indices.size() - 2; i += 3) {
         faces->append(Vector3int32(indices[i], indices[i + 1], indices[i + 2]));
     }
 
     Noise noise;
+    float freq = 10.0f;
     for (int i(0); i < verts.size(); ++i) {
         Vector3 vertex = verts[i];
-        float n = abs(noise.sampleFloat( vertex.x, vertex.y, vertex.z)) * 100.0f * radius;
-        debugPrintf("%f\n", n);
-        verts[i] += normals[i] * n;
+        
+        float nx = freq * vertex.x;
+        float ny = freq * vertex.y;
+        float nz = freq * vertex.z;
+
+        float d = noise.sampleFloat(nx, ny, nz, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
+        float o = noise.sampleFloat(nz, ny, nx, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
+        float p = noise.sampleFloat(ny, nx, nz, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
+        float e = noise.sampleFloat(nx, nz, ny, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
+
+        verts[i] += normals[i] * (abs(d) + abs(o) + abs(p) + abs(e));
     }
     vertices = std::make_shared<Array<Vector3>>(verts);
 
     
     SimpleMesh mesh2(*vertices, *faces, normals, texture);
-    mesh2.toObj("land.obj");
+    mesh2.toObj(filename);
 }
 
 void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector3>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {

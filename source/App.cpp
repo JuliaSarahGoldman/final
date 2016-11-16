@@ -157,27 +157,18 @@ void App::makeGUI() {
     
     Planet planet;
     shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
-    shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();/*
-    planet.writeSphere("water", 1.0f, 3, vertices, faces);
-
+    shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();
+    //planet.writeSphere("water", 1.0f, 3, vertices, faces);
 
     vertices = std::make_shared<Array<Vector3>>();
     faces = std::make_shared<Array<Vector3int32>>();
-    planet.writeSphere("land", 3.5f, 5, vertices, faces);
+    planet.writeSphere("land", 10.0f, 5, vertices, faces);
 
     makeHeightfield();
-    // More examples of debugging GUI controls:
-    // debugPane->addCheckBox("Use explicit checking", &explicitCheck);
-    // debugPane->addTextBox("Name", &myName);
-    // debugPane->addNumberBox("height", &height, "m", GuiTheme::LINEAR_SLIDER, 1.0f, 2.5f);
-    // button = debugPane->addButton("Run Simulator");
-    // debugPane->addButton("Generate Heightfield", [this](){ generateHeightfield(); });
-    // debugPane->addButton("Generate Heightfield", [this](){ makeHeightfield(imageName, scale, "model/heightfield.off"); });
     
-
     Array<Vector3> verticeArray(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
     Array<Vector3int32> triangles(Vector3int32(3,1,0), Vector3int32(1,2,0), Vector3int32(3,2,1), Vector3int32(3,0,2));
-    planet.makeIcohedron(3, vertices, faces);
+    
     //Mesh mesh(*vertices, *faces);
     Mesh mesh(verticeArray, triangles);
     mesh.bevelEdges(.1);
