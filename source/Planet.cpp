@@ -52,9 +52,9 @@ void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<A
     Noise noise;
     for (int i(0); i < verts.size(); ++i) {
         Vector3 vertex = verts[i];
-        float n = 1 + noise.sampleFloat(radius, acosf(vertex.z/radius), atanf(vertex.y/vertex.x), 2) * radius * 1000;
+        float n = abs(noise.sampleFloat( vertex.x, vertex.y, vertex.z)) * 100.0f * radius;
         debugPrintf("%f\n", n);
-        //verts[i] += normals[i] * n;
+        verts[i] += normals[i] * n;
     }
     vertices = std::make_shared<Array<Vector3>>(verts);
 

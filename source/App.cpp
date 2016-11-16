@@ -158,12 +158,12 @@ void App::makeGUI() {
     Planet planet;
     shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
     shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();/*
-    planet.writeSphere("test", 0.1f, 3, vertices, faces);
+    planet.writeSphere("water", 1.0f, 3, vertices, faces);
 
 
     vertices = std::make_shared<Array<Vector3>>();
     faces = std::make_shared<Array<Vector3int32>>();
-    planet.writeSphere("test", 3.5f, 5, vertices, faces); */
+    planet.writeSphere("land", 3.5f, 5, vertices, faces);
 
     makeHeightfield();
     // More examples of debugging GUI controls:
