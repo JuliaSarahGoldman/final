@@ -162,7 +162,7 @@ void App::makeGUI() {
 
     vertices = std::make_shared<Array<Vector3>>();
     faces = std::make_shared<Array<Vector3int32>>();
-    planet.writeSphere("land", 10.0f, 5, vertices, faces);
+    planet.writeSphere("land.obj", 10.0f, 5, vertices, faces);
 
     makeHeightfield();
     

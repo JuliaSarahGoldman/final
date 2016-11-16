@@ -16,7 +16,7 @@ void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<A
     for (int i(0); i < depths; ++i) {
         subdivideIcoHedron(radius, textVerts, textPos);
     }
-    
+
     Array<Vector2> texture;
     /*
     for(int i(0); i < textPos->length(); ++i){
@@ -56,23 +56,60 @@ void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<A
 
     Noise noise;
     float freq = 10.0f;
+        shared_ptr<Image> image = Image::fromFile("noise.jpg");//Image::create(1024, 1024, ImageFormat::RGBA8());
+    
+
+/*    float frequency = 1.0f;
+    for(int x(0); x < image->width(); x++){
+        for(int y(0); y < image->width(); y++){
+            image->set(x, y, Color1unorm8(unorm8::fromBits(noise.sampleUint8( frequency * (x << 12), frequency * (y << 12), 0))));
+        }
+    }
+    */
+
     for (int i(0); i < verts.size(); ++i) {
         Vector3 vertex = verts[i];
-        
-        float nx = freq * vertex.x;
-        float ny = freq * vertex.y;
-        float nz = freq * vertex.z;
 
+       /* float lat = (float)acosf(vertex.z / radius);
+        float lon =  (float)atanf(vertex.x / vertex.y);
+
+        int nx = (int)(radius * lon * image->width()) % (image->width());//freq * vertex.x;
+        int ny = (int)(image->height() * radius * log(tanf((lat + pif()/2.0f) / 2.0f))) % (image->height());//freq * vertex.y;
+
+        
+        */
+
+        Vector3 d = (vertex - Vector3(0,0,0)).unit();
+
+        float nx = image->width() * (0.5f + atanf(d.z/d.x)/(2.0f*pif()));
+        float ny = image->height() * (0.5f - asinf(d.y) * 1/pif());
+
+        int ix = (int) abs((int) nx % image->width());
+        int iy = (int) abs((int) ny % image->height());
+
+        debugPrintf("%d  %d \n", ix, iy);
+
+        Color3 color = Color3();
+
+        image->get(Point2int32(ix,iy), color);
+
+        /*
         float d = noise.sampleFloat(nx, ny, nz, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
         float o = noise.sampleFloat(nz, ny, nx, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
         float p = noise.sampleFloat(ny, nx, nz, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
         float e = noise.sampleFloat(nx, nz, ny, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
-
-        verts[i] += normals[i] * (abs(d) + abs(o) + abs(p) + abs(e));
+        */
+        /*
+        float bump = color.average();
+        if(bump > 0.3f && bump < 0.6f) bump = 0.5f;
+        else if (bump < 0.3f) bump = 0.1f;
+        else bump = 1.0f;
+        */
+        verts[i] += normals[i] * color.average();
     }
     vertices = std::make_shared<Array<Vector3>>(verts);
 
-    
+
     SimpleMesh mesh2(*vertices, *faces, normals, texture);
     mesh2.toObj(filename);
 }
@@ -165,9 +202,9 @@ void Planet::subdivideIcoHedron(float radius, shared_ptr<Array<Vector3>>& vertic
 //Creates an initial icohedron with the given radius to be tessellated to create a sphere
 void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector2>>& vertices, shared_ptr<Array<Vector3int32>>& faces) {
     //The number of points horizontally
-	float w = 5.5f;
-	//The number of points vertically
-	float h = 3.0f;
+    float w = 5.5f;
+    //The number of points vertically
+    float h = 3.0f;
 
     vertices->append(Vector2(0.5f / w, 0));
     vertices->append(Vector2(1.5f / w, 0));
@@ -175,7 +212,7 @@ void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector2>>& vertices, s
     vertices->append(Vector2(3.5f / w, 0));
     vertices->append(Vector2(4.5f / w, 0));
 
-    vertices->append(Vector2(0.0f    , 1.0f / h));
+    vertices->append(Vector2(0.0f, 1.0f / h));
     vertices->append(Vector2(1.0f / w, 1.0f / h));
     vertices->append(Vector2(2.0f / w, 1.0f / h));
     vertices->append(Vector2(3.0f / w, 1.0f / h));
@@ -187,8 +224,8 @@ void Planet::makeIcohedron(float radius, shared_ptr<Array<Vector2>>& vertices, s
     vertices->append(Vector2(2.5f / w, 2.0f / h));
     vertices->append(Vector2(3.5f / w, 2.0f / h));
     vertices->append(Vector2(4.5f / w, 2.0f / h));
-    vertices->append(Vector2(1.0f    , 2.0f / h));
-    
+    vertices->append(Vector2(1.0f, 2.0f / h));
+
     vertices->append(Vector2(1.0f / w, 1.0f));
     vertices->append(Vector2(2.0f / w, 1.0f));
     vertices->append(Vector2(3.0f / w, 1.0f));
@@ -290,50 +327,50 @@ void Planet::getMiddle(float radius, Vector2& v1, Vector2& v2, Vector2& newVecto
 */
 
 
-    /*int numVert = vertices->size();
-    int numFace = faces->size();
+/*int numVert = vertices->size();
+int numFace = faces->size();
 
-    TextOutput output("model/" + filename + ".obj");
+TextOutput output("model/" + filename + ".obj");
 
-    for (int i = 0; i < numVert; ++i) {
-        Vector3 vertex = vertices->operator[](i);
-        output.printf("v %f %f %f\n", vertex[0], vertex[1], vertex[2]);
-    }
+for (int i = 0; i < numVert; ++i) {
+    Vector3 vertex = vertices->operator[](i);
+    output.printf("v %f %f %f\n", vertex[0], vertex[1], vertex[2]);
+}
 
-    for (int i = 0; i < numFace; ++i) {
-        Vector3int32 face = faces->operator[](i);
-        output.printf("f %d %d %d\n", face[0]+1, face[1]+1, face[2]+1);
-    }
-    output.commit(true);
-    G3D::ArticulatedModel::clearCache();*/
+for (int i = 0; i < numFace; ++i) {
+    Vector3int32 face = faces->operator[](i);
+    output.printf("f %d %d %d\n", face[0]+1, face[1]+1, face[2]+1);
+}
+output.commit(true);
+G3D::ArticulatedModel::clearCache();*/
 
 
-    /*for(int i(0); i < 6; ++i){
-        subdivideIcoHedron(radius, vertices, faces);
-    }
-    //const G3D::Welder::Settings settings;
-    Array<Vector3> normals;
-    Array<Vector2> texture;
-    Array<int> indices;
-    Array<Vector3> verts;
+/*for(int i(0); i < 6; ++i){
+    subdivideIcoHedron(radius, vertices, faces);
+}
+//const G3D::Welder::Settings settings;
+Array<Vector3> normals;
+Array<Vector2> texture;
+Array<int> indices;
+Array<Vector3> verts;
 
-    for (int i(0); i < vertices->length(); ++i) {
-        verts.append(vertices->operator[](i));
-    }
+for (int i(0); i < vertices->length(); ++i) {
+    verts.append(vertices->operator[](i));
+}
 
-    for(int i(0); i < faces->length(); ++i){
-        Vector3int32 face = faces->operator[](i);
-        indices.append(face.x, face.y, face.z);
-    }
+for(int i(0); i < faces->length(); ++i){
+    Vector3int32 face = faces->operator[](i);
+    indices.append(face.x, face.y, face.z);
+}
 
-    Welder::weld(verts, texture, normals, indices, G3D::Welder::Settings());
+Welder::weld(verts, texture, normals, indices, G3D::Welder::Settings());
 
-    faces = std::make_shared<Array<Vector3int32>>();
-    for(int i(0); i < indices.size()-3; i += 3) {
-        faces->append(Vector3int32(indices[i], indices[i+1], indices[i+2]));
-    }
+faces = std::make_shared<Array<Vector3int32>>();
+for(int i(0); i < indices.size()-3; i += 3) {
+    faces->append(Vector3int32(indices[i], indices[i+1], indices[i+2]));
+}
 
-    for(int i(0); i < verts.size(); ++i) {
-        verts[i] += normals[i] * Random::threadCommon().uniform(1.0, 1.2);
-    }
-    vertices = std::make_shared<Array<Vector3>>(verts);*/
+for(int i(0); i < verts.size(); ++i) {
+    verts[i] += normals[i] * Random::threadCommon().uniform(1.0, 1.2);
+}
+vertices = std::make_shared<Array<Vector3>>(verts);*/
