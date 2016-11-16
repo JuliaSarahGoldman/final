@@ -56,29 +56,28 @@ void Planet::writeSphere(String filename, float radius, int depths, shared_ptr<A
 
     Noise noise;
     float freq = 10.0f;
-        shared_ptr<Image> image = Image::fromFile("noise.jpg");//Image::create(1024, 1024, ImageFormat::RGBA8());
-    
+    shared_ptr<Image> image = Image::fromFile("noise.jpg");  //Image::create(1024, 1024, ImageFormat::RGBA8());
+
     for (int i(0); i < verts.size(); ++i) {
         Vector3 vertex = verts[i];
 
+        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
 
-        Vector3 d = (vertex - Vector3(0,0,0)).unit();
+        float nx = image->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
+        float ny = image->height() * (0.5f - asinf(d.y) * 1 / pif());
 
-        float nx = image->width() * (0.5f + atanf(d.z/d.x)/(2.0f*pif()));
-        float ny = image->height() * (0.5f - asinf(d.y) * 1/pif());
-
-        int ix = (int) abs((int) nx % image->width());
-        int iy = (int) abs((int) ny % image->height());
+        int ix = (int)abs((int)nx % image->width());
+        int iy = (int)abs((int)ny % image->height());
 
         Color3 color = Color3();
 
-        image->get(Point2int32(ix,iy), color);
-        
+        image->get(Point2int32(ix, iy), color);
+
         float bump = color.average();
-        if(bump > 0.3f && bump < 0.6f) bump = 0.5f;
+        if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
         else if (bump < 0.3f) bump = 0.1f;
         else bump = 1.0f;
-        
+
         verts[i] += normals[i] * bump * 2.0f;
     }
     vertices = std::make_shared<Array<Vector3>>(verts);
@@ -349,12 +348,12 @@ for(int i(0); i < verts.size(); ++i) {
 }
 vertices = std::make_shared<Array<Vector3>>(verts);*/
 
- /*
-        float d = noise.sampleFloat(nx, ny, nz, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
-        float o = noise.sampleFloat(nz, ny, nx, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
-        float p = noise.sampleFloat(ny, nx, nz, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
-        float e = noise.sampleFloat(nx, nz, ny, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
-        */
+/*
+       float d = noise.sampleFloat(nx, ny, nz, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
+       float o = noise.sampleFloat(nz, ny, nx, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
+       float p = noise.sampleFloat(ny, nx, nz, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
+       float e = noise.sampleFloat(nx, nz, ny, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
+       */
 
 
        /* float lat = (float)acosf(vertex.z / radius);
@@ -363,15 +362,15 @@ vertices = std::make_shared<Array<Vector3>>(verts);*/
         int nx = (int)(radius * lon * image->width()) % (image->width());//freq * vertex.x;
         int ny = (int)(image->height() * radius * log(tanf((lat + pif()/2.0f) / 2.0f))) % (image->height());//freq * vertex.y;
 
-        
+
         */
 
 
 
-/*    float frequency = 1.0f;
-    for(int x(0); x < image->width(); x++){
-        for(int y(0); y < image->width(); y++){
-            image->set(x, y, Color1unorm8(unorm8::fromBits(noise.sampleUint8( frequency * (x << 12), frequency * (y << 12), 0))));
-        }
-    }
-    */
+        /*    float frequency = 1.0f;
+            for(int x(0); x < image->width(); x++){
+                for(int y(0); y < image->width(); y++){
+                    image->set(x, y, Color1unorm8(unorm8::fromBits(noise.sampleUint8( frequency * (x << 12), frequency * (y << 12), 0))));
+                }
+            }
+            */
