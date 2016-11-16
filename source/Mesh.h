@@ -23,7 +23,10 @@ protected:
     
     MeshAlg::Edge findMinEdge(const Array<MeshAlg::Edge>& edges);
 
+    static void Mesh::merge( SmallArray<float,6>& data, SmallArray<float,6>& temp, int low, int middle, int high, SmallArray<int,6>& along, SmallArray<int,6>& temp2);
     Array<MeshAlg::Edge> minTriEdges();
+    static void Mesh::mergeSortRecursive(SmallArray<float,6>& data, SmallArray<float,6>& temp, int low, int high, SmallArray<int,6>& along, SmallArray<int,6>& temp2);
+    static void Mesh::mergeSort(SmallArray<float,6>& data, SmallArray<int,6>& along);
 
     int findMinEdge(int minIndex, int maxIndex);
 
@@ -53,9 +56,12 @@ public:
     void collapseEdges(int regionSize);
 
     //bump is how much we expand the panet's radius by
+    //Only works on completely closed and welded meshes.
     void bevelEdges(float bump);
 
     void toObj(String filename);
+
+    
 
     Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
     ~Mesh();

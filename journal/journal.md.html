@@ -6,6 +6,57 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
+2016-11-16: Edge Collapsed Mountains
+=============================================================
+
+![](2016-11-16_005_starter_r2429_g3d_r977__.jpg)
+
+Hmmmm....
+
+
+
+2016-11-16: Edge Collapse
+=============================================================
+
+![](2016-11-16_004_starter_r2429_g3d_r977__.jpg)
+
+Seems functional, but why rverting to sphere?
+
+
+
+2016-11-16: Wider Bevel
+=============================================================
+
+![](2016-11-16_003_starter_r2429_g3d_r977__.jpg)
+
+...which yes, make sthe holes at the vertices more apparent.
+
+
+
+2016-11-16: Beveled Planet
+=============================================================
+
+![](2016-11-16_002_starter_r2429_g3d_r977__.jpg)
+
+There are holes in the beveling, but still.
+
+
+
+2016-11-16: Beveling
+============================================================
+Still trying to get vertice caps. Advice from Morgan:
+
+I assume you also know the average normal (vertex normal), or could at the very least keep track of one face normal (...although that won't be as handy once you start displacing faces). In that case, you can reconstruct the polygon winding order because you know that it has to be a convex polygon that is facing up. There are probably several easy ways of doing this. The one that comes to mind first is:
+
+1. project them into the plane of the normal (i.e., generate an arbitrary coordinate from from the normal as the z axis; G3D has several routines for this; and then call cframe::pointToObjectSpace and only keep the xy coordinates or whatever the permutation is)
+2. use atan2 to compute the angle in that plane to each point
+3. sort the points by angle
+4. connect them all in that order! 
+
+You just have to keep the index tagging along in a parallel array when you do these coordinate transformations.
+
+I'm still quite confused, although I've been trying.
+
 2016-11-16: Edge Collapse
 =============================================================
 

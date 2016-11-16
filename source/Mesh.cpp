@@ -190,27 +190,48 @@ void Mesh::bevelEdges(float bump) {
     }
 
 
-    //Now iterate through the vertices
-     //Assume that we're working with a topologicalically closed shape, and every vertex is in at least 3 triangles.
-    for (int i = 0; i < vertexArray.size(); ++i) {
-        //use indexMap[i]
-        //compute radius of sphere cap
-        Vector3 f1n(faceNormalArray[indexMap[i][0] / 3]);
-        Vector3 f2n(faceNormalArray[indexMap[i][0] / 3]);
-        float mag = f1n.magnitude()*f1n.magnitude();
-        float angle = acosf(dot(f1n, f2n) / mag) / 2.0;
-        float radius = sin(angle)*bump;
+   //Now iterate through the vertices
+    //Assume that we're working with a topologicalically closed shape, and every vertex is in at least 3 triangles.
+   for (int i = 0; i < vertexArray.size(); ++i) {
+       //use indexMap[i]
+       /*
+       //compute radius of sphere cap
+       Vector3 f1n(faceNormalArray[indexMap[i][0]/3]);
+       Vector3 f2n(faceNormalArray[indexMap[i][0]/3]);
+       float mag = f1n.magnitude()*f1n.magnitude();
+       float angle = acosf(dot(f1n,f2n)/mag)/2.0;
+       float radius = sin(angle)*bump;
+       */
+       //Draw polygon
+       //int iOff = newIndices.size();
 
-        //Draw polygon
-        int iOff = newIndices.size();
 
-        for (int j = 0; j < indexMap[i].size(); ++j) {
-            //newVertices.append();
-            newIndices.append(iOff, iOff + 1, iOff + 2);
-        }
-    }
+       //1. project them into the plane of the normal (i.e., generate an arbitrary coordinate from from the normal as the z axis; 
+       //G3D has several routines for this; and then call cframe::pointToObjectSpace and only keep the xy coordinates or whatever the permutation is)
+       Vector3 vNorm = vertexNormalArray[i];
+       Point3 arb = 5*vertexNormalArray[i];
+       Matrix3 R();
+       Point3 T(0,0,0);
+       CoordinateFrame c(T);
 
-    //Temporary code for testing
+       //Vector2 projected = c.pointToObjectSpace(arb).xy;
+       SmallArray<float,6> angles;
+       angles.resize(indexMap[i].size());
+       //2. use atan2 to compute the angle in that plane to each point
+       for (int j = 0; j <indexMap[i].size(); ++j){
+            newVertices[ indexMap[i][j]];
+            atan2(1.0,2.0);
+            angles[j] = atan2(1.0,2.0);
+       }
+       //3. sort the points by angle
+       mergeSort(angles, indexMap[i]);
+       //4. connect them all in that order! 
+       int point1 = indexMap[i][0];
+       for (int j = 1; j < indexMap[i].size()-1; ++j){
+            newIndices.append(point1, indexMap[i][j], indexMap[i][j+1]);
+       }
+   }
+
     m_vertexPositions = newVertices;
     m_indexArray = newIndices;
 }
@@ -238,3 +259,54 @@ void Mesh::toObj(String filename) {
     file.commit();
 }
 
+
+void Mesh::merge( SmallArray<float,6>& data, SmallArray<float,6>& temp, int low, int middle, int high, SmallArray<int,6>& along, SmallArray<int,6>& temp2){
+	int ri = low; 
+	int ti = low;
+	int di = middle; 
+
+	// While two lists are not empty, merge smaller value
+	while (ti < middle && di <= high ){ 
+		if (data[di] < temp[ti]){
+            along[ri] = along[di];
+			data[ri++] = data[di++]; // smaller is in high data
+		} else { 
+            along[ri] = along[ti];
+			data[ri++] = temp[ti++]; // smaller is in temp
+		}
+	}
+
+	// Possibly some values left in temp array
+	while (ti < middle) { 
+        along[ri] = along[ti];
+		data[ri++] = temp[ti++];
+	}
+	// ...or some values left in correct place in data array
+}
+
+void Mesh::mergeSortRecursive(SmallArray<float,6>& data, SmallArray<float,6>& temp, int low, int high, SmallArray<int,6>& along, SmallArray<int,6>& temp2) {
+	int n = high-low+1; 
+	int middle = low + n/2;
+
+	if (n < 2) return; 
+	// move lower half of data into temporary storage
+	for (int i = low; i < middle; i++) {
+		temp[i] = data[i];
+        temp2[i] = along[i];
+	}
+	
+	// Sort lower half of array 
+	mergeSortRecursive(temp,data,low, middle-1, along, temp2); 
+	// sort upper half of array 
+    mergeSortRecursive(data, temp, middle, high, along, temp2);
+	// merge halves together
+	merge(data,temp,low,middle,high, along, temp2);
+}
+
+void Mesh::mergeSort(SmallArray<float,6>& data, SmallArray<int,6>& along) {
+    SmallArray<float,6> newArray;
+    newArray.resize(data.size());
+    SmallArray<int,6> newArray2;
+    newArray2.resize(data.size());
+	mergeSortRecursive(data, newArray, 0, data.size()-1, along, newArray2); 
+}

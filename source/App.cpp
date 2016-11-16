@@ -165,7 +165,7 @@ void App::makeGUI() {
     planet.writeSphere("land.obj", 10.0f, 5, vertices, faces);
 
 
-      vertices = std::make_shared<Array<Vector3>>();
+    vertices = std::make_shared<Array<Vector3>>();
     faces = std::make_shared<Array<Vector3int32>>();
     planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);
 
@@ -174,9 +174,9 @@ void App::makeGUI() {
     Array<Vector3> verticeArray(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
     Array<Vector3int32> triangles(Vector3int32(3,1,0), Vector3int32(1,2,0), Vector3int32(3,2,1), Vector3int32(3,0,2));
     
-    //Mesh mesh(*vertices, *faces);
-    Mesh mesh(verticeArray, triangles);
-    mesh.bevelEdges(.1);
+    Mesh mesh(*vertices, *faces);
+    //Mesh mesh(verticeArray, triangles);
+    mesh.bevelEdges(.3);
     mesh.toObj("wtf.obj");
 
     debugWindow->pack();
