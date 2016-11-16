@@ -53,24 +53,28 @@ int Mesh::edgeLength(const MeshAlg::Edge& edge) {
     return length(m_vertexPositions[edge.vertexIndex[0]] - m_vertexPositions[edge.vertexIndex[1]]);
 };
 
+int Mesh::edgeLength(int i0, int i1) {
+    return length(m_vertexPositions[i1] - m_vertexPositions[i0]);
+};
 
-Array<int> randomIntList(int min, int max) { 
+
+Array<int> randomIntList(int min, int max) {
     Array<int> toReturn;
-    int iters(max); 
-    while(iters >= min) { 
-        int r = Random::threadCommon().integer(min,max); 
-        if(!toReturn.contains(r)) {
+    int iters(max);
+    while (iters >= min) {
+        int r = Random::threadCommon().integer(min, max);
+        if (!toReturn.contains(r)) {
             toReturn.append(r);
             --iters;
-        }    
+        }
     }
     return toReturn;
 }
 
 MeshAlg::Edge Mesh::findMinEdge(const Array<MeshAlg::Edge>& data) {
-    MeshAlg::Edge minEdge(data[Random::threadCommon().integer(0,data.size()-1)]);
-    Array<int> ind(randomIntList(0, data.size()-1));
-  
+    MeshAlg::Edge minEdge(data[Random::threadCommon().integer(0, data.size() - 1)]);
+    Array<int> ind(randomIntList(0, data.size() - 1));
+
     for (int i(0); i < ind.size(); ++i) {
         if (edgeLength(minEdge) < edgeLength(data[ind[i]])) {
             minEdge = data[ind[i]];
@@ -79,24 +83,44 @@ MeshAlg::Edge Mesh::findMinEdge(const Array<MeshAlg::Edge>& data) {
     return minEdge;
 }
 
-void Mesh::collapseEdges(int numCollapsed) {
-    Array<MeshAlg::Edge> edges;
-    for (int i(1); i < numCollapsed; ++i) {
-        computeAdjacency(Array<MeshAlg::Face>(), edges, Array<MeshAlg::Vertex>());
+int Mesh::findMinEdge(int minIndex, int maxIndex) {
+    int min(edgeLength(m_indexArray[minIndex], m_indexArray[minIndex+1])); 
+    int r = minIndex;
 
-        MeshAlg::Edge minEdge(findMinEdge(edges));
-        int newIndex(minEdge.vertexIndex[0]);
-        int toCollapse(minEdge.vertexIndex[1]);
-
-        for (int j(0); j < m_indexArray.size(); ++j) {
-            if (m_indexArray[j] == toCollapse) {
-                m_indexArray[j] = newIndex;
-            }
+    for(int i(minIndex); i < maxIndex-1; ++i) { 
+        int cur(edgeLength(m_indexArray[minIndex], m_indexArray[minIndex+1]));
+        if(min > cur) { 
+            min = cur; 
+            r = i;
         }
     }
+
+    return r;
+}
+
+Array<Array<int>> Mesh::toCollapse(int regionSize) {
+    Array<Array<int>> toReturn;
+    for (int i(0); i < m_indexArray.size() - 1; i += regionSize) {
+        int j (findMinEdge(i, i+regionSize-1));
+        toReturn.append(Array<int>(m_indexArray[j], m_indexArray[j + 1]));
+    }
+    return toReturn;
+}
+
+void Mesh::collapseEdges(int regionSize) {
+    Array<Array<int>> collapseList(toCollapse(regionSize));
+    for (int j(0); j < collapseList.size(); ++j) {
+        int index0(collapseList[j][0]);
+        int index1(collapseList[j][1]);
+
+        Vector3 average = (m_vertexPositions[index1] +  m_vertexPositions[index0])/2; 
+        m_vertexPositions[index0] = average; 
+        m_vertexPositions[index1] = average;
+    }
+    Welder::weld(m_vertexPositions, Array<Vector2>(), Array<Vector3>(), m_indexArray, G3D::Welder::Settings());
 };
 
-void Mesh::bevelEdges(float bump){
+void Mesh::bevelEdges(float bump) {
     //Step 1: Explode the planet
     Array<Vector3> newVertices;
     Array<int> newIndices;
@@ -114,77 +138,77 @@ void Mesh::bevelEdges(float bump){
     computeNormals(faceArray, edgeArray, vertexArray, vertexNormalArray, faceNormalArray);
 
     //Map from vertex index to all new indices
-    Array<SmallArray<int,6>> indexMap;
+    Array<SmallArray<int, 6>> indexMap;
 
     indexMap.resize(m_vertexPositions.size());
 
     //Map from face and old index to new index
-    Array<Table<int,int>> faceIndexMap;
+    Array<Table<int, int>> faceIndexMap;
 
     faceIndexMap.resize(m_indexArray.size());
 
     //Iterate through the faces, creating new vertices and a new face using those vertices for each one
-    for (int i = 0; i < m_indexArray.size(); i+=3) {
-       Vector3 normal( faceNormalArray[i/3]);
-       Vector3 v1(m_vertexPositions[m_indexArray[i]] + bump*normal);
-       Vector3 v2(m_vertexPositions[m_indexArray[i+1]] + bump*normal);
-       Vector3 v3(m_vertexPositions[m_indexArray[i+2]] + bump*normal);
-       newVertices.append(v1, v2, v3);
-       newIndices.append(i, i+1, i+2);
+    for (int i = 0; i < m_indexArray.size(); i += 3) {
+        Vector3 normal(faceNormalArray[i / 3]);
+        Vector3 v1(m_vertexPositions[m_indexArray[i]] + bump*normal);
+        Vector3 v2(m_vertexPositions[m_indexArray[i + 1]] + bump*normal);
+        Vector3 v3(m_vertexPositions[m_indexArray[i + 2]] + bump*normal);
+        newVertices.append(v1, v2, v3);
+        newIndices.append(i, i + 1, i + 2);
 
-       //Save vertex mapping
-       indexMap[m_indexArray[i]].append(i);
-       indexMap[m_indexArray[i+1]].append(i+1);
-       indexMap[m_indexArray[i+2]].append(i+2);
+        //Save vertex mapping
+        indexMap[m_indexArray[i]].append(i);
+        indexMap[m_indexArray[i + 1]].append(i + 1);
+        indexMap[m_indexArray[i + 2]].append(i + 2);
 
-       //Face index is i%3
-       debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i/3, m_indexArray[i], i);
-       faceIndexMap[i/3].set(m_indexArray[i], i);
-       debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i/3, m_indexArray[i+1], i+1);
-       faceIndexMap[i/3].set(m_indexArray[i+1],i+1);
-       debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i/3, m_indexArray[i+2], i+2);
-       faceIndexMap[i/3].set(m_indexArray[i+2], i+2);
+        //Face index is i%3
+        debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i], i);
+        faceIndexMap[i / 3].set(m_indexArray[i], i);
+        debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 1], i + 1);
+        faceIndexMap[i / 3].set(m_indexArray[i + 1], i + 1);
+        debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 2], i + 2);
+        faceIndexMap[i / 3].set(m_indexArray[i + 2], i + 2);
     }
 
     //Iterate through edges. For each edge, find the 4 points associated with it, via indexing. Construct 2 new triangles. 
     for (int i = 0; i < edgeArray.size(); ++i) {
-        
+
         //get the faceIndexes:
-         int face1 = edgeArray[i].faceIndex[0];
-         int face2 = edgeArray[i].faceIndex[1];
+        int face1 = edgeArray[i].faceIndex[0];
+        int face2 = edgeArray[i].faceIndex[1];
 
-         debugPrintf(STR(Checking face %d at original vertex %d\n), face1, edgeArray[i].vertexIndex[0]);
-         //Problem- we have the vertex index, not the index index. Oh, vertexIndex is the index index.... That's hwo they're labeled
-         int v1 = faceIndexMap[face1][edgeArray[i].vertexIndex[0]];
-         int v2 = faceIndexMap[face1][edgeArray[i].vertexIndex[1]];
-         int v3 = faceIndexMap[face2][edgeArray[i].vertexIndex[0]];
-         int v4 = faceIndexMap[face2][edgeArray[i].vertexIndex[1]];
+        debugPrintf(STR(Checking face %d at original vertex %d\n), face1, edgeArray[i].vertexIndex[0]);
+        //Problem- we have the vertex index, not the index index. Oh, vertexIndex is the index index.... That's hwo they're labeled
+        int v1 = faceIndexMap[face1][edgeArray[i].vertexIndex[0]];
+        int v2 = faceIndexMap[face1][edgeArray[i].vertexIndex[1]];
+        int v3 = faceIndexMap[face2][edgeArray[i].vertexIndex[0]];
+        int v4 = faceIndexMap[face2][edgeArray[i].vertexIndex[1]];
 
-         newIndices.append(v3, v2, v1);
-         newIndices.append(v4, v2, v3);
-        
+        newIndices.append(v3, v2, v1);
+        newIndices.append(v4, v2, v3);
+
     }
 
 
-   //Now iterate through the vertices
-    //Assume that we're working with a topologicalically closed shape, and every vertex is in at least 3 triangles.
-   for (int i = 0; i < vertexArray.size(); ++i) {
-       //use indexMap[i]
-       //compute radius of sphere cap
-       Vector3 f1n(faceNormalArray[indexMap[i][0]/3]);
-       Vector3 f2n(faceNormalArray[indexMap[i][0]/3]);
-       float mag = f1n.magnitude()*f1n.magnitude();
-       float angle = acosf(dot(f1n,f2n)/mag)/2.0;
-       float radius = sin(angle)*bump;
+    //Now iterate through the vertices
+     //Assume that we're working with a topologicalically closed shape, and every vertex is in at least 3 triangles.
+    for (int i = 0; i < vertexArray.size(); ++i) {
+        //use indexMap[i]
+        //compute radius of sphere cap
+        Vector3 f1n(faceNormalArray[indexMap[i][0] / 3]);
+        Vector3 f2n(faceNormalArray[indexMap[i][0] / 3]);
+        float mag = f1n.magnitude()*f1n.magnitude();
+        float angle = acosf(dot(f1n, f2n) / mag) / 2.0;
+        float radius = sin(angle)*bump;
 
-       //Draw polygon
-       int iOff = newIndices.size();
+        //Draw polygon
+        int iOff = newIndices.size();
 
-       for (int j = 0; j <indexMap[i].size(); ++j){
+        for (int j = 0; j < indexMap[i].size(); ++j) {
             //newVertices.append();
-            newIndices.append(iOff, iOff+1, iOff+2);
-       }
-   }
+            newIndices.append(iOff, iOff + 1, iOff + 2);
+        }
+    }
 
     //Temporary code for testing
     m_vertexPositions = newVertices;
@@ -207,8 +231,8 @@ void Mesh::toObj(String filename) {
         file.printf(STR(f %d %d %d\n), m_triArray[i].x, m_triArray[i].y, m_triArray[i].z);
     }*/
     //using m_indexArray
-    for (int i = 0; i < m_indexArray.size(); i+=3) {
-        file.printf(STR(f %d %d %d\n), m_indexArray[i]+1, m_indexArray[i+1]+1, m_indexArray[i+2]+1);
+    for (int i = 0; i < m_indexArray.size(); i += 3) {
+        file.printf(STR(f %d %d %d\n), m_indexArray[i] + 1, m_indexArray[i + 1] + 1, m_indexArray[i + 2] + 1);
     }
     file.printf(STR(\n));
     file.commit();

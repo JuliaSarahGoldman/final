@@ -19,9 +19,16 @@ protected:
     Array<Vector3int32> m_triArray;
 
     int edgeLength(const MeshAlg::Edge& edge);
+    int Mesh::edgeLength(int i0, int i1);
     
     MeshAlg::Edge findMinEdge(const Array<MeshAlg::Edge>& edges);
 
+    Array<MeshAlg::Edge> minTriEdges();
+
+    int findMinEdge(int minIndex, int maxIndex);
+
+    /** Called by collapseEdges() */
+    Array<Array<int>> toCollapse(int regionSize);
 
 public:
     void addVertex(const Vector3& vertex);
@@ -40,7 +47,10 @@ public:
     void computeNormals(const Array<MeshAlg::Face>& faceArray, const Array<MeshAlg::Edge>& edgeArray, const Array<MeshAlg::Vertex>& vertexArray,
         Array<Vector3>& vertexNormalArray, Array<Vector3>& faceNormalArray);
 
-    void collapseEdges(int numCollapsed);
+    /** As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf
+        Calls toCollapse()
+        Collapses one edge for each block of regionSize indices */
+    void collapseEdges(int regionSize);
 
     //bump is how much we expand the panet's radius by
     void bevelEdges(float bump);
