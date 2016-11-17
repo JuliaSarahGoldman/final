@@ -17,6 +17,9 @@ protected:
     float m_heightfieldXZScale;
     String m_heightfieldSource;
 
+    int m_recursionLevel;
+    float m_frequency;
+
     /** Called from onInit */
     void makeGUI();
     void makeHeightfield();

@@ -33,6 +33,10 @@ protected:
     /** Called by collapseEdges() */
     Array<Array<int>> toCollapse(int regionSize);
 
+
+
+
+
 public:
     void addVertex(const Vector3& vertex);
     void addVertex(const Array<Vector3>& vertexList);

@@ -124,12 +124,12 @@ void App::makePlanetGUI() {
     GuiPane* planetPane = debugPane->addPane("Planet");
 
     planetPane->setNewChildSize(240);
-    /*planetPane->addNumberBox("Max Y", &m_heightfieldYScale, "m",
-        GuiTheme::LOG_SLIDER, 0.0f, 100.0f)->setUnitsSize(30);
+    planetPane->addNumberBox("Recursion Level", &m_recursionLevel, "",
+        GuiTheme::LINEAR_SLIDER, 0, 8)->setUnitsSize(1);
 
-    planetPane->addNumberBox("XZ Scale", &m_heightfieldXZScale, "m/px",
-        GuiTheme::LOG_SLIDER, 0.001f, 10.0f)->setUnitsSize(30);
-
+    planetPane->addNumberBox("Frequency", &m_frequency, "",
+        GuiTheme::LOG_SLIDER, 0.001f, 8.0f)->setUnitsSize(1);
+    /*
     heightfieldPane->beginRow(); {
         heightfieldPane->addTextBox("Input Image", &m_heightfieldSource)->setWidth(210);
         heightfieldPane->addButton("...", [this]() {
@@ -141,12 +141,14 @@ void App::makePlanetGUI() {
         shared_ptr<G3D::Image> image;
         //Noise noise = G3D::Noise::common();
         try {
-            Planet planet;
+           Planet planet;
             shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
             shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();
             planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);
             Mesh mesh(*vertices, *faces);
+            mesh.bevelEdges(.1);
             loadScene("Ground");
+
             addPlanetToScene(mesh);
         }
         catch (...) {
@@ -231,7 +233,7 @@ void App::makeGUI() {
     infoPane->addButton("Exit", [this]() { m_endProgram = true; });
     infoPane->pack();
     
-    Planet planet;
+    /*Planet planet;
     shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
     shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();
     planet.writeSphere("water.obj", 9.9f, 3, vertices, faces);
@@ -243,9 +245,9 @@ void App::makeGUI() {
 
     vertices = std::make_shared<Array<Vector3>>();
     faces = std::make_shared<Array<Vector3int32>>();
-    planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);
+    planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);*/
 
-    makeHeightfield();
+    //makeHeightfield();
     makePlanetGUI();
     
     Array<Vector3> verticeArray(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));

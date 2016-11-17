@@ -120,6 +120,19 @@ void Mesh::collapseEdges(int regionSize) {
     Welder::weld(m_vertexPositions, Array<Vector2>(), Array<Vector3>(), m_indexArray, G3D::Welder::Settings());
 };
 
+
+ class AngledVertex{
+ public:
+    float angle;
+    int index;
+    bool operator>(const AngledVertex& other) const {
+        return angle > other.angle;
+    }
+    bool operator<(const AngledVertex& other) const {
+        return angle < other.angle;
+    }
+};
+
 void Mesh::bevelEdges(float bump) {
     //Step 1: Explode the planet
     Array<Vector3> newVertices;
@@ -208,27 +221,37 @@ void Mesh::bevelEdges(float bump) {
 
        //1. project them into the plane of the normal (i.e., generate an arbitrary coordinate from from the normal as the z axis; 
        //G3D has several routines for this; and then call cframe::pointToObjectSpace and only keep the xy coordinates or whatever the permutation is)
-       Vector3 vNorm = vertexNormalArray[i];
-       Point3 arb = 5*vertexNormalArray[i];
-       Matrix3 R();
-       Point3 T(0,0,0);
-       CoordinateFrame c(T);
+       Vector3 vNorm(vertexNormalArray[i]);
+       
+       Vector3 x(1,0,0);
+       if(abs(dot(x,vNorm) > .9)){
+           x = Vector3(0,1,0);
+       }
+       Vector3 y = normalize(vNorm.cross(x));
+       x = y.cross(vNorm);
 
-       //Vector2 projected = c.pointToObjectSpace(arb).xy;
-       SmallArray<float,6> angles;
-       angles.resize(indexMap[i].size());
+       Array<AngledVertex> angles;
        //2. use atan2 to compute the angle in that plane to each point
+       Vector3 sum(0.0, 0, 0);
        for (int j = 0; j <indexMap[i].size(); ++j){
-            newVertices[ indexMap[i][j]];
-            atan2(1.0,2.0);
-            angles[j] = atan2(1.0,2.0);
+           sum += newVertices[indexMap[i][j]];
+       }
+       Vector3 C = (1.0/indexMap[i].size())*sum;
+       for (int j = 0; j <indexMap[i].size(); ++j){
+            int myIndex = indexMap[i][j];
+            Vector3 a(newVertices[myIndex] - C);
+            AngledVertex av;
+            av.angle = atan2(dot(y,a),dot(x,a));
+            av.index = myIndex;
+            angles.append(av);
        }
        //3. sort the points by angle
-       mergeSort(angles, indexMap[i]);
+       angles.sort(SORT_INCREASING);
+       
        //4. connect them all in that order! 
-       int point1 = indexMap[i][0];
+       int point1 = angles[0].index;
        for (int j = 1; j < indexMap[i].size()-1; ++j){
-            newIndices.append(point1, indexMap[i][j], indexMap[i][j+1]);
+            newIndices.append(point1, angles[j].index, angles[j+1].index);
        }
    }
 
@@ -320,13 +343,14 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name) {
     mesh->material = UniversalMaterial::create(
         PARSE_ANY(
         UniversalMaterial::Specification {
-            lambertian = Texture::Specification {
+            /*lambertian = Texture::Specification {
                 filename = "image/checker-32x32-1024x1024.png";
                 // Orange
                 encoding = Color3(1.0, 0.7, 0.15);
             };
 
-            glossy     = Color4(Color3(0.01), 0.2);
+            glossy     = Color4(Color3(0.01), 0.2);*/
+            lambertian = Color3(0,1,.2);
         }));
 
     Array<CPUVertexArray::Vertex>& vertexArray = geometry->cpuVertexArray.vertex;
