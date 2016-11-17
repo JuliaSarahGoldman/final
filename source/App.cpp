@@ -164,15 +164,31 @@ void App::makePlanetGUI() {
         shared_ptr<G3D::Image> image;
         //Noise noise = G3D::Noise::common();
         try {
-           Planet planet;
-            shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
-            shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();
-            planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);
-            Mesh mesh(*vertices, *faces);
-            mesh.bevelEdges(.1);
-            loadScene("Ground");
+            Planet planet;
+            NoiseGen noise;
 
-            addPlanetToScene(mesh);
+            Array<Vector3> vertices = Array<Vector3>();
+            Array<Vector3int32> faces = Array<Vector3int32>();
+            float freq = 3.0f;
+            shared_ptr<Image> image = Image::create(1024, 1024, ImageFormat::RGBA8()); //Image::fromFile("noise.jpg"); 
+            //noise.generateNoisyImage(image, 0, freq);
+            image->save("ocean.png");
+            planet.writeSphere("ocean", 12.5f, 3, vertices, faces);
+            Mesh mesh(vertices, faces);
+            mesh.toObj("ocean");
+
+            vertices = Array<Vector3>();
+            faces = Array<Vector3int32>();
+            freq = 0.25f;
+            image = Image::create(1024, 1024, ImageFormat::RGBA8()); //Image::fromFile("noise.jpg"); 
+            noise.generateNoisyImage(image, 1, freq);
+            image->save("land.png");
+            planet.writeSphere("land", 12.0f, 8, vertices, faces);
+            planet.applyNoiseLand(vertices, image);
+            Mesh mesh2(vertices, faces);
+            mesh2.toObj("land");
+
+            loadScene("Planet");
         }
         catch (...) {
             msgBox("Unable to load the image.", m_heightfieldSource);
@@ -277,9 +293,9 @@ void App::makeGUI() {
     Array<Vector3int32> triangles(Vector3int32(3,1,0), Vector3int32(1,2,0), Vector3int32(3,2,1), Vector3int32(3,0,2));
     
     //Mesh mesh(*vertices, *faces);
-    Mesh mesh(verticeArray, triangles);
+    //Mesh mesh(verticeArray, triangles);
     //mesh.bevelEdges(.3);
-    mesh.toObj("wtf.obj");
+    //mesh.toObj("wtf.obj");
 
     //loadScene("Ground");
     //mesh.toArticulatedModel("test");

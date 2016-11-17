@@ -8,7 +8,7 @@ float NoiseGen::sampleFloat(int x, int y, int numOctaves) {
 }
 
 
-void NoiseGen::generateMountainImage(shared_ptr<Image> image, int frequency){
+void NoiseGen::generateMountainImage(shared_ptr<Image> image, float frequency){
     for(int x(0); x < image->width(); ++x){
         for(int y(0); y < image->height(); ++y) {
             image->set(x, y, Color1unorm8(unorm8::fromBits(sampleUint8(x << 12, y <<12, 0))));
@@ -17,31 +17,31 @@ void NoiseGen::generateMountainImage(shared_ptr<Image> image, int frequency){
     }
 }
 
-void NoiseGen::generateLandImage(shared_ptr<Image> image, int frequency){
+void NoiseGen::generateLandImage(shared_ptr<Image> image, float frequency){
     for(int x(0); x < image->width(); ++x){
         for(int y(0); y < image->height(); ++y) {
-            image->set(x, y, Color1unorm8(unorm8::fromBits(sampleUint8((x * frequency) << 12, (y * frequency) <<12, 0))));
+            image->set(x, y, Color1unorm8(unorm8::fromBits(sampleUint8( (int) (x * frequency) << 12, (int) (y * frequency) <<12, 0))));
         }
     }
 }
 
-void NoiseGen::generateSeaImage(shared_ptr<Image> image, int frequency){
+void NoiseGen::generateSeaImage(shared_ptr<Image> image, float frequency){
     for(int x(0); x < image->width(); ++x){
         for(int y(0); y < image->height(); ++y) {
-            image->set(x, y, Color1unorm8(unorm8::fromBits(sampleUint8((x * frequency) << 12, (y * frequency) <<12, 0))));
+            image->set(x, y, Color1unorm8(unorm8::fromBits(sampleUint8( (int) (x * frequency) << 12, (int) (y * frequency) <<12, 0))));
         }
     }
 }
 
-void NoiseGen::generateNoisyImage(shared_ptr<Image> image, int frequency){
+void NoiseGen::generateNoisyImage(shared_ptr<Image> image, float frequency){
     for(int x(0); x < image->width(); ++x){
         for(int y(0); y < image->height(); ++y) {
-            image->set(x, y, Color1unorm8(unorm8::fromBits(sampleUint8((x * frequency) << 12, (y * frequency) <<12, 0))));
+            image->set(x, y, Color1unorm8(unorm8::fromBits(sampleUint8( (int) (x * frequency) << 12, (int) (y * frequency) <<12, 0))));
         }
     }
 }
 
-void NoiseGen::generateNoisyImage(shared_ptr<Image> image, int type, int frequency) {
+void NoiseGen::generateNoisyImage(shared_ptr<Image> image, int type, float frequency) {
     if (type == 0) {
         generateSeaImage(image, frequency);
     }

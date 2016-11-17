@@ -14,9 +14,9 @@ protected:
     Random rng1;
     Random rng2;
 
-    void generateMountainImage(shared_ptr<Image> image, int frequency);
-    void generateLandImage(shared_ptr<Image> image, int frequency);
-    void generateSeaImage(shared_ptr<Image> image, int frequency);
+    void generateMountainImage(shared_ptr<Image> image, float frequency);
+    void generateLandImage(shared_ptr<Image> image, float frequency);
+    void generateSeaImage(shared_ptr<Image> image, float frequency);
 
 public:
 
@@ -26,7 +26,7 @@ public:
 
     float noise2(float nx, float ny);
     
-    void generateNoisyImage(shared_ptr<Image> image, int frequency);
+    void generateNoisyImage(shared_ptr<Image> image, float frequency);
 
-    void generateNoisyImage(shared_ptr<Image> image, int type, int frequency);
+    void generateNoisyImage(shared_ptr<Image> image, int type, float frequency);
 };

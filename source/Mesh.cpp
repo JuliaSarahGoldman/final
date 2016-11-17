@@ -307,7 +307,7 @@ void Mesh::bevelEdges(float bump) {
 }
 
 void Mesh::toObj(String filename) {
-    TextOutput file(filename);
+    TextOutput file(filename+".obj");
     //file.printf("g name\n");
         //loop to make vertices
     //debugPrintf(STR(%d\n), sizeof(m_vertexArray));
