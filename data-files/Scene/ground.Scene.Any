@@ -2,14 +2,15 @@
 { 
     entities = { 
 
-        planet = VisibleEntity {
+        /*ground = VisibleEntity {
             model = "groundModel";
             frame = CFrame::fromXYZYPRDegrees(0,0,0,0,-90,0);
-        };
+        };*/
+
 
         camera = 
         Camera {             
-            frame = CFrame::fromXYZYPRDegrees(  9.2f,   1.8f,  -1.2f,  87.4f,  -3.3f,   0.0f); 
+            frame = CFrame::fromXYZYPRDegrees(  54.0f,   -26.0f,  23.0f,  87.4f,  73.1f,   29.3f); 
             
             projection = Projection { 
                 farPlaneZ = -inf; 
@@ -41,7 +42,7 @@
     models = { 
         groundModel = ArticulatedModel::Specification { 
             filename = "square.ifs"; 
-            scale = 20; 
+            scale = 50; 
         }; 
         
     }; 

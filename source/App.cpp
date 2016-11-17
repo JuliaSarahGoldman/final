@@ -84,7 +84,7 @@ void App::addPlanetToScene(Mesh& mesh) {
     // Replace any existing torus model. Models don't 
     // have to be added to the model table to use them 
     // with a VisibleEntity.
-    const shared_ptr<Model>& planetModel = mesh.toArticulatedModel("planet");
+    const shared_ptr<Model>& planetModel = mesh.toArticulatedModel("planetModel");
     if (scene()->modelTable().containsKey(planetModel->name())) {
         scene()->removeModel(planetModel->name());
     }
@@ -117,6 +117,42 @@ void App::addPlanetToScene(Mesh& mesh) {
     }
 
     planet->setFrame(CFrame::fromXYZYPRDegrees(0.0f, 1.8f, 0.0f, 45.0f, 45.0f));
+}
+
+void App::makePlanetGUI() {
+
+    GuiPane* planetPane = debugPane->addPane("Planet");
+
+    planetPane->setNewChildSize(240);
+    /*planetPane->addNumberBox("Max Y", &m_heightfieldYScale, "m",
+        GuiTheme::LOG_SLIDER, 0.0f, 100.0f)->setUnitsSize(30);
+
+    planetPane->addNumberBox("XZ Scale", &m_heightfieldXZScale, "m/px",
+        GuiTheme::LOG_SLIDER, 0.001f, 10.0f)->setUnitsSize(30);
+
+    heightfieldPane->beginRow(); {
+        heightfieldPane->addTextBox("Input Image", &m_heightfieldSource)->setWidth(210);
+        heightfieldPane->addButton("...", [this]() {
+            FileDialog::getFilename(m_heightfieldSource, "png", false);
+        })->setWidth(30);
+    } heightfieldPane->endRow();*/
+
+    planetPane->addButton("Generate", [this]() {
+        shared_ptr<G3D::Image> image;
+        //Noise noise = G3D::Noise::common();
+        try {
+            Planet planet;
+            shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
+            shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();
+            planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);
+            Mesh mesh(*vertices, *faces);
+            loadScene("Ground");
+            addPlanetToScene(mesh);
+        }
+        catch (...) {
+            msgBox("Unable to load the image.", m_heightfieldSource);
+        }
+    });
 }
 
 //Creates a GUI that allows a user to generate a heightfield with a given xz and y scale based on a given image
@@ -210,6 +246,7 @@ void App::makeGUI() {
     planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);
 
     makeHeightfield();
+    makePlanetGUI();
     
     Array<Vector3> verticeArray(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
     Array<Vector3int32> triangles(Vector3int32(3,1,0), Vector3int32(1,2,0), Vector3int32(3,2,1), Vector3int32(3,0,2));
@@ -219,9 +256,9 @@ void App::makeGUI() {
     //mesh.bevelEdges(.3);
     mesh.toObj("wtf.obj");
 
-    loadScene("Ground");
+    //loadScene("Ground");
     //mesh.toArticulatedModel("test");
-    addPlanetToScene(mesh);
+    //addPlanetToScene(mesh);
 
     debugWindow->pack();
     debugWindow->setRect(Rect2D::xywh(0, 0, (float)window()->width(), debugWindow->rect().height()));

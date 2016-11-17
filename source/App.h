@@ -22,6 +22,7 @@ protected:
     void makeHeightfield();
 
     void addPlanetToScene(Mesh& mesh);
+    void App::makePlanetGUI();
 
 public:
     
