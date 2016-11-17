@@ -310,3 +310,47 @@ void Mesh::mergeSort(SmallArray<float,6>& data, SmallArray<int,6>& along) {
     newArray2.resize(data.size());
 	mergeSortRecursive(data, newArray, 0, data.size()-1, along, newArray2); 
 }
+
+shared_ptr<Model> Mesh::toArticulatedModel(String name) {
+    const shared_ptr<ArticulatedModel>& model = ArticulatedModel::createEmpty(name);
+    ArticulatedModel::Part*     part      = model->addPart("root");
+    ArticulatedModel::Geometry* geometry  = model->addGeometry("geom");
+    ArticulatedModel::Mesh*     mesh      = model->addMesh("mesh", part, geometry);
+
+    mesh->material = UniversalMaterial::create(
+        PARSE_ANY(
+        UniversalMaterial::Specification {
+            lambertian = Texture::Specification {
+                filename = "image/checker-32x32-1024x1024.png";
+                // Orange
+                encoding = Color3(1.0, 0.7, 0.15);
+            };
+
+            glossy     = Color4(Color3(0.01), 0.2);
+        }));
+
+    Array<CPUVertexArray::Vertex>& vertexArray = geometry->cpuVertexArray.vertex;
+    Array<int>& indexArray = mesh->cpuIndexArray;
+
+   for (int i = 0; i < m_vertexPositions.size(); ++i){
+        CPUVertexArray::Vertex& v = vertexArray.next();
+        v.position = m_vertexPositions[i];
+
+        //fix
+        //v.texCoord0 = Vector2(0,0);
+
+        // Set to NaN to trigger automatic vertex normal and tangent computation
+        v.normal  = Vector3::nan();
+        v.tangent = Vector4::nan();
+    }
+    for (int i = 0; i < m_indexArray.size(); ++i){
+        indexArray.append(m_indexArray[i]);
+    }
+
+    ArticulatedModel::CleanGeometrySettings geometrySettings;
+    geometrySettings.allowVertexMerging = false;
+    model->cleanGeometry(geometrySettings);
+
+    return model;
+}
+

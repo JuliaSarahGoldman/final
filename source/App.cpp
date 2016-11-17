@@ -79,6 +79,46 @@ void App::onInit() {
     );
 }
 
+
+void App::addPlanetToScene(Mesh& mesh) {
+    // Replace any existing torus model. Models don't 
+    // have to be added to the model table to use them 
+    // with a VisibleEntity.
+    const shared_ptr<Model>& planetModel = mesh.toArticulatedModel("planet");
+    if (scene()->modelTable().containsKey(planetModel->name())) {
+        scene()->removeModel(planetModel->name());
+    }
+    scene()->insert(planetModel);
+
+    // Replace any existing planet entity that has the wrong type
+    shared_ptr<Entity> planet = scene()->entity("planet");
+    if (notNull(planet) && isNull(dynamic_pointer_cast<VisibleEntity>(planet))) {
+        logPrintf("The scene contained an Entity named %s that was not a VisibleEntity\n", "planet");
+        scene()->remove(planet);
+        planet.reset();
+    }
+
+    if (isNull(planet)) {
+        // There is no torus entity in this scene, so make one.
+        //
+        // We could either explicitly instantiate a VisibleEntity or simply
+        // allow the Scene parser to construct one. The second approach
+        // has more consise syntax for this case, since we are using all constant
+        // values in the specification.
+        planet = scene()->createEntity("planet",
+            PARSE_ANY(
+                VisibleEntity {
+                    model = "planetModel";
+                };
+            ));
+    } else {
+        // Change the model on the existing planet entity
+        dynamic_pointer_cast<VisibleEntity>(planet)->setModel(planetModel);
+    }
+
+    planet->setFrame(CFrame::fromXYZYPRDegrees(0.0f, 1.8f, 0.0f, 45.0f, 45.0f));
+}
+
 //Creates a GUI that allows a user to generate a heightfield with a given xz and y scale based on a given image
 void App::makeHeightfield() {
 
@@ -174,10 +214,14 @@ void App::makeGUI() {
     Array<Vector3> verticeArray(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
     Array<Vector3int32> triangles(Vector3int32(3,1,0), Vector3int32(1,2,0), Vector3int32(3,2,1), Vector3int32(3,0,2));
     
-    Mesh mesh(*vertices, *faces);
-    //Mesh mesh(verticeArray, triangles);
-    mesh.bevelEdges(.3);
+    //Mesh mesh(*vertices, *faces);
+    Mesh mesh(verticeArray, triangles);
+    //mesh.bevelEdges(.3);
     mesh.toObj("wtf.obj");
+
+    loadScene("Ground");
+    //mesh.toArticulatedModel("test");
+    addPlanetToScene(mesh);
 
     debugWindow->pack();
     debugWindow->setRect(Rect2D::xywh(0, 0, (float)window()->width(), debugWindow->rect().height()));

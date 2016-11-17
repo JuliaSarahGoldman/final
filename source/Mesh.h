@@ -61,6 +61,7 @@ public:
 
     void toObj(String filename);
 
+    shared_ptr<Model> toArticulatedModel(String name);
     
 
     Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
