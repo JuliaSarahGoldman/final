@@ -3,30 +3,28 @@
     name = "Planet";
     
     models = {
-       land = ArticulatedModel::Specification {
+  oceanModel = ArticulatedModel::Specification {
+            filename = "ocean.obj";
+            preprocess = {
+                setMaterial(all(), Color3(0, 0, 1));
+                transformGeometry(all(), Matrix4::scale(1, 1, 1));
+            };
+       };/*
+
+        landModel = ArticulatedModel::Specification {
             filename = "land.obj";
             preprocess = {
-                
-                setMaterial(all(), Color3(0.3f, 0.7f, 0.2f));
+                setMaterial(all(), Color3(0, 1, 0));
                 transformGeometry(all(), Matrix4::scale(1, 1, 1));
             };
-       };
-
-    water = ArticulatedModel::Specification {
-            filename = "water.obj";
+       };*/
+        testModel = ArticulatedModel::Specification {
+            filename = "wtf.obj";
             preprocess = {
-                setMaterial(all(), Color3(0.1f, 0.3f, 0.7f));
+                setMaterial(all(), Color3(0, 1, 0));
                 transformGeometry(all(), Matrix4::scale(1, 1, 1));
             };
-       };
-
-    mountains = ArticulatedModel::Specification {
-            filename = "mountains.obj";
-            preprocess = {
-                setMaterial(all(), Color3(0.7f, 0.5f, 0.4f));
-                transformGeometry(all(), Matrix4::scale(1, 1, 1));
-            };
-       };
+        };
     };
     
     entities = {
@@ -34,23 +32,23 @@
             texture = "cubemap/whiteroom/whiteroom-*.png";
        };
 
-        LAND = VisibleEntity {
-            model = "land";
-            frame = CFrame::fromXYZYPRDegrees(0, 0, -2, 45, 0, 0);
-        };
+  /*   ocean = VisibleEntity {
+            model = "oceanModel";
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 0, 0);
+        }; 
 
-        WATER = VisibleEntity {
-            model = "water";
-            frame = CFrame::fromXYZYPRDegrees(0, 0, -2, 45, 0, 0);
-        };
+       land = VisibleEntity {
+            model = "landModel";
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 0, 0);
+        };*/
 
-        WATER = VisibleEntity {
-            model = "mountains";
-            frame = CFrame::fromXYZYPRDegrees(0, 0, -2, 45, 0, 0);
+      test = VisibleEntity {
+            model = "testModel";
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 0, 0);
         };
 
         camera = Camera {
-            frame = CFrame::fromXYZYPRDegrees(34.516, 2.508, 6.3544, 68.755, 6.8756, 0);
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 1, 1, 0, 0);
         };
     };
 };
