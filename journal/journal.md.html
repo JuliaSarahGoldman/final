@@ -6,6 +6,25 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
+2016-11-17: Edge Collapsing algorithm works! But not how we want it to
+=============================================================
+
+![10 collapses on sphere](2016-11-17_000_starter_r2436_g3d_r977__10_collapses_on_sphere.jpg)
+
+We select edges to collapse based on edge length, but we should do curvature
+instead. The uniform sphere is a bad test case. We should edge collapse after
+distorting the uniform sphere.
+
+![Pentagon](2016-11-17_001_starter_r2436_g3d_r977__Pentagon.jpg)
+
+![Pentagon -1 edge](2016-11-17_003_starter_r2436_g3d_r977__Pentagon_-1_edge.jpg)
+
+![Pentagon -2 edges](2016-11-17_004_starter_r2436_g3d_r977__Pentagon_-2_edges.jpg)
+
+![Pentagon -3 edges](2016-11-17_005_starter_r2436_g3d_r977__Pentagon_-3_edges.jpg)
+
+![Pentagon -4 edges](2016-11-17_006_starter_r2436_g3d_r977__Pentagon_-4_edges.jpg)
+
 2016-11-17: Beveled Edges
 =============================================================
 
@@ -44,7 +63,6 @@ AddPlanetToScene currently only works if already visible entity named planet.
 
 2016-11-16: toArticulatedModel
 =============================================================
-
 ![](2016-11-16_006_starter_r2435_g3d_r977__.jpg)
 
 Added toArticulatedModel to mesh and addPlanetToScene to App, which should be

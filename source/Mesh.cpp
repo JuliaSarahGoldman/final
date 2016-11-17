@@ -13,6 +13,10 @@ Mesh::Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& tri
 
 Mesh::~Mesh() {};
 
+std::shared_ptr<Mesh> Mesh::create(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray) {
+    return std::shared_ptr<Mesh>(new Mesh(vertexPositions, triArray));
+}
+
 void Mesh::addVertex(const Vector3& vertex) {
     m_vertexPositions.append(vertex);
 };
@@ -73,24 +77,24 @@ Array<int> randomIntList(int min, int max) {
 
 MeshAlg::Edge Mesh::findMinEdge(const Array<MeshAlg::Edge>& data) {
     MeshAlg::Edge minEdge(data[Random::threadCommon().integer(0, data.size() - 1)]);
-    Array<int> ind(randomIntList(0, data.size() - 1));
+    // Array<int> ind(randomIntList(0, data.size() - 1));
 
-    for (int i(0); i < ind.size(); ++i) {
-        if (edgeLength(minEdge) < edgeLength(data[ind[i]])) {
-            minEdge = data[ind[i]];
+    for (int i(0); i < data.size(); ++i) {
+        if (edgeLength(minEdge) < edgeLength(data[i])) {
+            minEdge = data[i];
         }
     }
     return minEdge;
 }
 
 int Mesh::findMinEdge(int minIndex, int maxIndex) {
-    int min(edgeLength(m_indexArray[minIndex], m_indexArray[minIndex+1])); 
+    int min(edgeLength(m_indexArray[minIndex], m_indexArray[minIndex + 1]));
     int r = minIndex;
 
-    for(int i(minIndex); i < maxIndex-1; ++i) { 
-        int cur(edgeLength(m_indexArray[minIndex], m_indexArray[minIndex+1]));
-        if(min > cur) { 
-            min = cur; 
+    for (int i(minIndex); i < maxIndex - 1; ++i) {
+        int cur(edgeLength(m_indexArray[minIndex], m_indexArray[minIndex + 1]));
+        if (min > cur) {
+            min = cur;
             r = i;
         }
     }
@@ -98,26 +102,69 @@ int Mesh::findMinEdge(int minIndex, int maxIndex) {
     return r;
 }
 
+int nextInTri(int x) {
+    for (int i(x); i < x + 3; ++i) {
+        if (i % 3 == 0) return i;
+    }
+    return x;
+}
 Array<Array<int>> Mesh::toCollapse(int regionSize) {
     Array<Array<int>> toReturn;
     for (int i(0); i < m_indexArray.size() - 1; i += regionSize) {
-        int j (findMinEdge(i, i+regionSize-1));
+        int j(nextInTri(i));
         toReturn.append(Array<int>(m_indexArray[j], m_indexArray[j + 1]));
     }
     return toReturn;
 }
 
-void Mesh::collapseEdges(int regionSize) {
-    Array<Array<int>> collapseList(toCollapse(regionSize));
-    for (int j(0); j < collapseList.size(); ++j) {
-        int index0(collapseList[j][0]);
-        int index1(collapseList[j][1]);
+void Mesh::collapseEdges(int numEdges) {
+    Array<MeshAlg::Edge> edges;
+    for (int i(0); i < numEdges; ++i) {
+        computeAdjacency(Array<MeshAlg::Face>(), edges, Array<MeshAlg::Vertex>());
+        MeshAlg::Edge collapsedEdge(findMinEdge(edges));
 
-        Vector3 average = (m_vertexPositions[index1] +  m_vertexPositions[index0])/2; 
-        m_vertexPositions[index0] = average; 
-        m_vertexPositions[index1] = average;
+        int index0(collapsedEdge.vertexIndex[0]);
+        int index1(collapsedEdge.vertexIndex[1]);
+
+        for (int j(0); j < m_indexArray.size(); ++j) {
+            if (m_indexArray[j] == index0 || m_indexArray[j] == index1) {
+                m_indexArray[j] = min(index0,index1);
+            }
+        }
+        //m_vertexPositions[index0] = m_vertexPositions[index1];
     }
-    Welder::weld(m_vertexPositions, Array<Vector2>(), Array<Vector3>(), m_indexArray, G3D::Welder::Settings());
+    /*   Array<Array<int>> collapseList(toCollapse(regionSize));
+       for (int i(0); i < collapseList.size(); ++i) {
+           int index0(collapseList[i][0]);
+           int index1(collapseList[i][1]);
+
+           Vector3 average = (m_vertexPositions[index1] + m_vertexPositions[index0]) / 2;
+           m_vertexPositions[index0] = average;
+           m_vertexPositions[index1] = average;
+           for (int j(0); j < m_indexArray.size(); ++j) {
+               if(m_indexArray[j] == index0) {
+                   m_indexArray[j] = index1;
+               }
+           }
+       }*/
+       /* for (int j(0); j < collapseList.size(); ++j) {
+            int index0(collapseList[j][0]);
+            int index1(collapseList[j][1]);
+
+            Vector3 average = (m_vertexPositions[index1] + m_vertexPositions[index0]) / 2;
+            m_vertexPositions[index0] = average;
+            m_vertexPositions[index1] = average;
+        }*/
+        //for (int i(0); i < m_indexArray.size() - 2; i += 6) {
+        //    int index0 = m_indexArray[i]; 
+        //    int index1 = m_indexArray[i+1]; 
+        //    int index2 = m_indexArray[i+2]; 
+        //    m_vertexPositions[index1] = m_vertexPositions[index0];
+        //    m_vertexPositions[index2] = m_vertexPositions[index0];
+        //    //m_indexArray.remove(i,3);
+        //}
+
+        // Welder::weld(m_vertexPositions, Array<Vector2>(), Array<Vector3>(), m_indexArray, G3D::Welder::Settings());
 };
 
 
@@ -203,20 +250,20 @@ void Mesh::bevelEdges(float bump) {
     }
 
 
-   //Now iterate through the vertices
-    //Assume that we're working with a topologicalically closed shape, and every vertex is in at least 3 triangles.
-   for (int i = 0; i < vertexArray.size(); ++i) {
-       //use indexMap[i]
-       /*
-       //compute radius of sphere cap
-       Vector3 f1n(faceNormalArray[indexMap[i][0]/3]);
-       Vector3 f2n(faceNormalArray[indexMap[i][0]/3]);
-       float mag = f1n.magnitude()*f1n.magnitude();
-       float angle = acosf(dot(f1n,f2n)/mag)/2.0;
-       float radius = sin(angle)*bump;
-       */
-       //Draw polygon
-       //int iOff = newIndices.size();
+    //Now iterate through the vertices
+     //Assume that we're working with a topologicalically closed shape, and every vertex is in at least 3 triangles.
+    for (int i = 0; i < vertexArray.size(); ++i) {
+        //use indexMap[i]
+        /*
+        //compute radius of sphere cap
+        Vector3 f1n(faceNormalArray[indexMap[i][0]/3]);
+        Vector3 f2n(faceNormalArray[indexMap[i][0]/3]);
+        float mag = f1n.magnitude()*f1n.magnitude();
+        float angle = acosf(dot(f1n,f2n)/mag)/2.0;
+        float radius = sin(angle)*bump;
+        */
+        //Draw polygon
+        //int iOff = newIndices.size();
 
 
        //1. project them into the plane of the normal (i.e., generate an arbitrary coordinate from from the normal as the z axis; 
@@ -283,62 +330,63 @@ void Mesh::toObj(String filename) {
 }
 
 
-void Mesh::merge( SmallArray<float,6>& data, SmallArray<float,6>& temp, int low, int middle, int high, SmallArray<int,6>& along, SmallArray<int,6>& temp2){
-	int ri = low; 
-	int ti = low;
-	int di = middle; 
+void Mesh::merge(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int middle, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2) {
+    int ri = low;
+    int ti = low;
+    int di = middle;
 
-	// While two lists are not empty, merge smaller value
-	while (ti < middle && di <= high ){ 
-		if (data[di] < temp[ti]){
+    // While two lists are not empty, merge smaller value
+    while (ti < middle && di <= high) {
+        if (data[di] < temp[ti]) {
             along[ri] = along[di];
-			data[ri++] = data[di++]; // smaller is in high data
-		} else { 
+            data[ri++] = data[di++]; // smaller is in high data
+        }
+        else {
             along[ri] = along[ti];
-			data[ri++] = temp[ti++]; // smaller is in temp
-		}
-	}
+            data[ri++] = temp[ti++]; // smaller is in temp
+        }
+    }
 
-	// Possibly some values left in temp array
-	while (ti < middle) { 
+    // Possibly some values left in temp array
+    while (ti < middle) {
         along[ri] = along[ti];
-		data[ri++] = temp[ti++];
-	}
-	// ...or some values left in correct place in data array
+        data[ri++] = temp[ti++];
+    }
+    // ...or some values left in correct place in data array
 }
 
-void Mesh::mergeSortRecursive(SmallArray<float,6>& data, SmallArray<float,6>& temp, int low, int high, SmallArray<int,6>& along, SmallArray<int,6>& temp2) {
-	int n = high-low+1; 
-	int middle = low + n/2;
+void Mesh::mergeSortRecursive(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2) {
+    int n = high - low + 1;
+    int middle = low + n / 2;
 
-	if (n < 2) return; 
-	// move lower half of data into temporary storage
-	for (int i = low; i < middle; i++) {
-		temp[i] = data[i];
+    if (n < 2) return;
+    // move lower half of data into temporary storage
+    for (int i = low; i < middle; i++) {
+        temp[i] = data[i];
         temp2[i] = along[i];
-	}
-	
-	// Sort lower half of array 
-	mergeSortRecursive(temp,data,low, middle-1, along, temp2); 
-	// sort upper half of array 
+    }
+
+    // Sort lower half of array 
+    mergeSortRecursive(temp, data, low, middle - 1, along, temp2);
+    // sort upper half of array 
     mergeSortRecursive(data, temp, middle, high, along, temp2);
-	// merge halves together
-	merge(data,temp,low,middle,high, along, temp2);
+    // merge halves together
+    merge(data, temp, low, middle, high, along, temp2);
 }
 
-void Mesh::mergeSort(SmallArray<float,6>& data, SmallArray<int,6>& along) {
-    SmallArray<float,6> newArray;
+void Mesh::mergeSort(SmallArray<float, 6>& data, SmallArray<int, 6>& along) {
+    SmallArray<float, 6> newArray;
     newArray.resize(data.size());
-    SmallArray<int,6> newArray2;
+    SmallArray<int, 6> newArray2;
     newArray2.resize(data.size());
-	mergeSortRecursive(data, newArray, 0, data.size()-1, along, newArray2); 
+    mergeSortRecursive(data, newArray, 0, data.size() - 1, along, newArray2);
 }
 
 shared_ptr<Model> Mesh::toArticulatedModel(String name) {
     const shared_ptr<ArticulatedModel>& model = ArticulatedModel::createEmpty(name);
-    ArticulatedModel::Part*     part      = model->addPart("root");
-    ArticulatedModel::Geometry* geometry  = model->addGeometry("geom");
-    ArticulatedModel::Mesh*     mesh      = model->addMesh("mesh", part, geometry);
+    ArticulatedModel::Part*     part = model->addPart("root");
+    ArticulatedModel::Geometry* geometry = model->addGeometry("geom");
+    ArticulatedModel::Mesh*     mesh = model->addMesh("mesh", part, geometry);
 
     mesh->material = UniversalMaterial::create(
         PARSE_ANY(
@@ -356,7 +404,7 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name) {
     Array<CPUVertexArray::Vertex>& vertexArray = geometry->cpuVertexArray.vertex;
     Array<int>& indexArray = mesh->cpuIndexArray;
 
-   for (int i = 0; i < m_vertexPositions.size(); ++i){
+    for (int i = 0; i < m_vertexPositions.size(); ++i) {
         CPUVertexArray::Vertex& v = vertexArray.next();
         v.position = m_vertexPositions[i];
 
@@ -364,10 +412,10 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name) {
         //v.texCoord0 = Vector2(0,0);
 
         // Set to NaN to trigger automatic vertex normal and tangent computation
-        v.normal  = Vector3::nan();
+        v.normal = Vector3::nan();
         v.tangent = Vector4::nan();
     }
-    for (int i = 0; i < m_indexArray.size(); ++i){
+    for (int i = 0; i < m_indexArray.size(); ++i) {
         indexArray.append(m_indexArray[i]);
     }
 

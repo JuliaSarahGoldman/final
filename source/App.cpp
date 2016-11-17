@@ -119,6 +119,29 @@ void App::addPlanetToScene(Mesh& mesh) {
     planet->setFrame(CFrame::fromXYZYPRDegrees(0.0f, 1.8f, 0.0f, 45.0f, 45.0f));
 }
 
+void App::makePentagon() {
+    Array<Vector3> vertices1(Vector3(0, 0, -2), Vector3(0, 2, -2), Vector3(-2, 0, -2), Vector3(-1, -2, -2), Vector3(1, -2, -2), Vector3(2, 0, -2));
+    Array<Vector3int32> indices1(Vector3int32(0, 1, 2), Vector3int32(0, 2, 3), Vector3int32(0, 3, 4), Vector3int32(0, 4, 5), Vector3int32(0, 5, 1));
+    m_myMesh = Mesh::create(vertices1, indices1);
+
+    m_myMesh->toObj("pentagon.obj");
+
+    GuiPane* pentPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
+
+    // Example of how to add debugging controls
+    pentPane->addLabel("Collapse Edges");
+
+    pentPane->addButton("Collapse one edge", [this]() {
+        m_myMesh->collapseEdges(1);
+        m_myMesh->toObj("pentagon.obj");
+        G3D::ArticulatedModel::clearCache();
+        loadScene("Planet");
+
+    });
+
+    pentPane->pack();
+}
+
 void App::makePlanetGUI() {
 
     GuiPane* planetPane = debugPane->addPane("Planet");

@@ -12,7 +12,7 @@
 #pragma once
 #include <G3D/G3DAll.h>
 
-class Mesh {
+class Mesh : public ReferenceCountedObject {
 protected:
     Array<Vector3> m_vertexPositions;
     Array<int> m_indexArray;
@@ -20,13 +20,13 @@ protected:
 
     int edgeLength(const MeshAlg::Edge& edge);
     int Mesh::edgeLength(int i0, int i1);
-    
+
     MeshAlg::Edge findMinEdge(const Array<MeshAlg::Edge>& edges);
 
-    static void Mesh::merge( SmallArray<float,6>& data, SmallArray<float,6>& temp, int low, int middle, int high, SmallArray<int,6>& along, SmallArray<int,6>& temp2);
+    static void Mesh::merge(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int middle, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2);
     Array<MeshAlg::Edge> minTriEdges();
-    static void Mesh::mergeSortRecursive(SmallArray<float,6>& data, SmallArray<float,6>& temp, int low, int high, SmallArray<int,6>& along, SmallArray<int,6>& temp2);
-    static void Mesh::mergeSort(SmallArray<float,6>& data, SmallArray<int,6>& along);
+    static void Mesh::mergeSortRecursive(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2);
+    static void Mesh::mergeSort(SmallArray<float, 6>& data, SmallArray<int, 6>& along);
 
     int findMinEdge(int minIndex, int maxIndex);
 
@@ -66,8 +66,8 @@ public:
     void toObj(String filename);
 
     shared_ptr<Model> toArticulatedModel(String name);
-    
 
+    static std::shared_ptr<Mesh> create(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
     Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
     ~Mesh();
 

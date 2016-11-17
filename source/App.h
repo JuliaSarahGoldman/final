@@ -11,7 +11,7 @@
 /** \brief Application framework. */
 class App : public GApp {
 protected:
-
+    shared_ptr<Mesh> m_myMesh;
     //variables for makeHeightfield()
     float m_heightfieldYScale;
     float m_heightfieldXZScale;
@@ -23,6 +23,8 @@ protected:
     /** Called from onInit */
     void makeGUI();
     void makeHeightfield();
+
+    void makePentagon();
 
     void addPlanetToScene(Mesh& mesh);
     void App::makePlanetGUI();
