@@ -74,26 +74,26 @@ void App::onInit() {
     developerWindow->cameraControlWindow->moveTo(Point2(developerWindow->cameraControlWindow->rect().x0(), 0));
     loadScene(
         //"G3D Sponza"
-        "Planet" // Load something simple
+        "Ground" // Load something simple
         //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
     );
 }
 
 
-void App::addPlanetToScene(Mesh& mesh) {
+void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color) {
     // Replace any existing torus model. Models don't 
     // have to be added to the model table to use them 
     // with a VisibleEntity.
-    const shared_ptr<Model>& planetModel = mesh.toArticulatedModel("planetModel");
+    const shared_ptr<Model>& planetModel = mesh.toArticulatedModel(name + "Model", color);
     if (scene()->modelTable().containsKey(planetModel->name())) {
         scene()->removeModel(planetModel->name());
     }
     scene()->insert(planetModel);
 
     // Replace any existing planet entity that has the wrong type
-    shared_ptr<Entity> planet = scene()->entity("planet");
+    shared_ptr<Entity> planet = scene()->entity(name);
     if (notNull(planet) && isNull(dynamic_pointer_cast<VisibleEntity>(planet))) {
-        logPrintf("The scene contained an Entity named %s that was not a VisibleEntity\n", "planet");
+        logPrintf("The scene contained an Entity named %s that was not a VisibleEntity\n", name);
         scene()->remove(planet);
         planet.reset();
     }
@@ -105,18 +105,23 @@ void App::addPlanetToScene(Mesh& mesh) {
         // allow the Scene parser to construct one. The second approach
         // has more consise syntax for this case, since we are using all constant
         // values in the specification.
-        planet = scene()->createEntity("planet",
+        //planet = scene()->createEntity();
+        String anyStr("VisibleEntity { model = \"" + name + "Model\"; };");
+        Any any = Any::parse(anyStr);
+        planet = scene()->createEntity(name, any);
+        /*planet = scene()->createEntity("planet",
             PARSE_ANY(
                 VisibleEntity {
                     model = "planetModel";
                 };
-            ));
+            ));*/
     } else {
         // Change the model on the existing planet entity
         dynamic_pointer_cast<VisibleEntity>(planet)->setModel(planetModel);
     }
 
-    planet->setFrame(CFrame::fromXYZYPRDegrees(0.0f, 1.8f, 0.0f, 45.0f, 45.0f));
+    //planet->setFrame(CFrame::fromXYZYPRDegrees(0.0f, 1.8f, 0.0f, 45.0f, 45.0f));
+    planet->setFrame(CFrame::fromXYZYPRDegrees(position.x, position.y, position.z, 45.0f, 45.0f));
 }
 
 void App::makePentagon() {
@@ -175,7 +180,7 @@ void App::makePlanetGUI() {
             image->save("ocean.png");
             planet.writeSphere("ocean", 12.5f, 3, vertices, faces);
             Mesh mesh(vertices, faces);
-            mesh.toObj("ocean");
+            //mesh.toObj("ocean");
 
             vertices = Array<Vector3>();
             faces = Array<Vector3int32>();
@@ -186,9 +191,25 @@ void App::makePlanetGUI() {
             planet.writeSphere("land", 12.0f, 8, vertices, faces);
             planet.applyNoiseLand(vertices, image);
             Mesh mesh2(vertices, faces);
-            mesh2.toObj("land");
+            //mesh2.toObj("land");
 
-            loadScene("Planet");
+            loadScene("Ground");
+            addPlanetToScene(mesh, "ocean", Point3(0,0,0), Color3(0,0,1));
+            addPlanetToScene(mesh2, "land", Point3(0,0,0), Color3(0,1,0));
+
+            //loadScene("Planet");
+
+            //Julia's Generate Code
+            /*Planet planet;
+            Array<Vector3> vertices1 = Array<Vector3>();
+            Array<Vector3int32> faces1 = Array<Vector3int32>();
+            planet.writeSphere("mountains", 10.1f, 5, vertices1, faces1);
+            Mesh mesh(vertices1, faces1);
+            mesh.bevelEdges(1);
+            loadScene("Ground");
+
+            addPlanetToScene(mesh, "sphere", Point3(-4,-4,-4), Color3(1,0,0));
+            addPlanetToScene(mesh, "sphere2", Point3(10,12,10), Color3(0,0,1));*/
         }
         catch (...) {
             msgBox("Unable to load the image.", m_heightfieldSource);

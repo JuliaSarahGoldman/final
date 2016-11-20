@@ -11,6 +11,10 @@ Mesh::Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& tri
     m_triArray = triArray;
 };
 
+Mesh::Mesh(String filename) {
+    shared_ptr<ArticulatedModel> model = ArticulatedModel::fromFile(filename);    
+};
+
 Mesh::~Mesh() {};
 
 std::shared_ptr<Mesh> Mesh::create(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray) {
@@ -382,14 +386,18 @@ void Mesh::mergeSort(SmallArray<float, 6>& data, SmallArray<int, 6>& along) {
     mergeSortRecursive(data, newArray, 0, data.size() - 1, along, newArray2);
 }
 
-shared_ptr<Model> Mesh::toArticulatedModel(String name) {
+shared_ptr<Model> Mesh::toArticulatedModel(String name, Color3& color) {
     const shared_ptr<ArticulatedModel>& model = ArticulatedModel::createEmpty(name);
     ArticulatedModel::Part*     part = model->addPart("root");
     ArticulatedModel::Geometry* geometry = model->addGeometry("geom");
     ArticulatedModel::Mesh*     mesh = model->addMesh("mesh", part, geometry);
 
-    mesh->material = UniversalMaterial::create(
-        PARSE_ANY(
+    //Any any = Any::parse("UniversalMaterial::Specification { lambertian = Color3(" + String(color.r) + ", " + String(color.g) + ", " + String(color.b) + "); }");
+    //String test = (String) std::to_string(color.r);
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String) std::to_string(color.r) + ", " + (String) std::to_string(color.g) + ", " + (String) std::to_string(color.b) + "); }";
+    Any any = Any::parse(anyStr);
+    mesh->material = UniversalMaterial::create(any);
+/*        PARSE_ANY(
         UniversalMaterial::Specification {
             /*lambertian = Texture::Specification {
                 filename = "image/checker-32x32-1024x1024.png";
@@ -397,9 +405,9 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name) {
                 encoding = Color3(1.0, 0.7, 0.15);
             };
 
-            glossy     = Color4(Color3(0.01), 0.2);*/
+            glossy     = Color4(Color3(0.01), 0.2);
             lambertian = Color3(0,1,.2);
-        }));
+        }));*/
 
     Array<CPUVertexArray::Vertex>& vertexArray = geometry->cpuVertexArray.vertex;
     Array<int>& indexArray = mesh->cpuIndexArray;

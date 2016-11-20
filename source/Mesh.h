@@ -65,10 +65,11 @@ public:
 
     void toObj(String filename);
 
-    shared_ptr<Model> toArticulatedModel(String name);
+    shared_ptr<Model> toArticulatedModel(String name, Color3& color);
 
     static std::shared_ptr<Mesh> create(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
     Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
+    Mesh(String filename);
     ~Mesh();
 
 

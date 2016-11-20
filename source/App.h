@@ -26,7 +26,7 @@ protected:
 
     void makePentagon();
 
-    void addPlanetToScene(Mesh& mesh);
+    void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color);
     void App::makePlanetGUI();
 
 public:
