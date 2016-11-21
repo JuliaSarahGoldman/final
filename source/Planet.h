@@ -10,7 +10,9 @@ class Planet{
 
 public:
 
+    void applyNoiseWater(Array<Vector3>& vertices, shared_ptr<Image> image);
     void applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> image);
+    void applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> image);
 
     //Creates an initial icohedron with the given radius to be tessellated to create a sphere
     void makeIcohedron(float radius, Array<Vector3>& vertices, Array<Vector3int32>& faces);

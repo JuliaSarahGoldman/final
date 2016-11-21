@@ -10,7 +10,7 @@
 
         camera = 
         Camera {             
-            frame = CFrame::fromXYZYPRDegrees(  54.0f,   -26.0f,  23.0f,  87.4f,  73.1f,   29.3f); 
+            frame = CFrame::fromXYZYPRDegrees(89.579, -13.701, 32.709, 68.492, 10.648, 0); 
             
             projection = Projection { 
                 farPlaneZ = -inf; 

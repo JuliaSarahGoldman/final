@@ -226,11 +226,11 @@ void Mesh::bevelEdges(float bump) {
         indexMap[m_indexArray[i + 2]].append(i + 2);
 
         //Face index is i%3
-        debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i], i);
+        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i], i);
         faceIndexMap[i / 3].set(m_indexArray[i], i);
-        debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 1], i + 1);
+        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 1], i + 1);
         faceIndexMap[i / 3].set(m_indexArray[i + 1], i + 1);
-        debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 2], i + 2);
+        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 2], i + 2);
         faceIndexMap[i / 3].set(m_indexArray[i + 2], i + 2);
     }
 
@@ -241,7 +241,7 @@ void Mesh::bevelEdges(float bump) {
         int face1 = edgeArray[i].faceIndex[0];
         int face2 = edgeArray[i].faceIndex[1];
 
-        debugPrintf(STR(Checking face %d at original vertex %d\n), face1, edgeArray[i].vertexIndex[0]);
+        //debugPrintf(STR(Checking face %d at original vertex %d\n), face1, edgeArray[i].vertexIndex[0]);
         //Problem- we have the vertex index, not the index index. Oh, vertexIndex is the index index.... That's hwo they're labeled
         int v1 = faceIndexMap[face1][edgeArray[i].vertexIndex[0]];
         int v2 = faceIndexMap[face1][edgeArray[i].vertexIndex[1]];

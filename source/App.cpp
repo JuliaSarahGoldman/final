@@ -176,11 +176,12 @@ void App::makePlanetGUI() {
             Array<Vector3int32> faces = Array<Vector3int32>();
             float freq = 3.0f;
             shared_ptr<Image> image = Image::create(1024, 1024, ImageFormat::RGBA8()); //Image::fromFile("noise.jpg"); 
-            //noise.generateNoisyImage(image, 0, freq);
+            noise.generateNoisyImage(image, 0, freq);
             image->save("ocean.png");
             planet.writeSphere("ocean", 12.5f, 3, vertices, faces);
+            planet.applyNoiseWater(vertices, image);
             Mesh mesh(vertices, faces);
-            //mesh.toObj("ocean");
+            mesh.toObj("ocean");
 
             vertices = Array<Vector3>();
             faces = Array<Vector3int32>();
@@ -188,14 +189,27 @@ void App::makePlanetGUI() {
             image = Image::create(1024, 1024, ImageFormat::RGBA8()); //Image::fromFile("noise.jpg"); 
             noise.generateNoisyImage(image, 1, freq);
             image->save("land.png");
-            planet.writeSphere("land", 12.0f, 8, vertices, faces);
+            planet.writeSphere("land", 12.0f, 5, vertices, faces);
             planet.applyNoiseLand(vertices, image);
             Mesh mesh2(vertices, faces);
-            //mesh2.toObj("land");
+            for(int i(0); i < 0; ++i) {
+                mesh2.bevelEdges(.1);
+            }
+            mesh2.toObj("land");
+
+            vertices = Array<Vector3>();
+            faces = Array<Vector3int32>();
+            freq = 0.25f;
+            planet.writeSphere("mountain", 11.5f, 4, vertices, faces);
+            planet.applyNoiseMountain(vertices, image);
+            Mesh mesh3(vertices, faces);
+            mesh3.bevelEdges(1);
+            mesh3.toObj("mountain");
 
             loadScene("Ground");
             addPlanetToScene(mesh, "ocean", Point3(0,0,0), Color3(0,0,1));
             addPlanetToScene(mesh2, "land", Point3(0,0,0), Color3(0,1,0));
+            addPlanetToScene(mesh3, "mountain", Point3(0,0,0), Color3(.5,.5,.5));
 
             //loadScene("Planet");
 

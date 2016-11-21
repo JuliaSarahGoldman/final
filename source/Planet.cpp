@@ -62,6 +62,34 @@ void Planet::writeSphere(String filename, float radius, int depths, Array<Vector
     vertices = verts;
 }
 
+void Planet::applyNoiseWater(Array<Vector3>& vertices, shared_ptr<Image> image) {
+    for (int i(0); i < vertices.size(); ++i) {
+        Vector3 vertex = vertices[i];
+
+        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
+
+        float nx = image->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
+        float ny = image->height() * (0.5f - asinf(d.y) * 1 / pif());
+
+        int ix = (int)abs((int)nx % image->width());
+        int iy = (int)abs((int)ny % image->height());
+
+        Color3 color = Color3();
+
+        image->get(Point2int32(ix, iy), color);
+
+        float bump = color.average();
+        /*if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
+        else if (bump < 0.3f) bump = 0.1f;
+        else bump = 1.0f;*/
+
+        if (bump < 0.4f) bump = -0.2f;
+        else if(bump > 0.6f) bump = 0.2f;
+        else bump = 0.0f;
+
+        vertices[i] += vertex.unit() * bump;
+    }
+}
 
 void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> image) {
     for (int i(0); i < vertices.size(); ++i) {
@@ -85,8 +113,36 @@ void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> image) {
         else bump = 1.0f;*/
 
         if (bump < 0.4f) bump = 0.0f;
-        //else if(bump < 0.7f) bump *= 4.0f;
+        else if(bump < 0.7f) bump *= 2.857f;
         else bump = 2.0f;
+
+        vertices[i] += vertex.unit() * bump;
+    }
+}
+
+void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> image) {
+    for (int i(0); i < vertices.size(); ++i) {
+        Vector3 vertex = vertices[i];
+
+        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
+
+        float nx = image->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
+        float ny = image->height() * (0.5f - asinf(d.y) * 1 / pif());
+
+        int ix = (int)abs((int)nx % image->width());
+        int iy = (int)abs((int)ny % image->height());
+
+        Color3 color = Color3();
+
+        image->get(Point2int32(ix, iy), color);
+
+        float bump = color.average();
+        /*if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
+        else if (bump < 0.3f) bump = 0.1f;
+        else bump = 1.0f;*/
+
+        if (bump < 0.6f) bump = 0.0f;
+        else bump *= 5.857f;
 
         vertices[i] += vertex.unit() * bump;
     }
