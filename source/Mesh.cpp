@@ -342,13 +342,13 @@ void Mesh::bevelEdges(float bump) {
     m_indexArray = newIndices;
 }
 
+//Bevel Edges Without Blowing Out the planet
 void Mesh::bevelEdges2(float bump) {
 
     //Step 1: Explode the planet
     Array<Vector3> newVertices;
     Array<int> newIndices;
 
-    //We need normals.
     Array<MeshAlg::Face> faceArray;
     Array<MeshAlg::Edge> edgeArray;
 
