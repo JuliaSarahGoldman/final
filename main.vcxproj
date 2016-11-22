@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="data-files\Scene\ground.Scene.Any" />
+    <None Include="data-files\Scene\Pentagon.Scene.Any" />
     <None Include="data-files\Scene\Planet.Scene.Any" />
     <None Include="doc-files\report.md.html" />
     <None Include="Doxyfile" />

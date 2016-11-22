@@ -23,8 +23,11 @@ protected:
 
     MeshAlg::Edge findMinEdge(const Array<MeshAlg::Edge>& edges);
 
-    static void Mesh::merge(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int middle, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2);
+    MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data);
+
     Array<MeshAlg::Edge> minTriEdges();
+
+    static void Mesh::merge(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int middle, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2);
     static void Mesh::mergeSortRecursive(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2);
     static void Mesh::mergeSort(SmallArray<float, 6>& data, SmallArray<int, 6>& along);
 
@@ -47,12 +50,16 @@ public:
     void addVertex(const Vector3& vertex, int index);
     void addVertex(const Array<Vector3>& vertexList, const Array<int>& indexList);
 
-    void computeAdjacency(Array<MeshAlg::Face>& faceArray, Array<MeshAlg::Edge>& edgeArray, Array<MeshAlg::Vertex>& vertexArray);
+    void computeAdjacency(Array<MeshAlg::Face>& faceArray,
+        Array<MeshAlg::Edge>& edgeArray = Array<MeshAlg::Edge>(),
+        Array<MeshAlg::Vertex>& vertexArray = Array<MeshAlg::Vertex>());
 
     /** pre: faceArray, edgeArray and vertexArray computed by computeAdjacency
     post: vertexNormalArray and faceNormalArray filled with appropriate normal values */
     void computeNormals(const Array<MeshAlg::Face>& faceArray, const Array<MeshAlg::Edge>& edgeArray, const Array<MeshAlg::Vertex>& vertexArray,
         Array<Vector3>& vertexNormalArray, Array<Vector3>& faceNormalArray);
+
+    void computeFaceNormals(Array<Vector3>& faceNormals, bool normalize = true);
 
     /** As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf
         Calls toCollapse()
@@ -68,9 +75,12 @@ public:
 
     shared_ptr<Model> toArticulatedModel(String name, Color3& color);
 
+    static std::shared_ptr<Mesh> Mesh::create(const String& filename);
     static std::shared_ptr<Mesh> create(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
+
     Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
-    Mesh(String filename);
+    Mesh(const String& filename);
+
     ~Mesh();
 
 

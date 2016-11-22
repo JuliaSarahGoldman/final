@@ -11,14 +11,18 @@ Mesh::Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& tri
     m_triArray = triArray;
 };
 
-Mesh::Mesh(String filename) {
-    shared_ptr<ArticulatedModel> model = ArticulatedModel::fromFile(filename);    
+Mesh::Mesh(const String& filename) {
+    shared_ptr<ArticulatedModel> model = ArticulatedModel::fromFile(filename);
 };
 
 Mesh::~Mesh() {};
 
 std::shared_ptr<Mesh> Mesh::create(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray) {
     return std::shared_ptr<Mesh>(new Mesh(vertexPositions, triArray));
+}
+
+std::shared_ptr<Mesh> Mesh::create(const String& filename) {
+    return std::shared_ptr<Mesh>(new Mesh(filename));
 }
 
 void Mesh::addVertex(const Vector3& vertex) {
@@ -57,6 +61,13 @@ void Mesh::computeNormals(const Array<MeshAlg::Face>& faceArray, const Array<Mes
     MeshAlg::computeNormals(m_vertexPositions, faceArray, vertexArray, vertexNormalArray, faceNormalArray);
 };
 
+void Mesh::computeFaceNormals(Array<Vector3>& faceNormals, bool normalize) {
+    Array<MeshAlg::Face> faceArray;
+    computeAdjacency(faceArray);
+    MeshAlg::computeFaceNormals(m_vertexPositions, faceArray, faceNormals, normalize);
+};
+
+
 int Mesh::edgeLength(const MeshAlg::Edge& edge) {
     return length(m_vertexPositions[edge.vertexIndex[0]] - m_vertexPositions[edge.vertexIndex[1]]);
 };
@@ -81,7 +92,6 @@ Array<int> randomIntList(int min, int max) {
 
 MeshAlg::Edge Mesh::findMinEdge(const Array<MeshAlg::Edge>& data) {
     MeshAlg::Edge minEdge(data[Random::threadCommon().integer(0, data.size() - 1)]);
-    // Array<int> ind(randomIntList(0, data.size() - 1));
 
     for (int i(0); i < data.size(); ++i) {
         if (edgeLength(minEdge) < edgeLength(data[i])) {
@@ -91,20 +101,42 @@ MeshAlg::Edge Mesh::findMinEdge(const Array<MeshAlg::Edge>& data) {
     return minEdge;
 }
 
-int Mesh::findMinEdge(int minIndex, int maxIndex) {
-    int min(edgeLength(m_indexArray[minIndex], m_indexArray[minIndex + 1]));
-    int r = minIndex;
+int findAngle(const Vector3& v1, const Vector3& v2) {
+    return G3D::acos(v1.dot(v2) / (length(v1)*length(v2)));
+}
 
-    for (int i(minIndex); i < maxIndex - 1; ++i) {
-        int cur(edgeLength(m_indexArray[minIndex], m_indexArray[minIndex + 1]));
-        if (min > cur) {
-            min = cur;
-            r = i;
-        }
+MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data) {
+    Array<Vector3> faceNormals;
+    computeFaceNormals(faceNormals);
+
+    MeshAlg::Edge toReturn(data[Random::threadCommon().integer(0, data.size() - 1)]);
+    while(toReturn.boundary()){
+        toReturn = data[Random::threadCommon().integer(0, data.size() - 1)];
     }
 
-    return r;
+    Vector3 fn0(faceNormals[toReturn.faceIndex[0]]);
+    Vector3 fn1(faceNormals[toReturn.faceIndex[1]]);
+
+    int maxAngle(findAngle(fn0, fn1));
+
+    for (int i(0); i < data.size(); ++i) {
+        MeshAlg::Edge curEdge(data[i]);
+        if (!curEdge.boundary()) {
+            fn0 = faceNormals[curEdge.faceIndex[0]];
+            fn1 = faceNormals[curEdge.faceIndex[1]];
+
+            int curAngle(findAngle(fn0, fn1));
+            if (maxAngle < curAngle) {
+                toReturn = curEdge;
+            }
+            else if (maxAngle == curAngle) {
+                toReturn = edgeLength(toReturn) < edgeLength(curEdge) ? toReturn : curEdge;
+            }
+        }
+    }
+    return toReturn;
 }
+
 
 int nextInTri(int x) {
     for (int i(x); i < x + 3; ++i) {
@@ -124,15 +156,15 @@ Array<Array<int>> Mesh::toCollapse(int regionSize) {
 void Mesh::collapseEdges(int numEdges) {
     Array<MeshAlg::Edge> edges;
     for (int i(0); i < numEdges; ++i) {
-        computeAdjacency(Array<MeshAlg::Face>(), edges, Array<MeshAlg::Vertex>());
-        MeshAlg::Edge collapsedEdge(findMinEdge(edges));
+        computeAdjacency(Array<MeshAlg::Face>(), edges);
+        MeshAlg::Edge collapsedEdge(toCollapse(edges));
 
         int index0(collapsedEdge.vertexIndex[0]);
         int index1(collapsedEdge.vertexIndex[1]);
 
         for (int j(0); j < m_indexArray.size(); ++j) {
             if (m_indexArray[j] == index0 || m_indexArray[j] == index1) {
-                m_indexArray[j] = min(index0,index1);
+                m_indexArray[j] = min(index0, index1);
             }
         }
         //m_vertexPositions[index0] = m_vertexPositions[index1];
@@ -172,8 +204,8 @@ void Mesh::collapseEdges(int numEdges) {
 };
 
 
- class AngledVertex{
- public:
+class AngledVertex {
+public:
     float angle;
     int index;
     bool operator>(const AngledVertex& other) const {
@@ -272,39 +304,39 @@ void Mesh::bevelEdges(float bump) {
 
        //1. project them into the plane of the normal (i.e., generate an arbitrary coordinate from from the normal as the z axis; 
        //G3D has several routines for this; and then call cframe::pointToObjectSpace and only keep the xy coordinates or whatever the permutation is)
-       Vector3 vNorm(vertexNormalArray[i]);
-       
-       Vector3 x(1,0,0);
-       if(abs(dot(x,vNorm) > .9)){
-           x = Vector3(0,1,0);
-       }
-       Vector3 y = normalize(vNorm.cross(x));
-       x = y.cross(vNorm);
+        Vector3 vNorm(vertexNormalArray[i]);
 
-       Array<AngledVertex> angles;
-       //2. use atan2 to compute the angle in that plane to each point
-       Vector3 sum(0.0, 0, 0);
-       for (int j = 0; j <indexMap[i].size(); ++j){
-           sum += newVertices[indexMap[i][j]];
-       }
-       Vector3 C = (1.0/indexMap[i].size())*sum;
-       for (int j = 0; j <indexMap[i].size(); ++j){
+        Vector3 x(1, 0, 0);
+        if (abs(dot(x, vNorm) > .9)) {
+            x = Vector3(0, 1, 0);
+        }
+        Vector3 y = normalize(vNorm.cross(x));
+        x = y.cross(vNorm);
+
+        Array<AngledVertex> angles;
+        //2. use atan2 to compute the angle in that plane to each point
+        Vector3 sum(0.0, 0, 0);
+        for (int j = 0; j < indexMap[i].size(); ++j) {
+            sum += newVertices[indexMap[i][j]];
+        }
+        Vector3 C = (1.0 / indexMap[i].size())*sum;
+        for (int j = 0; j < indexMap[i].size(); ++j) {
             int myIndex = indexMap[i][j];
             Vector3 a(newVertices[myIndex] - C);
             AngledVertex av;
-            av.angle = atan2(dot(y,a),dot(x,a));
+            av.angle = atan2(dot(y, a), dot(x, a));
             av.index = myIndex;
             angles.append(av);
-       }
-       //3. sort the points by angle
-       angles.sort(SORT_INCREASING);
-       
-       //4. connect them all in that order! 
-       int point1 = angles[0].index;
-       for (int j = 1; j < indexMap[i].size()-1; ++j){
-            newIndices.append(point1, angles[j].index, angles[j+1].index);
-       }
-   }
+        }
+        //3. sort the points by angle
+        angles.sort(SORT_INCREASING);
+
+        //4. connect them all in that order! 
+        int point1 = angles[0].index;
+        for (int j = 1; j < indexMap[i].size() - 1; ++j) {
+            newIndices.append(point1, angles[j].index, angles[j + 1].index);
+        }
+    }
 
     m_vertexPositions = newVertices;
     m_indexArray = newIndices;
@@ -448,7 +480,7 @@ void Mesh::bevelEdges2(float bump) {
 }
 
 void Mesh::toObj(String filename) {
-    TextOutput file(filename+".obj");
+    TextOutput file(filename + ".obj");
     //file.printf("g name\n");
         //loop to make vertices
     //debugPrintf(STR(%d\n), sizeof(m_vertexArray));
@@ -531,20 +563,20 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, Color3& color) {
 
     //Any any = Any::parse("UniversalMaterial::Specification { lambertian = Color3(" + String(color.r) + ", " + String(color.g) + ", " + String(color.b) + "); }");
     //String test = (String) std::to_string(color.r);
-    String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String) std::to_string(color.r) + ", " + (String) std::to_string(color.g) + ", " + (String) std::to_string(color.b) + "); }";
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
     Any any = Any::parse(anyStr);
     mesh->material = UniversalMaterial::create(any);
-/*        PARSE_ANY(
-        UniversalMaterial::Specification {
-            /*lambertian = Texture::Specification {
-                filename = "image/checker-32x32-1024x1024.png";
-                // Orange
-                encoding = Color3(1.0, 0.7, 0.15);
-            };
+    /*        PARSE_ANY(
+            UniversalMaterial::Specification {
+                /*lambertian = Texture::Specification {
+                    filename = "image/checker-32x32-1024x1024.png";
+                    // Orange
+                    encoding = Color3(1.0, 0.7, 0.15);
+                };
 
-            glossy     = Color4(Color3(0.01), 0.2);
-            lambertian = Color3(0,1,.2);
-        }));*/
+                glossy     = Color4(Color3(0.01), 0.2);
+                lambertian = Color3(0,1,.2);
+            }));*/
 
     Array<CPUVertexArray::Vertex>& vertexArray = geometry->cpuVertexArray.vertex;
     Array<int>& indexArray = mesh->cpuIndexArray;
