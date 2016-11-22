@@ -120,7 +120,7 @@ void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> image) {
     }
 }
 
-void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> image) {
+void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> image, float multiplier) {
     for (int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
 
@@ -141,10 +141,15 @@ void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> imag
         else if (bump < 0.3f) bump = 0.1f;
         else bump = 1.0f;*/
 
-        if (bump < 0.6f) bump = 0.0f;
-        else bump *= 5.857f;
+        /*e =    1 * noise(1 * nx, 1 * ny);
+                +  0.5 * noise(2 * nx, 2 * ny);
+                 + 0.25 * noise(4 * nx, 4 * ny);
+                elevation[y][x] = Math.pow(e, 3.00);*/
 
-        vertices[i] += vertex.unit() * bump;
+        if (bump > 0.8f) bump = 0.0f;
+        //else bump *= 1.25f;
+
+        vertices[i] += vertex.unit() * pow(bump, 1.0f) * multiplier;
     }
 }
 
