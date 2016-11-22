@@ -6,6 +6,50 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
+2016-11-21: New Bevel Edges Seems Functional
+=============================================================
+
+![](2016-11-21_002_starter_r2490_g3d_r977__.jpg)
+
+
+
+2016-11-21: Strategy actually seems to work.
+=============================================================
+
+![](2016-11-21_001_starter_r2490_g3d_r977__.jpg)
+
+Was previously bumping by more than the height fo the triangle, which was bad
+(will have to specify range for bump.)
+
+
+
+2016-11-21: Attempting to Shrink Triangles
+=============================================================
+
+![](2016-11-21_000_starter_r2490_g3d_r977__.jpg)
+
+Not quite right. Current strategy: For each vertex, take midpoint of other
+vertices, then subtract (normalized and multiplied by bump) from original
+vertex.
+
+
+
+2016-11-21: Beveling Edges
+=============================================================
+
+2016-11-21: The Problem with Beveling Edges
+=============================================================
+Edges are now beveled by shifting the faces in the direvtion of there faces. This works great in some cases:
+       _       _     ,-
+/\ -> / \  or |  -> |   
+
+But, in other cases:
+\/ -> X or |_ -> + 
+
+it does not work so well.
+
+Honestly, it might be necessary to change tack and shrink the triangles instead.
+
 
 2016-11-20: Planet with Mountains
 =============================================================

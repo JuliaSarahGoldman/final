@@ -169,7 +169,7 @@ void App::makePlanetGUI() {
         shared_ptr<G3D::Image> image;
         //Noise noise = G3D::Noise::common();
         try {
-            Planet planet;
+          /*  Planet planet;
             NoiseGen noise;
 
             Array<Vector3> vertices = Array<Vector3>();
@@ -209,21 +209,21 @@ void App::makePlanetGUI() {
             loadScene("Ground");
             addPlanetToScene(mesh, "ocean", Point3(0,0,0), Color3(0,0,1));
             addPlanetToScene(mesh2, "land", Point3(0,0,0), Color3(0,1,0));
-            addPlanetToScene(mesh3, "mountain", Point3(0,0,0), Color3(.5,.5,.5));
+            addPlanetToScene(mesh3, "mountain", Point3(0,0,0), Color3(.5,.5,.5)); */
 
             //loadScene("Planet");
 
             //Julia's Generate Code
-            /*Planet planet;
+            Planet planet;
             Array<Vector3> vertices1 = Array<Vector3>();
             Array<Vector3int32> faces1 = Array<Vector3int32>();
             planet.writeSphere("mountains", 10.1f, 5, vertices1, faces1);
             Mesh mesh(vertices1, faces1);
-            mesh.bevelEdges(1);
+            mesh.bevelEdges2(.1);
             loadScene("Ground");
 
             addPlanetToScene(mesh, "sphere", Point3(-4,-4,-4), Color3(1,0,0));
-            addPlanetToScene(mesh, "sphere2", Point3(10,12,10), Color3(0,0,1));*/
+            addPlanetToScene(mesh, "sphere2", Point3(10,12,10), Color3(0,0,1));
         }
         catch (...) {
             msgBox("Unable to load the image.", m_heightfieldSource);
