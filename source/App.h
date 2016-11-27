@@ -27,6 +27,7 @@ protected:
 
     void makePentagon();
     void makeBunny(const GuiControl* leftPane); 
+    void makeLittleHeightfield(const GuiControl* leftPane);
 
     void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color);
     void App::makePlanetGUI();

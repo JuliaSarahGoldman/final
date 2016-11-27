@@ -74,7 +74,7 @@ void App::onInit() {
     developerWindow->cameraControlWindow->moveTo(Point2(developerWindow->cameraControlWindow->rect().x0(), 0));
     loadScene(
         //"G3D Sponza"
-        "Bunny" // Load something simple
+        "Ground" // Load something simple
         //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
     );
 }
@@ -133,7 +133,7 @@ void App::makePentagon() {
     Planet planet;
     planet.writeSphere("pentagon", 12.0f, 5, vertices, faces);
     //m_myMesh = Mesh::create(vertices, faces);
-    
+
     m_myMesh = Mesh::create(vertices1, indices1);
     m_myMesh->toObj("pentagon");
 
@@ -178,6 +178,51 @@ void App::makeBunny(const GuiControl* leftPane) {
     });
     bunnyPane->moveRightOf(leftPane, 4.0);
     bunnyPane->pack();
+}
+
+void App::makeLittleHeightfield(const GuiControl* leftPane) {
+    Array<Vector3> vertices;
+    Array<Vector3int32> indices;
+
+    shared_ptr<Image>base(Image::fromFile("heightmap.png"));
+    for (int x = 0; x < base->width(); ++x) {
+        int i(x*base->height());
+
+        for (int z = 0; z < base->height(); ++z) {
+            Color3 color; 
+            base->get(Point2int32(x, z), color);
+            float y(color.average());
+            vertices.append(Vector3(x, y*5, z));
+
+            if(x < base->width()-1 && z < base->height()-1){ 
+                int c(i+z); 
+                int h(base->height());
+                indices.append(Vector3int32(c, c+1, c+h), Vector3int32(c+1, c+h+1, c+h));
+            }
+        }
+    }
+
+    m_myMesh = Mesh::create(vertices, indices);
+    m_myMesh->toObj("littleHf");
+
+    loadScene("Little Heightfield");
+    GuiPane* hfPane = debugPane->addPane("Collapse Edges", GuiTheme::ORNATE_PANE_STYLE);
+
+    // Example of how to add debugging controls
+    hfPane->addLabel("Collapse Edges");
+
+    hfPane->addNumberBox("# edges", &m_edgesToCollapse, "",
+        GuiTheme::LINEAR_SLIDER, 0, 1000)->setUnitsSize(1);
+
+    hfPane->addButton("Collapse!", [this]() {
+        m_myMesh->collapseEdges(m_edgesToCollapse);
+        m_myMesh->toObj("littleHf");
+        G3D::ArticulatedModel::clearCache();
+        loadScene("Little Heightfield");
+
+    });
+    hfPane->moveRightOf(leftPane, 4.0);
+    hfPane->pack();
 }
 
 void App::makePlanetGUI() {
@@ -378,11 +423,13 @@ void App::makeGUI() {
     planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);*/
 
     //makeHeightfield();
-    //makePlanetGUI();
-    makeBunny(infoPane);
+    makePlanetGUI();
 
-    /* Array<Vector3> verticeArray(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
-     Array<Vector3int32> triangles(Vector3int32(3, 1, 0), Vector3int32(1, 2, 0), Vector3int32(3, 2, 1), Vector3int32(3, 0, 2));*/
+    // makeBunny(infoPane);
+    //makeLittleHeightfield(infoPane);
+
+     Array<Vector3> verticeArray(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
+     Array<Vector3int32> triangles(Vector3int32(3, 1, 0), Vector3int32(1, 2, 0), Vector3int32(3, 2, 1), Vector3int32(3, 0, 2));
 
      //Mesh mesh(*vertices, *faces);
      //Mesh mesh(verticeArray, triangles);

@@ -143,9 +143,9 @@ void Mesh::collapseEdges(int numEdges) {
     }
     mergeSort(edges);
     numEdges = min(numEdges, edges.size());
-    for (int i(0); i < numEdges; ++i) {
-        int index0(edges[i].vertexIndex[0]);
-        int index1(edges[i].vertexIndex[1]);
+    for (int x(0); x < numEdges; ++x) {
+        int index0(edges[x].vertexIndex[0]);
+        int index1(edges[x].vertexIndex[1]);
         
         for (int j(0); j < m_indexArray.size(); ++j) {
             if (m_indexArray[j] == index0 || m_indexArray[j] == index1) {
