@@ -18,6 +18,7 @@ protected:
     String m_heightfieldSource;
 
     int m_recursionLevel;
+    int m_edgesToCollapse;
     float m_frequency;
 
     /** Called from onInit */
@@ -25,6 +26,7 @@ protected:
     void makeHeightfield();
 
     void makePentagon();
+    void makeBunny(const GuiControl* leftPane); 
 
     void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color);
     void App::makePlanetGUI();

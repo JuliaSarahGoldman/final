@@ -17,28 +17,23 @@ protected:
     Array<Vector3> m_vertexPositions;
     Array<int> m_indexArray;
     Array<Vector3int32> m_triArray;
+    Array<Vector3> m_faceNormals;
 
     int edgeLength(const MeshAlg::Edge& edge);
     int Mesh::edgeLength(int i0, int i1);
 
-    MeshAlg::Edge findMinEdge(const Array<MeshAlg::Edge>& edges);
+    bool greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2);
 
     MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data);
 
-    Array<MeshAlg::Edge> minTriEdges();
 
     static void Mesh::merge(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int middle, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2);
     static void Mesh::mergeSortRecursive(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2);
     static void Mesh::mergeSort(SmallArray<float, 6>& data, SmallArray<int, 6>& along);
 
-    int findMinEdge(int minIndex, int maxIndex);
-
-    /** Called by collapseEdges() */
-    Array<Array<int>> toCollapse(int regionSize);
-
-
-
-
+    void merge(Array<MeshAlg::Edge>& data, const Array<MeshAlg::Edge>& temp, int low, int middle, int hight);
+    void mergeSortRecursive(Array<MeshAlg::Edge>& data, Array<MeshAlg::Edge>& temp, int low, int hight);
+    void mergeSort(Array<MeshAlg::Edge>& data);
 
 public:
     void addVertex(const Vector3& vertex);

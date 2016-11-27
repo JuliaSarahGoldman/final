@@ -51,6 +51,9 @@
     <None Include="data-files\Scene\Pentagon.Scene.Any">
       <Filter>Scene Files</Filter>
     </None>
+    <None Include="data-files\Scene\Bunny.Scene.Any">
+      <Filter>Scene Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

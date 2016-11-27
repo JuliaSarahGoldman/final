@@ -9,10 +9,18 @@ Mesh::Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& tri
     }
     m_vertexPositions = vertexPositions;
     m_triArray = triArray;
+    computeFaceNormals(m_faceNormals);
 };
 
 Mesh::Mesh(const String& filename) {
     shared_ptr<ArticulatedModel> model = ArticulatedModel::fromFile(filename);
+    const Array<ArticulatedModel::Geometry*>& geometryArray(model->geometryArray());
+    const Array< ArticulatedModel::Mesh*>& meshArray(model->meshArray());
+    for (int i(0); i < geometryArray[0]->cpuVertexArray.vertex.size(); ++i) {
+        m_vertexPositions.append(geometryArray[0]->cpuVertexArray.vertex[i].position);
+    }
+    m_indexArray = meshArray[0]->cpuIndexArray;
+    computeFaceNormals(m_faceNormals);
 };
 
 Mesh::~Mesh() {};
@@ -76,56 +84,40 @@ int Mesh::edgeLength(int i0, int i1) {
     return length(m_vertexPositions[i1] - m_vertexPositions[i0]);
 };
 
-
-Array<int> randomIntList(int min, int max) {
-    Array<int> toReturn;
-    int iters(max);
-    while (iters >= min) {
-        int r = Random::threadCommon().integer(min, max);
-        if (!toReturn.contains(r)) {
-            toReturn.append(r);
-            --iters;
-        }
-    }
-    return toReturn;
-}
-
-MeshAlg::Edge Mesh::findMinEdge(const Array<MeshAlg::Edge>& data) {
-    MeshAlg::Edge minEdge(data[Random::threadCommon().integer(0, data.size() - 1)]);
-
-    for (int i(0); i < data.size(); ++i) {
-        if (edgeLength(minEdge) < edgeLength(data[i])) {
-            minEdge = data[i];
-        }
-    }
-    return minEdge;
-}
-
-int findAngle(const Vector3& v1, const Vector3& v2) {
+int computeAngle(const Vector3& v1, const Vector3& v2) {
     return G3D::acos(v1.dot(v2) / (length(v1)*length(v2)));
 }
 
+bool Mesh::greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2) {
+    if (elem1.boundary() || elem2.boundary()) {
+        return edgeLength(elem1) < edgeLength(elem2);
+    }
+    int x1(computeAngle(m_faceNormals[elem1.faceIndex[0]], m_faceNormals[elem1.faceIndex[1]]));
+    int x2(computeAngle(m_faceNormals[elem2.faceIndex[0]], m_faceNormals[elem2.faceIndex[1]]));
+    return x1 > x2;
+}
+
 MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data) {
-    Array<Vector3> faceNormals;
-    computeFaceNormals(faceNormals);
+
+    computeFaceNormals(m_faceNormals);
 
     MeshAlg::Edge toReturn(data[Random::threadCommon().integer(0, data.size() - 1)]);
-    while(toReturn.boundary()){
+    while (toReturn.boundary()) {
         toReturn = data[Random::threadCommon().integer(0, data.size() - 1)];
     }
 
-    Vector3 fn0(faceNormals[toReturn.faceIndex[0]]);
-    Vector3 fn1(faceNormals[toReturn.faceIndex[1]]);
+    Vector3 fn0(m_faceNormals[toReturn.faceIndex[0]]);
+    Vector3 fn1(m_faceNormals[toReturn.faceIndex[1]]);
 
-    int maxAngle(findAngle(fn0, fn1));
+    int maxAngle(computeAngle(fn0, fn1));
 
     for (int i(0); i < data.size(); ++i) {
         MeshAlg::Edge curEdge(data[i]);
         if (!curEdge.boundary()) {
-            fn0 = faceNormals[curEdge.faceIndex[0]];
-            fn1 = faceNormals[curEdge.faceIndex[1]];
+            fn0 = m_faceNormals[curEdge.faceIndex[0]];
+            fn1 = m_faceNormals[curEdge.faceIndex[1]];
 
-            int curAngle(findAngle(fn0, fn1));
+            int curAngle(computeAngle(fn0, fn1));
             if (maxAngle < curAngle) {
                 toReturn = curEdge;
             }
@@ -138,71 +130,96 @@ MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data) {
 }
 
 
-int nextInTri(int x) {
-    for (int i(x); i < x + 3; ++i) {
-        if (i % 3 == 0) return i;
-    }
-    return x;
-}
-Array<Array<int>> Mesh::toCollapse(int regionSize) {
-    Array<Array<int>> toReturn;
-    for (int i(0); i < m_indexArray.size() - 1; i += regionSize) {
-        int j(nextInTri(i));
-        toReturn.append(Array<int>(m_indexArray[j], m_indexArray[j + 1]));
-    }
-    return toReturn;
-}
+
 
 void Mesh::collapseEdges(int numEdges) {
     Array<MeshAlg::Edge> edges;
+    computeAdjacency(Array<MeshAlg::Face>(), edges);
+
+    for (int i(0); i < edges.size(); ++i) {
+        if (edges[i].boundary()) {
+            edges.remove(i);
+        }
+    }
+    mergeSort(edges);
+    numEdges = min(numEdges, edges.size());
     for (int i(0); i < numEdges; ++i) {
-        computeAdjacency(Array<MeshAlg::Face>(), edges);
-        MeshAlg::Edge collapsedEdge(toCollapse(edges));
-
-        int index0(collapsedEdge.vertexIndex[0]);
-        int index1(collapsedEdge.vertexIndex[1]);
-
+        int index0(edges[i].vertexIndex[0]);
+        int index1(edges[i].vertexIndex[1]);
+        
         for (int j(0); j < m_indexArray.size(); ++j) {
             if (m_indexArray[j] == index0 || m_indexArray[j] == index1) {
                 m_indexArray[j] = min(index0, index1);
             }
         }
-        //m_vertexPositions[index0] = m_vertexPositions[index1];
+
     }
-    /*   Array<Array<int>> collapseList(toCollapse(regionSize));
-       for (int i(0); i < collapseList.size(); ++i) {
-           int index0(collapseList[i][0]);
-           int index1(collapseList[i][1]);
 
-           Vector3 average = (m_vertexPositions[index1] + m_vertexPositions[index0]) / 2;
-           m_vertexPositions[index0] = average;
-           m_vertexPositions[index1] = average;
-           for (int j(0); j < m_indexArray.size(); ++j) {
-               if(m_indexArray[j] == index0) {
-                   m_indexArray[j] = index1;
-               }
-           }
-       }*/
-       /* for (int j(0); j < collapseList.size(); ++j) {
-            int index0(collapseList[j][0]);
-            int index1(collapseList[j][1]);
+    //Array<MeshAlg::Edge> edges;
+    //for (int i(0); i < numEdges; ++i) {
+    //    computeAdjacency(Array<MeshAlg::Face>(), edges);
 
-            Vector3 average = (m_vertexPositions[index1] + m_vertexPositions[index0]) / 2;
-            m_vertexPositions[index0] = average;
-            m_vertexPositions[index1] = average;
-        }*/
-        //for (int i(0); i < m_indexArray.size() - 2; i += 6) {
-        //    int index0 = m_indexArray[i]; 
-        //    int index1 = m_indexArray[i+1]; 
-        //    int index2 = m_indexArray[i+2]; 
-        //    m_vertexPositions[index1] = m_vertexPositions[index0];
-        //    m_vertexPositions[index2] = m_vertexPositions[index0];
-        //    //m_indexArray.remove(i,3);
-        //}
+    //    if (edges.size() < 1) return;
+    //    numEdges = min(numEdges, edges.size());
 
-        // Welder::weld(m_vertexPositions, Array<Vector2>(), Array<Vector3>(), m_indexArray, G3D::Welder::Settings());
+    //    MeshAlg::Edge collapsedEdge(toCollapse(edges));
+
+    //    int index0(collapsedEdge.vertexIndex[0]);
+    //    int index1(collapsedEdge.vertexIndex[1]);
+
+    //    for (int j(0); j < m_indexArray.size(); ++j) {
+    //        if (m_indexArray[j] == index0 || m_indexArray[j] == index1) {
+    //            m_indexArray[j] = min(index0, index1);
+    //        }
+    //    }
+    //}
 };
 
+void Mesh::merge(Array<MeshAlg::Edge>& data, const Array<MeshAlg::Edge>& temp, int low, int middle, int high) {
+    int ri = low;
+    int ti = low;
+    int di = middle;
+
+    // While two lists are not empty, merge smaller value
+    while (ti < middle && di <= high) {
+        if (greaterAngle(data[di], temp[ti])) {
+            data[ri++] = data[di++]; // smaller is in high data
+        }
+        else {
+            data[ri++] = temp[ti++]; // smaller is in temp
+        }
+    }
+
+    // Possibly some values left in temp array
+    while (ti < middle) {
+        data[ri++] = temp[ti++];
+    }
+    // ...or some values left in correct place in data array
+};
+
+void Mesh::mergeSortRecursive(Array<MeshAlg::Edge>& data, Array<MeshAlg::Edge>& temp, int low, int high) {
+    int n = high - low + 1;
+    int middle = low + n / 2;
+
+    if (n < 2) return;
+    // move lower half of data into temporary storage
+    for (int i = low; i < middle; i++) {
+        temp[i] = data[i];
+    }
+
+    // Sort lower half of array 
+    mergeSortRecursive(temp, data, low, middle - 1);
+    // sort upper half of array 
+    mergeSortRecursive(data, temp, middle, high);
+    // merge halves together
+    merge(data, temp, low, middle, high);
+};
+
+void Mesh::mergeSort(Array<MeshAlg::Edge>& data) {
+    Array<MeshAlg::Edge> temp;
+    temp.resize(data.size());
+    mergeSortRecursive(data, temp, 0, data.size() - 1);
+};
 
 class AngledVertex {
 public:
@@ -379,17 +396,17 @@ void Mesh::bevelEdges2(float bump) {
 
         //Calculate vector for v1:
         //Take midpoint of v2 and v3
-        Vector3 mid((v2+v3)/2.0);
+        Vector3 mid((v2 + v3) / 2.0);
         //Subtract from v1 to create new vector
         Vector3 vec(v1 - mid);
         //shift v1 by new vector * bump in direction
         v1 = v1 - normalize(vec)*bump;
 
-        mid = (v1+v3)/2.0;
+        mid = (v1 + v3) / 2.0;
         vec = v2 - mid;
         v2 = v2 - normalize(vec)*bump;
 
-        mid = (v2+v1)/2.0;
+        mid = (v2 + v1) / 2.0;
         vec = v3 - mid;
         v3 = v3 - normalize(vec)*bump;
 
@@ -409,7 +426,7 @@ void Mesh::bevelEdges2(float bump) {
         //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 2], i + 2);
         faceIndexMap[i / 3].set(m_indexArray[i + 2], i + 2);
     }
-    
+
     //Iterate through edges. For each edge, find the 4 points associated with it, via indexing. Construct 2 new triangles. 
     for (int i = 0; i < edgeArray.size(); ++i) {
 
@@ -432,7 +449,7 @@ void Mesh::bevelEdges2(float bump) {
 
     //Now iterate through the vertices
      //Assume that we're working with a topologicalically closed shape, and every vertex is in at least 3 triangles.
-   for (int i = 0; i < vertexArray.size(); ++i) {
+    for (int i = 0; i < vertexArray.size(); ++i) {
         //use indexMap[i]
 
         //Draw polygon
@@ -441,39 +458,39 @@ void Mesh::bevelEdges2(float bump) {
 
        //1. project them into the plane of the normal (i.e., generate an arbitrary coordinate from from the normal as the z axis; 
        //G3D has several routines for this; and then call cframe::pointToObjectSpace and only keep the xy coordinates or whatever the permutation is)
-       Vector3 vNorm(vertexNormalArray[i]);
-       
-       Vector3 x(1,0,0);
-       if(abs(dot(x,vNorm) > .9)){
-           x = Vector3(0,1,0);
-       }
-       Vector3 y = normalize(vNorm.cross(x));
-       x = y.cross(vNorm);
+        Vector3 vNorm(vertexNormalArray[i]);
 
-       Array<AngledVertex> angles;
-       //2. use atan2 to compute the angle in that plane to each point
-       Vector3 sum(0.0, 0, 0);
-       for (int j = 0; j <indexMap[i].size(); ++j){
-           sum += newVertices[indexMap[i][j]];
-       }
-       Vector3 C = (1.0/indexMap[i].size())*sum;
-       for (int j = 0; j <indexMap[i].size(); ++j){
+        Vector3 x(1, 0, 0);
+        if (abs(dot(x, vNorm) > .9)) {
+            x = Vector3(0, 1, 0);
+        }
+        Vector3 y = normalize(vNorm.cross(x));
+        x = y.cross(vNorm);
+
+        Array<AngledVertex> angles;
+        //2. use atan2 to compute the angle in that plane to each point
+        Vector3 sum(0.0, 0, 0);
+        for (int j = 0; j < indexMap[i].size(); ++j) {
+            sum += newVertices[indexMap[i][j]];
+        }
+        Vector3 C = (1.0 / indexMap[i].size())*sum;
+        for (int j = 0; j < indexMap[i].size(); ++j) {
             int myIndex = indexMap[i][j];
             Vector3 a(newVertices[myIndex] - C);
             AngledVertex av;
-            av.angle = atan2(dot(y,a),dot(x,a));
+            av.angle = atan2(dot(y, a), dot(x, a));
             av.index = myIndex;
             angles.append(av);
-       }
-       //3. sort the points by angle
-       angles.sort(SORT_INCREASING);
-       
-       //4. connect them all in that order! 
-       int point1 = angles[0].index;
-       for (int j = 1; j < indexMap[i].size()-1; ++j){
-            newIndices.append(point1, angles[j].index, angles[j+1].index);
-       }
-   }
+        }
+        //3. sort the points by angle
+        angles.sort(SORT_INCREASING);
+
+        //4. connect them all in that order! 
+        int point1 = angles[0].index;
+        for (int j = 1; j < indexMap[i].size() - 1; ++j) {
+            newIndices.append(point1, angles[j].index, angles[j + 1].index);
+        }
+    }
 
     m_vertexPositions = newVertices;
     m_indexArray = newIndices;
@@ -501,7 +518,6 @@ void Mesh::toObj(String filename) {
     file.printf(STR(\n));
     file.commit();
 }
-
 
 void Mesh::merge(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int middle, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2) {
     int ri = low;

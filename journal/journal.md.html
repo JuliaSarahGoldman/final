@@ -7,6 +7,59 @@
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
 
+2016-11-27: Edge Collapse works better and faster
+=============================================================
+Around 16000 edge collapses
+![top view](2016-11-27_007_starter_r2502_g3d_r981__top_view.jpg)
+
+![top - wireframe](2016-11-27_008_starter_r2502_g3d_r981__top_-_wireframe.jpg)
+
+Instead of recomputing the edge to collapse in each iteration, we now sort the edges in decreasing order by the angle between their face normals, and pick however many edges we want to collapse in decreasing order of that angle.
+
+We currently use another overload of mergeSort to sort the edges, I tried using the built in array sort, but couldn't get it to accept my lessThan function no matter what. We should ask Morgan about this, since we probably want to ultimately get rid of our mergeSorts. 
+
+There is some weirdness with the winding order since some faces "disappear", especially around the ears.
+
+2016-11-27: 6000 edges collapsed
+=============================================================
+
+![front](2016-11-27_003_starter_r2502_g3d_r981__6000_eges_collapsed.jpg)
+
+![wireframe - front](2016-11-27_004_starter_r2502_g3d_r981__wireframe_-_6000_edges_collapsed.jpg)
+
+![side](2016-11-27_005_starter_r2502_g3d_r981__side.jpg)
+
+![wireframe - side](2016-11-27_006_starter_r2502_g3d_r981__wireframe_-_side.jpg)
+
+2016-11-27: Edge Collapsed Bunny
+=============================================================
+
+![1000 edges collapsed from the bunny's chest fur](2016-11-27_001_starter_r2502_g3d_r981__1000_edges_collapsed_from_the_bunny_s_chest_fur.jpg)
+
+Needs radical optimization. It's still very slow.
+
+![Wireframe view](2016-11-27_002_starter_r2502_g3d_r981__Wireframe_view.jpg)
+
+I'm not sure how I feel about the fact that it looks like the edges now "meet"
+at a given region. Maybe that's how it's supposed to work? Need to check for
+potential bugs.
+
+2016-11-27: We have a bunny!
+=============================================================
+
+![Bunny](2016-11-27_000_starter_r2502_g3d_r981__Bunny.jpg)
+
+We can now load single mesh models using the ArticulatedModel API. Mesh takes in
+a String filename that is passed into ArticuladedModel::fromFile() to load the
+model, we then get the first ArticulatedModel::Geometry from
+ArticulatedModel::geometryArray() and the first ArticulatedModel::Mesh() from
+ArticulatedModel::meshArray(). We then use the Geometry and Mesh we got to set
+our m_vertexPositions and our m_indexArray, which are then converted into an OBJ
+file by toObj().
+
+Currently this only works well for single mesh models since we only extract the first mesh and first geometry from the articulated model. However this can be solved by defining a version of toObj that takes in a const Array<ArticulatedModel::Geometry*>& and a const Array< ArticulatedModel::Mesh*>& used to output an obj file for the whole model. 
+
+
 
 2016-11-21: Edge Collapsing by angle
 =============================================================

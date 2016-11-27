@@ -74,7 +74,7 @@ void App::onInit() {
     developerWindow->cameraControlWindow->moveTo(Point2(developerWindow->cameraControlWindow->rect().x0(), 0));
     loadScene(
         //"G3D Sponza"
-        "Ground" // Load something simple
+        "Bunny" // Load something simple
         //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
     );
 }
@@ -115,7 +115,8 @@ void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& co
                     model = "planetModel";
                 };
             ));*/
-    } else {
+    }
+    else {
         // Change the model on the existing planet entity
         dynamic_pointer_cast<VisibleEntity>(planet)->setModel(planetModel);
     }
@@ -125,26 +126,58 @@ void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& co
 }
 
 void App::makePentagon() {
+    Array<Vector3> vertices = Array<Vector3>();
+    Array<Vector3int32> faces = Array<Vector3int32>();
     Array<Vector3> vertices1(Vector3(0, 0, -2), Vector3(0, 2, -2), Vector3(-2, 0, -2), Vector3(-1, -2, -2), Vector3(1, -2, -2), Vector3(2, 0, -2));
     Array<Vector3int32> indices1(Vector3int32(0, 1, 2), Vector3int32(0, 2, 3), Vector3int32(0, 3, 4), Vector3int32(0, 4, 5), Vector3int32(0, 5, 1));
+    Planet planet;
+    planet.writeSphere("pentagon", 12.0f, 5, vertices, faces);
+    //m_myMesh = Mesh::create(vertices, faces);
+    
     m_myMesh = Mesh::create(vertices1, indices1);
+    m_myMesh->toObj("pentagon");
 
-    m_myMesh->toObj("pentagon.obj");
-
+    loadScene("Pentagon");
     GuiPane* pentPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
 
     // Example of how to add debugging controls
     pentPane->addLabel("Collapse Edges");
+    pentPane->addNumberBox("# edges", &m_edgesToCollapse, "",
+        GuiTheme::LINEAR_SLIDER, 0, 1000)->setUnitsSize(1);
 
-    pentPane->addButton("Collapse one edge", [this]() {
-        m_myMesh->collapseEdges(1);
-        m_myMesh->toObj("pentagon.obj");
+    pentPane->addButton("Collapse!", [this]() {
+        m_myMesh->collapseEdges(200);
+        m_myMesh->toObj("pentagon");
         G3D::ArticulatedModel::clearCache();
-        loadScene("Planet");
+        loadScene("Pentagon");
 
     });
 
     pentPane->pack();
+}
+
+void App::makeBunny(const GuiControl* leftPane) {
+    m_myMesh = Mesh::create("bunny.ifs");
+    m_myMesh->toObj("bunny");
+
+    loadScene("Bunny");
+    GuiPane* bunnyPane = debugPane->addPane("Collapse Edges", GuiTheme::ORNATE_PANE_STYLE);
+
+    // Example of how to add debugging controls
+    bunnyPane->addLabel("Collapse Edges");
+
+    bunnyPane->addNumberBox("# edges", &m_edgesToCollapse, "",
+        GuiTheme::LINEAR_SLIDER, 0, 1000)->setUnitsSize(1);
+
+    bunnyPane->addButton("Collapse!", [this]() {
+        m_myMesh->collapseEdges(m_edgesToCollapse);
+        m_myMesh->toObj("bunny");
+        G3D::ArticulatedModel::clearCache();
+        loadScene("Bunny");
+
+    });
+    bunnyPane->moveRightOf(leftPane, 4.0);
+    bunnyPane->pack();
 }
 
 void App::makePlanetGUI() {
@@ -230,9 +263,9 @@ void App::makePlanetGUI() {
             image4->save("image4.png");
 
             loadScene("Ground");
-            addPlanetToScene(mesh, "ocean", Point3(0,0,0), Color3(0,0,1));
-            addPlanetToScene(mesh2, "land", Point3(0,0,0), Color3(0,1,0));
-            addPlanetToScene(mesh3, "mountain", Point3(0,0,0), Color3(.5,.5,.5)); 
+            addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));
+            addPlanetToScene(mesh2, "land", Point3(0, 0, 0), Color3(0, 1, 0));
+            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));
 
             //loadScene("Planet");
 
@@ -282,7 +315,7 @@ void App::makeHeightfield() {
             image = Image::create(640, 640, ImageFormat::RGBA8());
             for (int y = 0; y < image->height(); ++y) {
                 for (int x = 0; x < image->width(); ++x) {
-                    image->set(x, y, lerp(Color3(0.2f, 0.3f, 0.7f), Color3(1.0f), noise.sampleFloat(x, y, x+y, 3)));
+                    image->set(x, y, lerp(Color3(0.2f, 0.3f, 0.7f), Color3(1.0f), noise.sampleFloat(x, y, x + y, 3)));
                 }
             }
             image->save("../data-files/noise.png");
@@ -329,7 +362,7 @@ void App::makeGUI() {
     infoPane->addLabel("in App::onInit().");
     infoPane->addButton("Exit", [this]() { m_endProgram = true; });
     infoPane->pack();
-    
+
     /*Planet planet;
     shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
     shared_ptr<Array<Vector3int32>> faces = std::make_shared<Array<Vector3int32>>();
@@ -345,19 +378,20 @@ void App::makeGUI() {
     planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);*/
 
     //makeHeightfield();
-    makePlanetGUI();
-    
-    Array<Vector3> verticeArray(Vector3(0,0,0), Vector3(1,0,0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
-    Array<Vector3int32> triangles(Vector3int32(3,1,0), Vector3int32(1,2,0), Vector3int32(3,2,1), Vector3int32(3,0,2));
-    
-    //Mesh mesh(*vertices, *faces);
-    //Mesh mesh(verticeArray, triangles);
-    //mesh.bevelEdges(.3);
-    //mesh.toObj("wtf.obj");
+    //makePlanetGUI();
+    makeBunny(infoPane);
 
-    //loadScene("Ground");
-    //mesh.toArticulatedModel("test");
-    //addPlanetToScene(mesh);
+    /* Array<Vector3> verticeArray(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
+     Array<Vector3int32> triangles(Vector3int32(3, 1, 0), Vector3int32(1, 2, 0), Vector3int32(3, 2, 1), Vector3int32(3, 0, 2));*/
+
+     //Mesh mesh(*vertices, *faces);
+     //Mesh mesh(verticeArray, triangles);
+     //mesh.bevelEdges(.3);
+     //mesh.toObj("wtf.obj");
+
+     //loadScene("Ground");
+     //mesh.toArticulatedModel("test");
+     //addPlanetToScene(mesh);
 
     debugWindow->pack();
     debugWindow->setRect(Rect2D::xywh(0, 0, (float)window()->width(), debugWindow->rect().height()));
