@@ -72,11 +72,11 @@ void App::onInit() {
     // developerWindow->videoRecordDialog->setScreenShotFormat("PNG");
     // developerWindow->videoRecordDialog->setCaptureGui(false);
     developerWindow->cameraControlWindow->moveTo(Point2(developerWindow->cameraControlWindow->rect().x0(), 0));
-    //loadScene(
-    //    //"G3D Sponza"
-    //    "Ground" // Load something simple
-    //    //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
-    //);
+    loadScene(
+        //"G3D Sponza"
+        "Ground" // Load something simple
+        //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
+    );
 }
 
 void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename) {
@@ -450,9 +450,9 @@ void App::makeGUI() {
     planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);*/
 
     //makeHeightfield();
-    //makePlanetGUI();
+    makePlanetGUI();
 
-     makeBunny(infoPane);
+    // makeBunny(infoPane);
     //makeLittleHeightfield(infoPane);
     //makePentagon();
 
