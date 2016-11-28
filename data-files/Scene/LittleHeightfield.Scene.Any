@@ -17,7 +17,7 @@
             texture = "cubemap/whiteroom/whiteroom-*.png";
        };
 
-        BUNNY = VisibleEntity {
+        Heightfield = VisibleEntity {
             model = "hf";
             frame = CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 0, 0);
         };

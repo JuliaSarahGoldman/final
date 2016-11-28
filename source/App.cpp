@@ -72,11 +72,11 @@ void App::onInit() {
     // developerWindow->videoRecordDialog->setScreenShotFormat("PNG");
     // developerWindow->videoRecordDialog->setCaptureGui(false);
     developerWindow->cameraControlWindow->moveTo(Point2(developerWindow->cameraControlWindow->rect().x0(), 0));
-    loadScene(
-        //"G3D Sponza"
-        "Ground" // Load something simple
-        //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
-    );
+    //loadScene(
+    //    //"G3D Sponza"
+    //    "Ground" // Load something simple
+    //    //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
+    //);
 }
 
 void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename) {
@@ -140,8 +140,8 @@ void App::makePentagon() {
     Array<Vector3int32> faces = Array<Vector3int32>();
     Array<Vector3> vertices1(Vector3(0, 0, -2), Vector3(0, 2, -2), Vector3(-2, 0, -2), Vector3(-1, -2, -2), Vector3(1, -2, -2), Vector3(2, 0, -2));
     Array<Vector3int32> indices1(Vector3int32(0, 1, 2), Vector3int32(0, 2, 3), Vector3int32(0, 3, 4), Vector3int32(0, 4, 5), Vector3int32(0, 5, 1));
-    Planet planet;
-    planet.writeSphere("pentagon", 12.0f, 5, vertices, faces);
+    //Planet planet;
+    //planet.writeSphere("pentagon", 12.0f, 5, vertices, faces);
     //m_myMesh = Mesh::create(vertices, faces);
 
     m_myMesh = Mesh::create(vertices1, indices1);
@@ -151,12 +151,12 @@ void App::makePentagon() {
     GuiPane* pentPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
 
     // Example of how to add debugging controls
-    pentPane->addLabel("Collapse Edges");
+    pentPane->addLabel("Pentagon - Collapse Edges");
     pentPane->addNumberBox("# edges", &m_edgesToCollapse, "",
-        GuiTheme::LINEAR_SLIDER, 0, 1000)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0, 20000)->setUnitsSize(1);
 
     pentPane->addButton("Collapse!", [this]() {
-        m_myMesh->collapseEdges(200);
+        m_myMesh->collapseEdges(m_edgesToCollapse);
         m_myMesh->toObj("pentagon");
         G3D::ArticulatedModel::clearCache();
         loadScene("Pentagon");
@@ -177,7 +177,7 @@ void App::makeBunny(const GuiControl* leftPane) {
     bunnyPane->addLabel("Collapse Edges");
 
     bunnyPane->addNumberBox("# edges", &m_edgesToCollapse, "",
-        GuiTheme::LINEAR_SLIDER, 0, 1000)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0, 20000)->setUnitsSize(1);
 
     bunnyPane->addButton("Collapse!", [this]() {
         m_myMesh->collapseEdges(m_edgesToCollapse);
@@ -450,10 +450,11 @@ void App::makeGUI() {
     planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);*/
 
     //makeHeightfield();
-    makePlanetGUI();
+    //makePlanetGUI();
 
-    // makeBunny(infoPane);
+     makeBunny(infoPane);
     //makeLittleHeightfield(infoPane);
+    //makePentagon();
 
      Array<Vector3> verticeArray(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
      Array<Vector3int32> triangles(Vector3int32(3, 1, 0), Vector3int32(1, 2, 0), Vector3int32(3, 2, 1), Vector3int32(3, 0, 2));

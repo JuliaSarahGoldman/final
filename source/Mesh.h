@@ -28,24 +28,12 @@ protected:
 
     MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data);
 
-
-    static void Mesh::merge(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int middle, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2);
-    static void Mesh::mergeSortRecursive(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2);
-    static void Mesh::mergeSort(SmallArray<float, 6>& data, SmallArray<int, 6>& along);
-
     void merge(Array<MeshAlg::Edge>& data, const Array<MeshAlg::Edge>& temp, int low, int middle, int hight);
     void mergeSortRecursive(Array<MeshAlg::Edge>& data, Array<MeshAlg::Edge>& temp, int low, int hight);
     void mergeSort(Array<MeshAlg::Edge>& data);
 
 public:
-    void addVertex(const Vector3& vertex);
-    void addVertex(const Array<Vector3>& vertexList);
-
-    void addIndex(int index);
-    void addIndex(const Array<int>& indexList);
-
-    void addVertex(const Vector3& vertex, int index);
-    void addVertex(const Array<Vector3>& vertexList, const Array<int>& indexList);
+    static int edgeLength(const MeshAlg::Edge& edge, const Array<Vector3>& vertexArray);
 
     void computeAdjacency(Array<MeshAlg::Face>& faceArray,
         Array<MeshAlg::Edge>& edgeArray = Array<MeshAlg::Edge>(),

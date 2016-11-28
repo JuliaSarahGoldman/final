@@ -34,32 +34,6 @@ std::shared_ptr<Mesh> Mesh::create(const String& filename) {
     return std::shared_ptr<Mesh>(new Mesh(filename));
 }
 
-void Mesh::addVertex(const Vector3& vertex) {
-    m_vertexPositions.append(vertex);
-};
-
-void Mesh::addVertex(const Array<Vector3>& vertexList) {
-    m_vertexPositions.append(vertexList);
-};
-
-void Mesh::addIndex(int index) {
-    m_indexArray.append(index);
-};
-
-void Mesh::addIndex(const Array<int>& indexList) {
-    m_indexArray.append(indexList);
-};
-
-void Mesh::addVertex(const Vector3& vertex, int index) {
-    addVertex(vertex);
-    addIndex(index);
-};
-
-void Mesh::addVertex(const Array<Vector3>& vertexList, const Array<int>& indexList) {
-    addVertex(vertexList);
-    addIndex(indexList);
-};
-
 void Mesh::computeAdjacency(Array<MeshAlg::Face>& faceArray, Array<MeshAlg::Edge>& edgeArray, Array<MeshAlg::Vertex>& vertexArray) {
     //debugPrintf(STR(%d %d \n), m_indexArray.size(), m_vertexPositions.size());
     MeshAlg::computeAdjacency(m_vertexPositions, m_indexArray, faceArray, edgeArray, vertexArray);
@@ -76,6 +50,9 @@ void Mesh::computeFaceNormals(Array<Vector3>& faceNormals, bool normalize) {
     MeshAlg::computeFaceNormals(m_vertexPositions, faceArray, faceNormals, normalize);
 };
 
+int Mesh::edgeLength(const MeshAlg::Edge& edge, const Array<Vector3>& vertexArray) {
+    return length(vertexArray[edge.vertexIndex[0]] - vertexArray[edge.vertexIndex[1]]);
+};
 
 int Mesh::edgeLength(const MeshAlg::Edge& edge) {
     return length(m_vertexPositions[edge.vertexIndex[0]] - m_vertexPositions[edge.vertexIndex[1]]);
@@ -86,94 +63,91 @@ int Mesh::edgeLength(int i0, int i1) {
 };
 
 int computeAngle(const Vector3& v1, const Vector3& v2) {
-    return G3D::acos(v1.dot(v2) / (length(v1)*length(v2)));
+     return G3D::acos(v1.dot(v2) / (length(v1)*length(v2)));
 }
 
 bool Mesh::greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2) {
-    if (elem1.boundary() || elem2.boundary()) {
-        return edgeLength(elem1) < edgeLength(elem2);
-    }
+    debugAssertM(!elem1.boundary() && !elem2.boundary(), "Boundary Edge encountered!");
     int x1(computeAngle(m_faceNormals[elem1.faceIndex[0]], m_faceNormals[elem1.faceIndex[1]]));
     int x2(computeAngle(m_faceNormals[elem2.faceIndex[0]], m_faceNormals[elem2.faceIndex[1]]));
     return x1 > x2;
 }
 
-MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data) {
 
-    computeFaceNormals(m_faceNormals);
+class ComparableEdge {
+protected:
+    //MeshAlg::Edge& edge;
+    //Array<Vector3>& faceNormals;
+    //ComparableEdge(const MeshAlg::Edge& e, const Array<Vector3>& fn) {
+    //    edge = e;
+    //    faceNormals = fn;
+    //}
+public:
+    //static shared_ptr<ComparableEdge> create(const MeshAlg::Edge& e, const Array<Vector3>& fn) {
+    //     return std::shared_ptr<ComparableEdge>(new ComparableEdge(e, fn));
+    // }
+    MeshAlg::Edge edge = MeshAlg::Edge();
+    Array<Vector3> faceNormals = Array<Vector3>();
 
-    MeshAlg::Edge toReturn(data[Random::threadCommon().integer(0, data.size() - 1)]);
-    while (toReturn.boundary()) {
-        toReturn = data[Random::threadCommon().integer(0, data.size() - 1)];
+    bool operator>(const ComparableEdge& other) const {
+        int x1(computeAngle(faceNormals[edge.faceIndex[0]], faceNormals[edge.faceIndex[1]]));
+        int x2(computeAngle(faceNormals[other.edge.faceIndex[0]], faceNormals[other.edge.faceIndex[1]]));
+        return x1 > x2;
     }
 
-    Vector3 fn0(m_faceNormals[toReturn.faceIndex[0]]);
-    Vector3 fn1(m_faceNormals[toReturn.faceIndex[1]]);
-
-    int maxAngle(computeAngle(fn0, fn1));
-
-    for (int i(0); i < data.size(); ++i) {
-        MeshAlg::Edge curEdge(data[i]);
-        if (!curEdge.boundary()) {
-            fn0 = m_faceNormals[curEdge.faceIndex[0]];
-            fn1 = m_faceNormals[curEdge.faceIndex[1]];
-
-            int curAngle(computeAngle(fn0, fn1));
-            if (maxAngle < curAngle) {
-                toReturn = curEdge;
-            }
-            else if (maxAngle == curAngle) {
-                toReturn = edgeLength(toReturn) < edgeLength(curEdge) ? toReturn : curEdge;
-            }
-        }
+    bool operator<(const ComparableEdge& other) const {
+        int x1(computeAngle(faceNormals[edge.faceIndex[0]], faceNormals[edge.faceIndex[1]]));
+        int x2(computeAngle(faceNormals[other.edge.faceIndex[0]], faceNormals[other.edge.faceIndex[1]]));
+        return x1 < x2;
     }
-    return toReturn;
-}
-
-
-
+};
 
 void Mesh::collapseEdges(int numEdges) {
     Array<MeshAlg::Edge> edges;
     computeAdjacency(Array<MeshAlg::Face>(), edges);
+    computeFaceNormals(m_faceNormals);
 
+    Array<MeshAlg::Edge> insideEdges;
+    Array<ComparableEdge> compEdges;
     for (int i(0); i < edges.size(); ++i) {
-        if (edges[i].boundary()) {
-            edges.remove(i);
-        }
-    }
-    mergeSort(edges);
-    numEdges = min(numEdges, edges.size());
-    for (int x(0); x < numEdges; ++x) {
-        int index0(edges[x].vertexIndex[0]);
-        int index1(edges[x].vertexIndex[1]);
-        
-        for (int j(0); j < m_indexArray.size(); ++j) {
-            if (m_indexArray[j] == index0 || m_indexArray[j] == index1) {
-                m_indexArray[j] = min(index0, index1);
-            }
-        }
-
+        if (!edges[i].boundary()) {
+            //ComparableEdge ce;
+            //ce.edge = edges[i];
+            //ce.faceNormals = m_faceNormals;
+            //compEdges.append(ce);
+            insideEdges.append(edges[i]);
+        } 
     }
 
-    //Array<MeshAlg::Edge> edges;
-    //for (int i(0); i < numEdges; ++i) {
-    //    computeAdjacency(Array<MeshAlg::Face>(), edges);
-
-    //    if (edges.size() < 1) return;
-    //    numEdges = min(numEdges, edges.size());
-
-    //    MeshAlg::Edge collapsedEdge(toCollapse(edges));
-
-    //    int index0(collapsedEdge.vertexIndex[0]);
-    //    int index1(collapsedEdge.vertexIndex[1]);
+    //compEdges.sort(SORT_DECREASING);
+    //
+    //numEdges = min(numEdges, compEdges.size());
+    //for (int x(0); x < numEdges; ++x) {
+    //    int index0(compEdges[x].edge.vertexIndex[0]);
+    //    int index1(compEdges[x].edge.vertexIndex[1]);
 
     //    for (int j(0); j < m_indexArray.size(); ++j) {
     //        if (m_indexArray[j] == index0 || m_indexArray[j] == index1) {
     //            m_indexArray[j] = min(index0, index1);
     //        }
     //    }
+
     //}
+
+    mergeSort(insideEdges);
+    numEdges = min(numEdges, insideEdges.size());
+    for (int x(0); x < numEdges; ++x) {
+        int index0(insideEdges[x].vertexIndex[0]);
+        int index1(insideEdges[x].vertexIndex[1]);
+        m_vertexPositions[index0] = m_vertexPositions[index1];
+        for (int j(0); j < m_indexArray.size(); ++j) {
+            if (m_indexArray[j] == index0) {
+                m_indexArray[j] = index1;
+            }
+        }
+
+    }
+    Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, Welder::Settings());
 };
 
 void Mesh::merge(Array<MeshAlg::Edge>& data, const Array<MeshAlg::Edge>& temp, int low, int middle, int high) {
@@ -346,6 +320,7 @@ void Mesh::bevelEdges(float bump) {
             av.index = myIndex;
             angles.append(av);
         }
+
         //3. sort the points by angle
         angles.sort(SORT_INCREASING);
 
@@ -526,58 +501,6 @@ void Mesh::toObj(String filename) {
     }
     file.printf(STR(\n));
     file.commit();
-}
-
-void Mesh::merge(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int middle, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2) {
-    int ri = low;
-    int ti = low;
-    int di = middle;
-
-    // While two lists are not empty, merge smaller value
-    while (ti < middle && di <= high) {
-        if (data[di] < temp[ti]) {
-            along[ri] = along[di];
-            data[ri++] = data[di++]; // smaller is in high data
-        }
-        else {
-            along[ri] = along[ti];
-            data[ri++] = temp[ti++]; // smaller is in temp
-        }
-    }
-
-    // Possibly some values left in temp array
-    while (ti < middle) {
-        along[ri] = along[ti];
-        data[ri++] = temp[ti++];
-    }
-    // ...or some values left in correct place in data array
-}
-
-void Mesh::mergeSortRecursive(SmallArray<float, 6>& data, SmallArray<float, 6>& temp, int low, int high, SmallArray<int, 6>& along, SmallArray<int, 6>& temp2) {
-    int n = high - low + 1;
-    int middle = low + n / 2;
-
-    if (n < 2) return;
-    // move lower half of data into temporary storage
-    for (int i = low; i < middle; i++) {
-        temp[i] = data[i];
-        temp2[i] = along[i];
-    }
-
-    // Sort lower half of array 
-    mergeSortRecursive(temp, data, low, middle - 1, along, temp2);
-    // sort upper half of array 
-    mergeSortRecursive(data, temp, middle, high, along, temp2);
-    // merge halves together
-    merge(data, temp, low, middle, high, along, temp2);
-}
-
-void Mesh::mergeSort(SmallArray<float, 6>& data, SmallArray<int, 6>& along) {
-    SmallArray<float, 6> newArray;
-    newArray.resize(data.size());
-    SmallArray<int, 6> newArray2;
-    newArray2.resize(data.size());
-    mergeSortRecursive(data, newArray, 0, data.size() - 1, along, newArray2);
 }
 
 shared_ptr<Model> Mesh::toArticulatedModel(String name, Color3& color) {

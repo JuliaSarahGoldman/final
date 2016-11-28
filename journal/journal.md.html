@@ -6,6 +6,13 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
+2016-11-28: Edge Collapsing
+=============================================================
+Fixing Winding order:
+Edge collapse doesn't necessarily preserve the winding order of the faces, thus creating holes in the mesh. A way to fix it may be outlined [here](http://stackoverflow.com/questions/27049163/mesh-simplification-edge-collapse-conditions).
+
+Using built in sort: 
+I changed the implementation to use the built in sort, however, for the bunny it turned out to be extremely slow, since it required me to copy assign the face normal array for each edge. I tried to solve it by having the faceNormal array of ComparableEdges be a shared_ptr, but that does not work since we shouldn't assign an already initialized faceNormal array to a shared_ptr, which is what we would need to do. I also tried making it a reference, but it also didn't wrok. If we want to use the built in sort for the edge collapsing I'll need to figure out how to better refactor the code. 
 
 
 2016-11-28: Mapping
