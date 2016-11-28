@@ -18,6 +18,8 @@ protected:
     Array<int> m_indexArray;
     Array<Vector3int32> m_triArray;
     Array<Vector3> m_faceNormals;
+    Array<Vector3> m_vertexNormals;
+    bool m_hasFakeNormals = false;
 
     int edgeLength(const MeshAlg::Edge& edge);
     int Mesh::edgeLength(int i0, int i1);
@@ -69,6 +71,7 @@ public:
     void toObj(String filename);
 
     shared_ptr<Model> toArticulatedModel(String name, Color3& color);
+    shared_ptr<Model> toArticulatedModel(String name, String anyStr, int width, int height);
 
     static std::shared_ptr<Mesh> Mesh::create(const String& filename);
     static std::shared_ptr<Mesh> create(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);

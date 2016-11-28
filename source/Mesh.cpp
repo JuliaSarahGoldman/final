@@ -10,6 +10,7 @@ Mesh::Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& tri
     m_vertexPositions = vertexPositions;
     m_triArray = triArray;
     computeFaceNormals(m_faceNormals);
+    m_vertexNormals = Array<Vector3>();
 };
 
 Mesh::Mesh(const String& filename) {
@@ -232,7 +233,7 @@ public:
         return angle < other.angle;
     }
 };
-
+/*
 void Mesh::bevelEdges(float bump) {
     //Step 1: Explode the planet
     Array<Vector3> newVertices;
@@ -314,7 +315,7 @@ void Mesh::bevelEdges(float bump) {
         float mag = f1n.magnitude()*f1n.magnitude();
         float angle = acosf(dot(f1n,f2n)/mag)/2.0;
         float radius = sin(angle)*bump;
-        */
+        
         //Draw polygon
         //int iOff = newIndices.size();
 
@@ -357,7 +358,7 @@ void Mesh::bevelEdges(float bump) {
 
     m_vertexPositions = newVertices;
     m_indexArray = newIndices;
-}
+}*/
 
 //Bevel Edges Without Blowing Out the planet
 void Mesh::bevelEdges2(float bump) {
@@ -492,6 +493,14 @@ void Mesh::bevelEdges2(float bump) {
         }
     }
 
+    //Fill the vertex normal array for the new vertices
+    //Since they're in order, each vertex index divided by 3 should give the appropriate face index
+    m_vertexNormals.resize(newVertices.size());
+    for (int i = 0; i < newVertices.size(); ++i){
+        m_vertexNormals[i] = faceNormalArray[i/3];
+    }
+    m_hasFakeNormals = true;
+
     m_vertexPositions = newVertices;
     m_indexArray = newIndices;
 }
@@ -572,6 +581,11 @@ void Mesh::mergeSort(SmallArray<float, 6>& data, SmallArray<int, 6>& along) {
 }
 
 shared_ptr<Model> Mesh::toArticulatedModel(String name, Color3& color) {
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
+    return toArticulatedModel(name, anyStr, 1, 1);
+}
+
+shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width, int height) {
     const shared_ptr<ArticulatedModel>& model = ArticulatedModel::createEmpty(name);
     ArticulatedModel::Part*     part = model->addPart("root");
     ArticulatedModel::Geometry* geometry = model->addGeometry("geom");
@@ -579,7 +593,7 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, Color3& color) {
 
     //Any any = Any::parse("UniversalMaterial::Specification { lambertian = Color3(" + String(color.r) + ", " + String(color.g) + ", " + String(color.b) + "); }");
     //String test = (String) std::to_string(color.r);
-    String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
+    //String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
     Any any = Any::parse(anyStr);
     mesh->material = UniversalMaterial::create(any);
     /*        PARSE_ANY(
@@ -605,8 +619,28 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, Color3& color) {
         //v.texCoord0 = Vector2(0,0);
 
         // Set to NaN to trigger automatic vertex normal and tangent computation
-        v.normal = Vector3::nan();
+        if (m_hasFakeNormals){
+            v.normal = m_vertexNormals[i];
+        }
+        else{
+            v.normal = Vector3::nan();
+        }
         v.tangent = Vector4::nan();
+
+        Vector3 vertex = m_vertexPositions[i];
+
+        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
+
+        float nx = width * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
+        float ny = height * (0.5f - asinf(d.y) * 1 / pif());
+
+        int ix = (int)abs((int)nx % width);
+        int iy = (int)abs((int)ny % height);
+        //v.texCoord0 = Vector2(nx, ny);
+        //v.texCoord0 = Vector2(ix, iy);
+        v.texCoord0 = Vector2((ix*1.0)/width, (iy*1.0)/height);
+
+
     }
     for (int i = 0; i < m_indexArray.size(); ++i) {
         indexArray.append(m_indexArray[i]);

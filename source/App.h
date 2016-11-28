@@ -30,7 +30,9 @@ protected:
     void makeLittleHeightfield(const GuiControl* leftPane);
 
     void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color);
-    void App::makePlanetGUI();
+    void addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename);
+    void addPlanetToScene(Mesh& mesh, String name, Point3& position, String anyStr, int width, int height);
+    void makePlanetGUI();
 
 public:
     

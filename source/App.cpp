@@ -79,12 +79,22 @@ void App::onInit() {
     );
 }
 
+void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename) {
+    String anyStr = "UniversalMaterial::Specification { lambertian = \"" + filename + "\"; }";
+    shared_ptr<Image> im(Image::fromFile(filename));
+    addPlanetToScene(mesh, name, position, anyStr, im->width(), im->height());
+}
 
 void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color) {
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
+    addPlanetToScene(mesh, name, position, anyStr, 1, 1);
+}
+
+void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String anyStr, int width, int height) {
     // Replace any existing torus model. Models don't 
     // have to be added to the model table to use them 
     // with a VisibleEntity.
-    const shared_ptr<Model>& planetModel = mesh.toArticulatedModel(name + "Model", color);
+    const shared_ptr<Model>& planetModel = mesh.toArticulatedModel(name + "Model", anyStr, width, height);
     if (scene()->modelTable().containsKey(planetModel->name())) {
         scene()->removeModel(planetModel->name());
     }
@@ -302,6 +312,7 @@ void App::makePlanetGUI() {
             //noise.generateMountainImage(image4, 0.5f, 0.25f);
             planet.applyNoiseMountain(vertices, image, test, 3.0f, 100.0f);
             Mesh mesh3(vertices, faces);
+            //mesh3.collapseEdges(1000);
             mesh3.bevelEdges2(0.1f);
             mesh3.toObj("mountain");
 
@@ -311,9 +322,22 @@ void App::makePlanetGUI() {
             image4->save("image4.png");*/
 
             loadScene("Ground");
-            addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));
+            
+
+            /*String material1 = "UniversalMaterial::Specification { lambertian = \"space.png\"; }";
+            addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), material1, 1000, 1000);
+            String material2 = "UniversalMaterial::Specification { lambertian = \"texture2.jpg\"; }";
+            addPlanetToScene(mesh2, "land", Point3(0, 0, 0), material2, 1000, 1000);
+            String material3 = "UniversalMaterial::Specification { lambertian = \"texture.jpg\"; }";
+            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), material3, 1000, 1000);*/
+
+            /*addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));
             addPlanetToScene(mesh2, "land", Point3(0, 0, 0), Color3(0, 1, 0));
-            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));
+            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));*/
+
+            addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), "space.png");
+            addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "texture2.jpg");
+            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), "texture.jpg");
 
             //loadScene("Planet");
 
