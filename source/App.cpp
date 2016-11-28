@@ -253,24 +253,27 @@ void App::makePlanetGUI() {
             Array<Vector3> vertices = Array<Vector3>();
             Array<Vector3int32> faces = Array<Vector3int32>();
             float freq = 3.0f;
-            shared_ptr<Image> image = Image::create(1024, 1024, ImageFormat::RGBA8()); //Image::fromFile("noise.jpg"); 
-            noise.generateNoisyImage(image, 0, freq);
+            shared_ptr<Image> image = Image::create(1024, 1024, ImageFormat::RGBA8());
+            noise.generateSeaImage(image, freq);
             image->save("ocean.png");
-            planet.writeSphere("ocean", 12.5f, 3, vertices, faces);
+            planet.writeSphere("ocean", 12.5f, 5, vertices, faces);
             planet.applyNoiseWater(vertices, image);
             Mesh mesh(vertices, faces);
+            mesh.bevelEdges2(0.1f);
             mesh.toObj("ocean");
 
             vertices = Array<Vector3>();
             faces = Array<Vector3int32>();
             freq = 0.25f;
-            image = Image::create(1024, 1024, ImageFormat::RGBA8()); //Image::fromFile("noise.jpg"); 
-            noise.generateNoisyImage(image, 1, freq);
+            image = Image::create(1024, 1024, ImageFormat::RGBA8());
+            shared_ptr<Image> test = Image::create(1024, 1024, ImageFormat::RGBA8());
+            noise.generateLandImage(image, freq);
             image->save("land.png");
             planet.writeSphere("land", 12.0f, 5, vertices, faces);
-            planet.applyNoiseLand(vertices, image);
+            planet.applyNoiseLand(vertices, image, test);
+            test->save("test.png");
             Mesh mesh2(vertices, faces);
-            mesh2.bevelEdges2(0.1f);
+            mesh2.bevelEdges2(0.15f);
             mesh2.toObj("land");
 
             /*vertices = Array<Vector3>();
@@ -284,28 +287,28 @@ void App::makePlanetGUI() {
 
             vertices = Array<Vector3>();
             faces = Array<Vector3int32>();
-            planet.writeSphere("mountain", 11.5f, 6, vertices, faces);
+            planet.writeSphere("mountain", 11.5f, 5, vertices, faces);
             image = Image::create(1024, 1024, ImageFormat::RGBA8());
-            shared_ptr<Image> image2 = Image::create(1024, 1024, ImageFormat::RGBA8());
+            //shared_ptr<Image> image2 = Image::create(1024, 1024, ImageFormat::RGBA8());
             noise.generateMountainImage(image, 0.125f, 1.0f);
-            noise.generateMountainImage(image2, 0.125f, 1.0f);
+            //noise.generateMountainImage(image2, 0.125f, 1.0f);
             //planet.applyNoiseMountain(vertices, image2, 1.0f);
-            shared_ptr<Image> image3 = Image::create(1024, 1024, ImageFormat::RGBA8());
+            //shared_ptr<Image> image3 = Image::create(1024, 1024, ImageFormat::RGBA8());
             noise.generateMountainImage(image, 0.25f, 0.5f);
-            noise.generateMountainImage(image3, 0.25f, 0.5f);
+            //noise.generateMountainImage(image3, 0.25f, 0.5f);
             //planet.applyNoiseMountain(vertices, image3, 0.5f);
-            shared_ptr<Image> image4 = Image::create(1024, 1024, ImageFormat::RGBA8());
+            //shared_ptr<Image> image4 = Image::create(1024, 1024, ImageFormat::RGBA8());
             noise.generateMountainImage(image, 0.5f, 0.25f);
-            noise.generateMountainImage(image4, 0.5f, 0.25f);
-            planet.applyNoiseMountain(vertices, image, 7.0f);
+            //noise.generateMountainImage(image4, 0.5f, 0.25f);
+            planet.applyNoiseMountain(vertices, image, test, 3.0f, 100.0f);
             Mesh mesh3(vertices, faces);
             mesh3.bevelEdges2(0.1f);
             mesh3.toObj("mountain");
 
             image->save("image.png");
-            image2->save("image2.png");
+            /*image2->save("image2.png");
             image3->save("image3.png");
-            image4->save("image4.png");
+            image4->save("image4.png");*/
 
             loadScene("Ground");
             addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));

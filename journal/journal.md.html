@@ -8,6 +8,21 @@
 
 
 
+
+2016-11-27: Better Mountains
+=============================================================
+
+![](2016-11-27_013_starter_r2507_g3d_r977__.jpg)
+
+Fixed mountains by changing how we interpret the noise image.  We were
+increasing height if there was a white pixel when we should have been raising
+height if there was a black pixel.  To do this, I changed the initial value of
+bump to (1 - color.average) from just color.average.  Also added a new image
+that is getereated when we apply the land noise that acts as a test for at what
+points the land is above the ocean plane that is passed to the mountain noise
+function to make sure we don't make a mountain in the middle of the ocean.
+
+
 2016-11-27: Edge Collapse on heightfield
 =============================================================
 ![After](2016-11-27_012_starter_r2506_g3d_r981__after.jpg)

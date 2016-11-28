@@ -78,65 +78,76 @@ void Planet::applyNoiseWater(Array<Vector3>& vertices, shared_ptr<Image> image) 
 
         image->get(Point2int32(ix, iy), color);
 
-        float bump = color.average();
+        float bump = 1.0f - color.average();
         /*if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
         else if (bump < 0.3f) bump = 0.1f;
         else bump = 1.0f;*/
 
-        if (bump < 0.4f) bump = -0.2f;
-        else if(bump > 0.6f) bump = 0.2f;
-        else bump = 0.0f;
+        if (bump < 0.4f) { 
+            bump = -0.2f;
+        } else if(bump > 0.6f) {
+            bump = 0.2f;
+        } else {
+            bump = 0.0f;
+        }
 
         vertices[i] += vertex.unit() * bump;
     }
 }
 
-void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> image) {
+void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test) {
     for (int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
 
         Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
 
-        float nx = image->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
-        float ny = image->height() * (0.5f - asinf(d.y) * 1 / pif());
+        float nx = noise->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
+        float ny = noise->height() * (0.5f - asinf(d.y) * 1 / pif());
 
-        int ix = (int)abs((int)nx % image->width());
-        int iy = (int)abs((int)ny % image->height());
+        int ix = (int)abs((int)nx % noise->width());
+        int iy = (int)abs((int)ny % noise->height());
 
         Color3 color = Color3();
 
-        image->get(Point2int32(ix, iy), color);
+        noise->get(Point2int32(ix, iy), color);
 
-        float bump = color.average();
+        float bump = 1.0f - color.average();
         /*if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
         else if (bump < 0.3f) bump = 0.1f;
         else bump = 1.0f;*/
 
-        if (bump < 0.4f) bump = 0.0f;
-        else if(bump < 0.7f) bump *= 2.857f;
-        else bump = 2.0f;
+        if (bump < 0.4f) { 
+            bump = 0.0f;
+            test->set(Point2int32(ix, iy), Color1(1.0f));
+        } else if(bump < 0.7f) {
+            bump *= 2.857f;
+            test->set(Point2int32(ix, iy), Color1(0.0f));
+        } else {
+            bump = 2.0f;
+            test->set(Point2int32(ix, iy), Color1(0.0f));
+        }
 
         vertices[i] += vertex.unit() * bump;
     }
 }
 
-void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> image, float multiplier) {
+void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float power, float multiplier) {
     for (int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
 
         Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
 
-        float nx = image->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
-        float ny = image->height() * (0.5f - asinf(d.y) * 1 / pif());
+        float nx = noise->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
+        float ny = noise->height() * (0.5f - asinf(d.y) * 1 / pif());
 
-        int ix = (int)abs((int)nx % image->width());
-        int iy = (int)abs((int)ny % image->height());
+        int ix = (int)abs((int)nx % noise->width());
+        int iy = (int)abs((int)ny % noise->height());
 
         Color3 color = Color3();
 
-        image->get(Point2int32(ix, iy), color);
+        noise->get(Point2int32(ix, iy), color);
 
-        float bump = color.average();
+        float bump = 1.0f - color.average();
         /*if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
         else if (bump < 0.3f) bump = 0.1f;
         else bump = 1.0f;*/
@@ -145,11 +156,14 @@ void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> imag
                 +  0.5 * noise(2 * nx, 2 * ny);
                  + 0.25 * noise(4 * nx, 4 * ny);
                 elevation[y][x] = Math.pow(e, 3.00);*/
+        test->get(Point2int32(ix, iy), color);
 
-        if (bump > 0.8f) bump = 0.0f;
+        if (bump > 0.75f || color.average() != 0.0f) {
+            bump = 0.0f;
+        }
         //else bump *= 1.25f;
 
-        vertices[i] += vertex.unit() * pow(bump, 1.0f) * multiplier;
+        vertices[i] += vertex.unit() * pow(bump, power) * multiplier;
     }
 }
 
