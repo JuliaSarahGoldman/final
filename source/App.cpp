@@ -279,11 +279,11 @@ void App::makePlanetGUI() {
             shared_ptr<Image> test = Image::create(1024, 1024, ImageFormat::RGBA8());
             noise.generateLandImage(image, freq);
             image->save("land.png");
-            planet.writeSphere("land", 12.0f, 5, vertices, faces);
+            planet.writeSphere("land", 12.0f, m_recursionLevel, vertices, faces);
             planet.applyNoiseLand(vertices, image, test);
             test->save("test.png");
             Mesh mesh2(vertices, faces);
-            mesh2.bevelEdges2(0.15f);
+            mesh2.bevelEdges2(0.015f);
             mesh2.toObj("land");
 
             /*vertices = Array<Vector3>();
@@ -297,7 +297,7 @@ void App::makePlanetGUI() {
 
             vertices = Array<Vector3>();
             faces = Array<Vector3int32>();
-            planet.writeSphere("mountain", 11.5f, 5, vertices, faces);
+            planet.writeSphere("mountain", 11.5f, m_recursionLevel, vertices, faces);
             image = Image::create(1024, 1024, ImageFormat::RGBA8());
             //shared_ptr<Image> image2 = Image::create(1024, 1024, ImageFormat::RGBA8());
             noise.generateMountainImage(image, 0.125f, 1.0f);
@@ -313,7 +313,7 @@ void App::makePlanetGUI() {
             planet.applyNoiseMountain(vertices, image, test, 3.0f, 100.0f);
             Mesh mesh3(vertices, faces);
             //mesh3.collapseEdges(1000);
-            mesh3.bevelEdges2(0.1f);
+            mesh3.bevelEdges2(0.015f);
             mesh3.toObj("mountain");
 
             image->save("image.png");
@@ -331,13 +331,13 @@ void App::makePlanetGUI() {
             String material3 = "UniversalMaterial::Specification { lambertian = \"texture.jpg\"; }";
             addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), material3, 1000, 1000);*/
 
-            /*addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));
+            addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));
             addPlanetToScene(mesh2, "land", Point3(0, 0, 0), Color3(0, 1, 0));
-            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));*/
+            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));
 
-            addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), "space.png");
+            /*addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), "space.png");
             addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "texture2.jpg");
-            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), "texture.jpg");
+            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), "texture.jpg");*/
 
             //loadScene("Planet");
 
