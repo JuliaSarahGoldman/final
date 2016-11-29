@@ -241,10 +241,16 @@ void App::makePlanetGUI() {
 
     planetPane->setNewChildSize(240);
     planetPane->addNumberBox("Recursion Level", &m_recursionLevel, "",
-        GuiTheme::LINEAR_SLIDER, 0, 8)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 1, 8)->setUnitsSize(1);
 
-    planetPane->addNumberBox("Frequency", &m_frequency, "",
-        GuiTheme::LOG_SLIDER, 0.001f, 8.0f)->setUnitsSize(1);
+     planetPane->addNumberBox("Land Bevel", &m_landBevel, "",
+        GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
+
+      planetPane->addNumberBox("Mount Bevel", &m_mountainBevel, "",
+        GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
+
+    /*planetPane->addNumberBox("Frequency", &m_frequency, "",
+        GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
     /*
     heightfieldPane->beginRow(); {
         heightfieldPane->addTextBox("Input Image", &m_heightfieldSource)->setWidth(210);
@@ -283,7 +289,7 @@ void App::makePlanetGUI() {
             planet.applyNoiseLand(vertices, image, test);
             test->save("test.png");
             Mesh mesh2(vertices, faces);
-            mesh2.bevelEdges2(0.015f);
+            mesh2.bevelEdges2(m_landBevel);
             mesh2.toObj("land");
 
             /*vertices = Array<Vector3>();
@@ -313,7 +319,7 @@ void App::makePlanetGUI() {
             planet.applyNoiseMountain(vertices, image, test, 3.0f, 100.0f);
             Mesh mesh3(vertices, faces);
             //mesh3.collapseEdges(1000);
-            mesh3.bevelEdges2(0.015f);
+            mesh3.bevelEdges2(m_mountainBevel);
             mesh3.toObj("mountain");
 
             image->save("image.png");
@@ -336,7 +342,7 @@ void App::makePlanetGUI() {
             addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));
 
             /*addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), "space.png");
-            addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "texture2.jpg");
+            addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "texture3.jpg");
             addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), "texture.jpg");*/
 
             //loadScene("Planet");
@@ -427,13 +433,13 @@ void App::makeGUI() {
     debugWindow->setVisible(true);
     developerWindow->videoRecordDialog->setEnabled(true);
 
-    GuiPane* infoPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
+    /*GuiPane* infoPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
 
     // Example of how to add debugging controls
     infoPane->addLabel("You can add GUI controls");
     infoPane->addLabel("in App::onInit().");
     infoPane->addButton("Exit", [this]() { m_endProgram = true; });
-    infoPane->pack();
+    infoPane->pack();*/
 
     /*Planet planet;
     shared_ptr<Array<Vector3>> vertices = std::make_shared<Array<Vector3>>();
