@@ -6,6 +6,23 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
+2016-11-28: Interesting Behavior
+=============================================================
+
+![Single collapse of 20000 edges](2016-11-28_023_starter_r2534_g3d_r981__Single_collapse_of_20000_edges.jpg)
+
+![Single Collapse of 10000 edges](2016-11-28_024_starter_r2534_g3d_r981__Single_Collapse_of_10000_edges.jpg)
+
+![2 Collapses of 10000 edges each](2016-11-28_025_starter_r2534_g3d_r981__2_Collapses_of_10000_edges_each.jpg)
+
+It's important to note that the single 20000 edge collapse and the double 10000 edge collapse are not expected to look the same since the edges are resorted with each collapse. However, we can see that if we collapse once, no matter if 20000 or 10000 edges, we seem not to get "wholes" and weird artifacts in the mesh. Maybe compute adjacency between edge collapses can't be trusted? Maybe welding is not working properly? 
+
+
+2016-11-28: Fixing Winding order
+=============================================================
+Right now edgeCollapse does not collapse an edge if collapsing it creates a manifold. We still need to make sure the normals don't flip. 
+
+
 2016-11-28: Edge Collapsing
 =============================================================
 Fixing Winding order:

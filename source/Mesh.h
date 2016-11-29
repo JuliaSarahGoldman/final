@@ -24,6 +24,8 @@ protected:
     int edgeLength(const MeshAlg::Edge& edge);
     int Mesh::edgeLength(int i0, int i1);
 
+    bool isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices);
+
     bool greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2);
 
     MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data);

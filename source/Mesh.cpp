@@ -60,17 +60,60 @@ int Mesh::edgeLength(const MeshAlg::Edge& edge) {
 
 int Mesh::edgeLength(int i0, int i1) {
     return length(m_vertexPositions[i1] - m_vertexPositions[i0]);
+}
+
+bool Mesh::isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) {
+    bool toReturn(!edge.boundary());
+    if (toReturn) { // If the edge is an inside edge
+        // Check if collapsing it would generate a manifold by 
+        // checking how many end points of the adjacent edges coincide. 
+        // A manifold will be formed if there are more than two such endpoints. 
+        MeshAlg::Vertex v0(vertices[edge.vertexIndex[0]]);
+        SmallArray<int, 6> adjacentEdges0(v0.edgeIndex); //indices of edges adjacent to vertex 0
+
+        MeshAlg::Vertex v1(vertices[edge.vertexIndex[1]]);
+        SmallArray<int, 6> adjacentEdges1(v1.edgeIndex);
+
+        Array<int> endPoints0;
+        Array<int> endPoints1;
+
+        int maxSize(max(adjacentEdges0.size(), adjacentEdges1.size()));
+        // Fill both endPoints arrays
+        for (int i(0); i < maxSize; ++i) { 
+            if (i < adjacentEdges0.size()) {
+                int e0 = adjacentEdges0[i];
+                endPoints0.append(edges[e0 >= 0 ? e0 : ~e0].vertexIndex[1]);
+            }
+
+            if (i < adjacentEdges1.size()) {
+                int e1 = adjacentEdges1[i];
+                endPoints1.append(edges[e1 >= 0 ? e1 : ~e1].vertexIndex[1]);
+            }
+        }
+
+        int counter(0); // Count how many common end points there are
+        for (int i(0); i < endPoints0.size(); ++i) {
+            if (endPoints1.contains(endPoints0[i])) {
+                counter += 1;
+                //if (counter > 2) { // If there are more than 2 common end points we know this is not a collapsable edge.
+                //    break;
+                //}
+            }
+        }
+        toReturn = toReturn && (counter <= 2);
+    }
+    return toReturn;
 };
 
 int computeAngle(const Vector3& v1, const Vector3& v2) {
-     return G3D::acos(v1.dot(v2) / (length(v1)*length(v2)));
+    return G3D::acos(v1.dot(v2) / (length(v1)*length(v2)));
 }
 
 bool Mesh::greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2) {
     debugAssertM(!elem1.boundary() && !elem2.boundary(), "Boundary Edge encountered!");
     int x1(computeAngle(m_faceNormals[elem1.faceIndex[0]], m_faceNormals[elem1.faceIndex[1]]));
     int x2(computeAngle(m_faceNormals[elem2.faceIndex[0]], m_faceNormals[elem2.faceIndex[1]]));
-    return x1 > x2;
+    return abs(x1) > abs(x2);
 }
 
 
@@ -92,31 +135,33 @@ public:
     bool operator>(const ComparableEdge& other) const {
         int x1(computeAngle(faceNormals[edge.faceIndex[0]], faceNormals[edge.faceIndex[1]]));
         int x2(computeAngle(faceNormals[other.edge.faceIndex[0]], faceNormals[other.edge.faceIndex[1]]));
-        return x1 > x2;
+        return abs(x1) > abs(x2);
     }
 
     bool operator<(const ComparableEdge& other) const {
         int x1(computeAngle(faceNormals[edge.faceIndex[0]], faceNormals[edge.faceIndex[1]]));
         int x2(computeAngle(faceNormals[other.edge.faceIndex[0]], faceNormals[other.edge.faceIndex[1]]));
-        return x1 < x2;
+        return abs(x1) < abs(x2);
     }
 };
 
 void Mesh::collapseEdges(int numEdges) {
     Array<MeshAlg::Edge> edges;
-    computeAdjacency(Array<MeshAlg::Face>(), edges);
+    Array<MeshAlg::Face> faces; 
+    Array<MeshAlg::Vertex> vertices;
+    computeAdjacency(faces, edges, vertices);
     computeFaceNormals(m_faceNormals);
 
     Array<MeshAlg::Edge> insideEdges;
     Array<ComparableEdge> compEdges;
     for (int i(0); i < edges.size(); ++i) {
-        if (!edges[i].boundary()) {
+        if (isCollapsable(edges[i], faces, edges, vertices)) {
             //ComparableEdge ce;
             //ce.edge = edges[i];
             //ce.faceNormals = m_faceNormals;
             //compEdges.append(ce);
             insideEdges.append(edges[i]);
-        } 
+        }
     }
 
     //compEdges.sort(SORT_DECREASING);
@@ -139,7 +184,7 @@ void Mesh::collapseEdges(int numEdges) {
     for (int x(0); x < numEdges; ++x) {
         int index0(insideEdges[x].vertexIndex[0]);
         int index1(insideEdges[x].vertexIndex[1]);
-        m_vertexPositions[index0] = m_vertexPositions[index1];
+        //m_vertexPositions[index0] = m_vertexPositions[index1];
         for (int j(0); j < m_indexArray.size(); ++j) {
             if (m_indexArray[j] == index0) {
                 m_indexArray[j] = index1;
@@ -158,10 +203,10 @@ void Mesh::merge(Array<MeshAlg::Edge>& data, const Array<MeshAlg::Edge>& temp, i
     // While two lists are not empty, merge smaller value
     while (ti < middle && di <= high) {
         if (greaterAngle(data[di], temp[ti])) {
-            data[ri++] = data[di++]; // smaller is in high data
+            data[ri++] = data[di++]; 
         }
         else {
-            data[ri++] = temp[ti++]; // smaller is in temp
+            data[ri++] = temp[ti++]; 
         }
     }
 
@@ -258,7 +303,7 @@ void Mesh::bevelEdges(float bump) {
         faceIndexMap[i / 3].set(m_indexArray[i + 2], i + 2);
     }
 
-    //Iterate through edges. For each edge, find the 4 points associated with it, via indexing. Construct 2 new triangles. 
+    //Iterate through edges. For each edge, find the 4 points associated with it, via indexing. Construct 2 new triangles.
     for (int i = 0; i < edgeArray.size(); ++i) {
 
         //get the faceIndexes:
@@ -289,12 +334,12 @@ void Mesh::bevelEdges(float bump) {
         float mag = f1n.magnitude()*f1n.magnitude();
         float angle = acosf(dot(f1n,f2n)/mag)/2.0;
         float radius = sin(angle)*bump;
-        
+
         //Draw polygon
         //int iOff = newIndices.size();
 
 
-       //1. project them into the plane of the normal (i.e., generate an arbitrary coordinate from from the normal as the z axis; 
+       //1. project them into the plane of the normal (i.e., generate an arbitrary coordinate from from the normal as the z axis;
        //G3D has several routines for this; and then call cframe::pointToObjectSpace and only keep the xy coordinates or whatever the permutation is)
         Vector3 vNorm(vertexNormalArray[i]);
 
@@ -324,7 +369,7 @@ void Mesh::bevelEdges(float bump) {
         //3. sort the points by angle
         angles.sort(SORT_INCREASING);
 
-        //4. connect them all in that order! 
+        //4. connect them all in that order!
         int point1 = angles[0].index;
         for (int j = 1; j < indexMap[i].size() - 1; ++j) {
             newIndices.append(point1, angles[j].index, angles[j + 1].index);
@@ -471,8 +516,8 @@ void Mesh::bevelEdges2(float bump) {
     //Fill the vertex normal array for the new vertices
     //Since they're in order, each vertex index divided by 3 should give the appropriate face index
     m_vertexNormals.resize(newVertices.size());
-    for (int i = 0; i < newVertices.size(); ++i){
-        m_vertexNormals[i] = faceNormalArray[i/3];
+    for (int i = 0; i < newVertices.size(); ++i) {
+        m_vertexNormals[i] = faceNormalArray[i / 3];
     }
     m_hasFakeNormals = true;
 
@@ -542,10 +587,10 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width
         //v.texCoord0 = Vector2(0,0);
 
         // Set to NaN to trigger automatic vertex normal and tangent computation
-        if (m_hasFakeNormals){
+        if (m_hasFakeNormals) {
             v.normal = m_vertexNormals[i];
         }
-        else{
+        else {
             v.normal = Vector3::nan();
         }
         v.tangent = Vector4::nan();
@@ -561,7 +606,7 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width
         int iy = (int)abs((int)ny % height);
         //v.texCoord0 = Vector2(nx, ny);
         //v.texCoord0 = Vector2(ix, iy);
-        v.texCoord0 = Vector2((ix*1.0)/width, (iy*1.0)/height);
+        v.texCoord0 = Vector2((ix*1.0) / width, (iy*1.0) / height);
 
 
     }
