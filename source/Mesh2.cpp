@@ -45,6 +45,7 @@ void Mesh::computeNormals(const Array<MeshAlg::Face>& faceArray, const Array<Mes
 };
 
 void Mesh::computeFaceNormals(Array<Vector3>& faceNormals, bool normalize) {
+    Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, Welder::Settings());
     Array<MeshAlg::Face> faceArray;
     computeAdjacency(faceArray);
     MeshAlg::computeFaceNormals(m_vertexPositions, faceArray, faceNormals, normalize);
@@ -63,8 +64,8 @@ int Mesh::edgeLength(int i0, int i1) {
 }
 
 bool Mesh::isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) {
-    bool toReturn(!edge.boundary());
-    if (toReturn) { // If the edge is an inside edge
+    bool isInside(!edge.boundary());
+    if (isInside) { // If the edge is an inside edge
         // Check if collapsing it would generate a manifold by 
         // checking how many end points of the adjacent edges coincide. 
         // A manifold will be formed if there are more than two such endpoints. 
@@ -79,7 +80,7 @@ bool Mesh::isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& 
 
         int maxSize(max(adjacentEdges0.size(), adjacentEdges1.size()));
         // Fill both endPoints arrays
-        for (int i(0); i < maxSize; ++i) { 
+        for (int i(0); i < maxSize; ++i) {
             if (i < adjacentEdges0.size()) {
                 int e0 = adjacentEdges0[i];
                 endPoints0.append(edges[e0 >= 0 ? e0 : ~e0].vertexIndex[1]);
@@ -95,14 +96,14 @@ bool Mesh::isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& 
         for (int i(0); i < endPoints0.size(); ++i) {
             if (endPoints1.contains(endPoints0[i])) {
                 counter += 1;
-                //if (counter > 2) { // If there are more than 2 common end points we know this is not a collapsable edge.
-                //    break;
-                //}
+                if (counter > 2) { // If there are more than 2 common end points we know this is not a collapsable edge.
+                    break;
+                }
             }
         }
-        toReturn = toReturn && (counter <= 2);
+        return isInside && (counter <= 2);
     }
-    return toReturn;
+    return isInside;
 };
 
 int computeAngle(const Vector3& v1, const Vector3& v2) {
@@ -118,73 +119,54 @@ bool Mesh::greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2) 
 
 
 class ComparableEdge {
-protected:
-    //MeshAlg::Edge& edge;
-    //Array<Vector3>& faceNormals;
-    //ComparableEdge(const MeshAlg::Edge& e, const Array<Vector3>& fn) {
-    //    edge = e;
-    //    faceNormals = fn;
-    //}
 public:
-    //static shared_ptr<ComparableEdge> create(const MeshAlg::Edge& e, const Array<Vector3>& fn) {
-    //     return std::shared_ptr<ComparableEdge>(new ComparableEdge(e, fn));
-    // }
-    MeshAlg::Edge edge = MeshAlg::Edge();
-    Array<Vector3> faceNormals = Array<Vector3>();
+    MeshAlg::Edge edge;
+    Vector3 leftFaceNormal; 
+    Vector3 rightFaceNormal;
 
     bool operator>(const ComparableEdge& other) const {
-        int x1(computeAngle(faceNormals[edge.faceIndex[0]], faceNormals[edge.faceIndex[1]]));
-        int x2(computeAngle(faceNormals[other.edge.faceIndex[0]], faceNormals[other.edge.faceIndex[1]]));
+        const int x1(computeAngle(leftFaceNormal, rightFaceNormal));
+        const int x2(computeAngle(other.leftFaceNormal, other.rightFaceNormal));
         return abs(x1) > abs(x2);
     }
 
     bool operator<(const ComparableEdge& other) const {
-        int x1(computeAngle(faceNormals[edge.faceIndex[0]], faceNormals[edge.faceIndex[1]]));
-        int x2(computeAngle(faceNormals[other.edge.faceIndex[0]], faceNormals[other.edge.faceIndex[1]]));
+        const int x1(computeAngle(leftFaceNormal, rightFaceNormal));
+        const int x2(computeAngle(other.leftFaceNormal, other.rightFaceNormal));
         return abs(x1) < abs(x2);
     }
 };
 
 void Mesh::collapseEdges(int numEdges) {
+    Welder::Settings settings; 
+    settings.normalWeldRadius = 0.01;
+    Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, settings);
     Array<MeshAlg::Edge> edges;
-    Array<MeshAlg::Face> faces; 
+    Array<MeshAlg::Face> faces;
     Array<MeshAlg::Vertex> vertices;
     computeAdjacency(faces, edges, vertices);
     computeFaceNormals(m_faceNormals);
 
-    Array<MeshAlg::Edge> insideEdges;
+    //Array<MeshAlg::Edge> insideEdges;
     Array<ComparableEdge> compEdges;
     for (int i(0); i < edges.size(); ++i) {
         if (isCollapsable(edges[i], faces, edges, vertices)) {
-            //ComparableEdge ce;
-            //ce.edge = edges[i];
-            //ce.faceNormals = m_faceNormals;
-            //compEdges.append(ce);
-            insideEdges.append(edges[i]);
+            ComparableEdge ce;
+            ce.edge = edges[i];
+            ce.leftFaceNormal = m_faceNormals[edges[i].faceIndex[0]];
+            ce.rightFaceNormal = m_faceNormals[edges[i].faceIndex[1]];
+            compEdges.append(ce);
+            //insideEdges.append(edges[i]);
         }
     }
 
-    //compEdges.sort(SORT_DECREASING);
-    //
-    //numEdges = min(numEdges, compEdges.size());
-    //for (int x(0); x < numEdges; ++x) {
-    //    int index0(compEdges[x].edge.vertexIndex[0]);
-    //    int index1(compEdges[x].edge.vertexIndex[1]);
-
-    //    for (int j(0); j < m_indexArray.size(); ++j) {
-    //        if (m_indexArray[j] == index0 || m_indexArray[j] == index1) {
-    //            m_indexArray[j] = min(index0, index1);
-    //        }
-    //    }
-
-    //}
-
-    mergeSort(insideEdges);
-    numEdges = min(numEdges, insideEdges.size());
+    compEdges.sort(SORT_DECREASING);
+    
+    numEdges = min(numEdges, compEdges.size());
     for (int x(0); x < numEdges; ++x) {
-        int index0(insideEdges[x].vertexIndex[0]);
-        int index1(insideEdges[x].vertexIndex[1]);
-        //m_vertexPositions[index0] = m_vertexPositions[index1];
+        int index0(compEdges[x].edge.vertexIndex[0]);
+        int index1(compEdges[x].edge.vertexIndex[1]);
+
         for (int j(0); j < m_indexArray.size(); ++j) {
             if (m_indexArray[j] == index0) {
                 m_indexArray[j] = index1;
@@ -192,7 +174,20 @@ void Mesh::collapseEdges(int numEdges) {
         }
 
     }
-    Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, Welder::Settings());
+
+    //mergeSort(insideEdges);
+    //numEdges = min(numEdges, insideEdges.size());
+    //for (int x(0); x < numEdges; ++x) {
+    //    int index0(insideEdges[x].vertexIndex[0]);
+    //    int index1(insideEdges[x].vertexIndex[1]);
+    //    //m_vertexPositions[index0] = m_vertexPositions[index1];
+    //    for (int j(0); j < m_indexArray.size(); ++j) {
+    //        if (m_indexArray[j] == index0) {
+    //            m_indexArray[j] = index1;
+    //        }
+    //    }
+
+    //}
 };
 
 void Mesh::merge(Array<MeshAlg::Edge>& data, const Array<MeshAlg::Edge>& temp, int low, int middle, int high) {
@@ -203,10 +198,10 @@ void Mesh::merge(Array<MeshAlg::Edge>& data, const Array<MeshAlg::Edge>& temp, i
     // While two lists are not empty, merge smaller value
     while (ti < middle && di <= high) {
         if (greaterAngle(data[di], temp[ti])) {
-            data[ri++] = data[di++]; 
+            data[ri++] = data[di++];
         }
         else {
-            data[ri++] = temp[ti++]; 
+            data[ri++] = temp[ti++];
         }
     }
 
