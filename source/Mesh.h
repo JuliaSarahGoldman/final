@@ -17,7 +17,6 @@ protected:
     Array<Vector3> m_vertexPositions;
     Array<int> m_indexArray;
     Array<Vector3int32> m_triArray;
-    Array<Vector3> m_faceNormals;
     Array<Vector3> m_vertexNormals;
     bool m_hasFakeNormals = false;
 

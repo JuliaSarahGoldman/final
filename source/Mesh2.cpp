@@ -63,57 +63,134 @@ int Mesh::edgeLength(int i0, int i1) {
     return length(m_vertexPositions[i1] - m_vertexPositions[i0]);
 }
 
+bool isManifold(const MeshAlg::Edge& edge, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) {
+    // Check how many end points of the adjacent edges to edge coincide. 
+    // A manifold will be formed if there are more than two such endpoints. 
+    MeshAlg::Vertex v0(vertices[edge.vertexIndex[0]]);
+    SmallArray<int, 6> adjacentEdges0(v0.edgeIndex); //indices of edges adjacent to vertex 0
+
+    MeshAlg::Vertex v1(vertices[edge.vertexIndex[1]]);
+    SmallArray<int, 6> adjacentEdges1(v1.edgeIndex);
+
+    Array<int> endPoints0;
+    Array<int> endPoints1;
+
+    int maxSize(max(adjacentEdges0.size(), adjacentEdges1.size()));
+    // Fill both endPoints arrays
+    for (int i(0); i < maxSize; ++i) {
+        if (i < adjacentEdges0.size()) {
+            int e0 = adjacentEdges0[i];
+            endPoints0.append(edges[e0 >= 0 ? e0 : ~e0].vertexIndex[1]);
+        }
+
+        if (i < adjacentEdges1.size()) {
+            int e1 = adjacentEdges1[i];
+            endPoints1.append(edges[e1 >= 0 ? e1 : ~e1].vertexIndex[1]);
+        }
+    }
+
+    int counter(0); // Count how many common end points there are
+    for (int i(0); i < endPoints0.size(); ++i) {
+        if (endPoints1.contains(endPoints0[i])) {
+            counter += 1;
+            if (counter > 2) { // If there are more than 2 common end points we know this is not a collapsable edge.
+                break;
+            }
+        }
+    }
+    return counter > 2;
+}
+
+Array<MeshAlg::Face> findRemainingFaces(const SmallArray<int, 6>& faceIndices0, const SmallArray<int, 6>& faceIndices1, const Array<MeshAlg::Face>& faces) {
+    Array<MeshAlg::Face> remainingFaces;
+
+    int maxSize(max(faceIndices0.size(), faceIndices1.size()));
+    for (int i(0); i < maxSize; ++i) {
+        if (i < faceIndices0.size()) {
+            if (!faceIndices1.contains(faceIndices0[i])) {
+                remainingFaces.append(faces[faceIndices0[i]]);
+            }
+        }
+        if (i < faceIndices1.size()) {
+            if (!faceIndices0.contains(faceIndices1[i])) {
+                remainingFaces.append(faces[faceIndices1[i]]);
+            }
+        }
+    }
+
+    return remainingFaces;
+}
+
+Vector3 computeCurNormal(const MeshAlg::Face& face, const Array<Vector3>& vertices) {
+    Vector3 v0(vertices[face.vertexIndex[0]]);
+    Vector3 v1(vertices[face.vertexIndex[1]]);
+    Vector3 v2(vertices[face.vertexIndex[2]]);
+
+    Vector3 a(v0 - v2);
+    Vector3 b(v1 - v2);
+
+    return cross(a, b).direction();
+}
+
+Vector3 computeNewNormal(const MeshAlg::Face& face, const Array<Vector3>& vertices, const MeshAlg::Edge& edgeToCollapse) {
+    int toReplace(edgeToCollapse.vertexIndex[0]);
+    int replacement(edgeToCollapse.vertexIndex[1]);
+
+    Array<int> vertexIndices;
+    for (int i(0); i < 3; ++i) {
+        int index(face.vertexIndex[i]);
+        vertexIndices.append(index == toReplace ? replacement : index);
+    }
+
+    Vector3 v0(vertices[vertexIndices[0]]);
+    Vector3 v1(vertices[vertexIndices[1]]);
+    Vector3 v2(vertices[vertexIndices[2]]);
+
+    Vector3 a(v0 - v2);
+    Vector3 b(v1 - v2);
+
+    return cross(a, b).direction();
+}
+
+bool isSignOpposite(const Vector3& v1, const Vector3& v2){ 
+    bool checkX(sign(v1.x) == -sign(v2.x));
+    bool checkY(sign(v1.y) == -sign(v2.y));
+    bool checkZ(sign(v1.z) == -sign(v2.z));
+
+    return checkX && checkY && checkZ;
+}
+
+bool normalsFlipped(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Vertex>& vertices, const Array<Vector3>& vertexPositions) {
+    SmallArray<int, 6> faces0(vertices[edge.vertexIndex[0]].faceIndex);
+    SmallArray<int, 6> faces1(vertices[edge.vertexIndex[1]].faceIndex);
+
+    Array<MeshAlg::Face> facesToCheck(findRemainingFaces(faces0, faces1, faces));
+    for (int i(0); i < facesToCheck.size(); ++i) {
+        MeshAlg::Face face(facesToCheck[i]);
+        if (isSignOpposite(computeCurNormal(face,vertexPositions),computeNewNormal(face,vertexPositions,edge))) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Mesh::isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) {
     bool isInside(!edge.boundary());
     if (isInside) { // If the edge is an inside edge
-        // Check if collapsing it would generate a manifold by 
-        // checking how many end points of the adjacent edges coincide. 
-        // A manifold will be formed if there are more than two such endpoints. 
-        MeshAlg::Vertex v0(vertices[edge.vertexIndex[0]]);
-        SmallArray<int, 6> adjacentEdges0(v0.edgeIndex); //indices of edges adjacent to vertex 0
-
-        MeshAlg::Vertex v1(vertices[edge.vertexIndex[1]]);
-        SmallArray<int, 6> adjacentEdges1(v1.edgeIndex);
-
-        Array<int> endPoints0;
-        Array<int> endPoints1;
-
-        int maxSize(max(adjacentEdges0.size(), adjacentEdges1.size()));
-        // Fill both endPoints arrays
-        for (int i(0); i < maxSize; ++i) {
-            if (i < adjacentEdges0.size()) {
-                int e0 = adjacentEdges0[i];
-                endPoints0.append(edges[e0 >= 0 ? e0 : ~e0].vertexIndex[1]);
-            }
-
-            if (i < adjacentEdges1.size()) {
-                int e1 = adjacentEdges1[i];
-                endPoints1.append(edges[e1 >= 0 ? e1 : ~e1].vertexIndex[1]);
-            }
-        }
-
-        int counter(0); // Count how many common end points there are
-        for (int i(0); i < endPoints0.size(); ++i) {
-            if (endPoints1.contains(endPoints0[i])) {
-                counter += 1;
-                if (counter > 2) { // If there are more than 2 common end points we know this is not a collapsable edge.
-                    break;
-                }
-            }
-        }
-        return isInside && (counter <= 2);
+        // Edge is not collapsable if by collapsing it we get a many fold or the normals flip
+        return !isManifold(edge, edges, vertices) && !normalsFlipped(edge, faces, vertices, m_vertexPositions);
     }
     return isInside;
 };
 
-int computeAngle(const Vector3& v1, const Vector3& v2) {
+float computeAngle(const Vector3& v1, const Vector3& v2) {
     return G3D::acos(v1.dot(v2) / (length(v1)*length(v2)));
 }
 
 bool Mesh::greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2) {
     debugAssertM(!elem1.boundary() && !elem2.boundary(), "Boundary Edge encountered!");
-    int x1(computeAngle(m_faceNormals[elem1.faceIndex[0]], m_faceNormals[elem1.faceIndex[1]]));
-    int x2(computeAngle(m_faceNormals[elem2.faceIndex[0]], m_faceNormals[elem2.faceIndex[1]]));
+    float x1(computeAngle(m_faceNormals[elem1.faceIndex[0]], m_faceNormals[elem1.faceIndex[1]]));
+    float x2(computeAngle(m_faceNormals[elem2.faceIndex[0]], m_faceNormals[elem2.faceIndex[1]]));
     return abs(x1) > abs(x2);
 }
 
@@ -121,26 +198,40 @@ bool Mesh::greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2) 
 class ComparableEdge {
 public:
     MeshAlg::Edge edge;
-    Vector3 leftFaceNormal; 
+    Vector3 leftFaceNormal;
     Vector3 rightFaceNormal;
-
+    Vector3 v0;
+    Vector3 v1;
     bool operator>(const ComparableEdge& other) const {
-        const int x1(computeAngle(leftFaceNormal, rightFaceNormal));
-        const int x2(computeAngle(other.leftFaceNormal, other.rightFaceNormal));
-        return abs(x1) > abs(x2);
+        const float x1(computeAngle(leftFaceNormal, rightFaceNormal));
+        const float x2(computeAngle(other.leftFaceNormal, other.rightFaceNormal));
+        float l1(length(v1 - v0));
+        float l2(length(other.v1 - other.v0));
+        return (fabs(x1) / cbrt(l1)) > (fabs(x2) / cbrt(l2));
     }
 
     bool operator<(const ComparableEdge& other) const {
-        const int x1(computeAngle(leftFaceNormal, rightFaceNormal));
-        const int x2(computeAngle(other.leftFaceNormal, other.rightFaceNormal));
-        return abs(x1) < abs(x2);
+        const float x1(computeAngle(leftFaceNormal, rightFaceNormal));
+        const float x2(computeAngle(other.leftFaceNormal, other.rightFaceNormal));
+        float l1(length(v1 - v0));
+        float l2(length(other.v1 - other.v0));
+        return (fabs(x1) / cbrt(l1)) < (fabs(x2) / cbrt(l2));
     }
 };
 
+void collapseOneEdge(const MeshAlg::Edge& edge, Array<Vector3>& vertexArray, Array<int>& indexArray) {
+    int index0(edge.vertexIndex[0]);
+    int index1(edge.vertexIndex[1]);
+    for (int j(0); j < indexArray.size(); ++j) {
+        if (indexArray[j] == index0) {
+            indexArray[j] = index1;
+        }
+    }
+    vertexArray[index0] = vertexArray[index1];
+}
+
 void Mesh::collapseEdges(int numEdges) {
-    Welder::Settings settings; 
-    settings.normalWeldRadius = 0.01;
-    Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, settings);
+   // Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, Welder::Settings());
     Array<MeshAlg::Edge> edges;
     Array<MeshAlg::Face> faces;
     Array<MeshAlg::Vertex> vertices;
@@ -155,40 +246,23 @@ void Mesh::collapseEdges(int numEdges) {
             ce.edge = edges[i];
             ce.leftFaceNormal = m_faceNormals[edges[i].faceIndex[0]];
             ce.rightFaceNormal = m_faceNormals[edges[i].faceIndex[1]];
+            ce.v0 = m_vertexPositions[edges[i].vertexIndex[0]];
+            ce.v1 = m_vertexPositions[edges[i].vertexIndex[1]];
             compEdges.append(ce);
             //insideEdges.append(edges[i]);
         }
     }
 
     compEdges.sort(SORT_DECREASING);
-    
+
     numEdges = min(numEdges, compEdges.size());
     for (int x(0); x < numEdges; ++x) {
-        int index0(compEdges[x].edge.vertexIndex[0]);
-        int index1(compEdges[x].edge.vertexIndex[1]);
-
-        for (int j(0); j < m_indexArray.size(); ++j) {
-            if (m_indexArray[j] == index0) {
-                m_indexArray[j] = index1;
-            }
-        }
-
+        collapseOneEdge(compEdges[x].edge, m_vertexPositions, m_indexArray);
     }
 
-    //mergeSort(insideEdges);
-    //numEdges = min(numEdges, insideEdges.size());
-    //for (int x(0); x < numEdges; ++x) {
-    //    int index0(insideEdges[x].vertexIndex[0]);
-    //    int index1(insideEdges[x].vertexIndex[1]);
-    //    //m_vertexPositions[index0] = m_vertexPositions[index1];
-    //    for (int j(0); j < m_indexArray.size(); ++j) {
-    //        if (m_indexArray[j] == index0) {
-    //            m_indexArray[j] = index1;
-    //        }
-    //    }
-
-    //}
+    Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, Welder::Settings());
 };
+
 
 void Mesh::merge(Array<MeshAlg::Edge>& data, const Array<MeshAlg::Edge>& temp, int low, int middle, int high) {
     int ri = low;
