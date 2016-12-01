@@ -342,7 +342,7 @@ void App::makePlanetGUI() {
             addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));
 
             /*addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), "space.png");
-            addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "texture3.jpg");
+            addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "texture2.jpg");
             addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), "texture.jpg");*/
 
             //loadScene("Planet");
