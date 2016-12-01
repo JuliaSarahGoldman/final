@@ -301,18 +301,21 @@ void App::makePlanetGUI() {
         GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("Mount Height", &m_mountainHeight, "",
-        GuiTheme::LOG_SLIDER, 10.0f, 200.0f)->setUnitsSize(1);
+        GuiTheme::LOG_SLIDER, 10.0f, 500.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("Mount Diversity", &m_mountianDiversity, "",
-        GuiTheme::LOG_SLIDER, 1.0f, 10.0f)->setUnitsSize(1);
+        GuiTheme::LOG_SLIDER, 1.0f, 5.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("Ocean Level", &m_oceanLevel, "",
         GuiTheme::LOG_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
+    planetPane->addNumberBox("Land Noise", &m_landNoise, "",
+        GuiTheme::LOG_SLIDER, -1.0f, 1.0f)->setUnitsSize(1);
+
     planetPane->addNumberBox("Ocean Noise", &m_oceanNoise, "",
         GuiTheme::LOG_SLIDER, 0.0f, 10.0f)->setUnitsSize(1);
 
-    planetPane->addCheckBox("Water Mount", &m_waterMount);
+    planetPane->addCheckBox("Water Mountains", &m_waterMount);
 
     planetPane->addNumberBox("Land Noise", &m_landNoise, "",
         GuiTheme::LOG_SLIDER, -1.0f, 10.0f)->setUnitsSize(1);
@@ -396,10 +399,13 @@ void App::makePlanetGUI() {
             freq = 0.25f;
             image = Image::create(1024, 1024, ImageFormat::RGBA8());
             shared_ptr<Image> test = Image::create(1024, 1024, ImageFormat::RGBA8());
+            shared_ptr<Image> cImage = Image::create(1024, 1024, ImageFormat::RGBA8());
             noise.generateLandImage(image, m_landNoise);
             //noise.generateLandImage(image, freq);
             image->save("land.png");
             planet.writeSphere("land", 12.0f, m_recursionLevel, vertices, faces);
+            noise.colorLandImage(image, cImage, m_oceanLevel);
+            cImage->save("landColor.png");
             planet.applyNoiseLand(vertices, image, test, m_oceanLevel);
             test->save("test.png");
             Mesh mesh2(vertices, faces);
@@ -408,10 +414,13 @@ void App::makePlanetGUI() {
             vertices = Array<Vector3>();
             faces = Array<Vector3int32>();
             planet.writeSphere("mountain", 11.5f, m_recursionLevel, vertices, faces);
+            cImage = Image::create(1024, 1024, ImageFormat::RGBA8());
             image = Image::create(1024, 1024, ImageFormat::RGBA8());
             noise.generateMountainImage(image, 0.125f, 1.0f);
             noise.generateMountainImage(image, 0.25f, 0.5f);
             noise.generateMountainImage(image, 0.5f, 0.25f);
+            noise.colorMountainImage(image, cImage);
+            cImage->save("mountColor.png");
             planet.applyNoiseMountain(vertices, image, test, m_waterMount, m_mountianDiversity, m_mountainHeight);
             Mesh mesh3(vertices, faces);
             mesh3.bevelEdges2(m_mountainBevel);

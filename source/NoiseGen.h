@@ -25,4 +25,8 @@ public:
     void generateLandImage(shared_ptr<Image> image, float frequency);
 
     void generateSeaImage(shared_ptr<Image> image, float frequency);
+
+    void colorMountainImage(shared_ptr<Image> noise, shared_ptr<Image> colorMap);
+
+    void colorLandImage(shared_ptr<Image> noise, shared_ptr<Image> colorMap, float oceanLevel);
 };
