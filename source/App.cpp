@@ -311,13 +311,18 @@ void App::makePlanetGUI() {
     planetPane->addNumberBox("Ocean Level", &m_oceanLevel, "",
         GuiTheme::LOG_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
-    planetPane->addNumberBox("Land Noise", &m_landNoise, "",
-        GuiTheme::LOG_SLIDER, -1.0f, 10.0f)->setUnitsSize(1);
-
     planetPane->addNumberBox("Ocean Noise", &m_oceanNoise, "",
         GuiTheme::LOG_SLIDER, 0.0f, 10.0f)->setUnitsSize(1);
 
     planetPane->addCheckBox("Water Mount", &m_waterMount);
+
+    planetPane->addNumberBox("Land Noise", &m_landNoise, "",
+        GuiTheme::LOG_SLIDER, -1.0f, 10.0f)->setUnitsSize(1);
+
+    planetPane->addTextBox("Save to:", &m_planetSave);
+    
+   /* heightfieldPane->beginRow(); {
+
 
     /*planetPane->addNumberBox("Frequency", &m_frequency, "",
         GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
@@ -328,6 +333,46 @@ void App::makePlanetGUI() {
             FileDialog::getFilename(m_heightfieldSource, "png", false);
         })->setWidth(30);
     } heightfieldPane->endRow();*/
+
+    planetPane->addButton("Get Constants from Any File", [this]() {
+        FileDialog::getFilename(m_planetSource, "", false);
+        try{
+            Any any(Any::TABLE, "Planet");
+            any.load(m_planetSource);
+            AnyTableReader x(any);
+            x.getIfPresent("recursions", m_recursionLevel);
+            x.getIfPresent("landBevel", m_landBevel);
+            x.getIfPresent("mountainBevel", m_mountainBevel);
+            x.getIfPresent("mountainHeight", m_mountainHeight);
+            x.getIfPresent("mountainDiversity", m_mountianDiversity);
+            x.getIfPresent("oceanLevel", m_oceanLevel);
+            x.getIfPresent("landNoise", m_landNoise);
+            x.getIfPresent("oceanNoise", m_oceanNoise);
+            x.getIfPresent("waterMount", m_waterMount);
+        }
+        catch (...) {
+            msgBox("Unable to load the image.");
+        }
+    });
+
+    planetPane->addButton("Save Constants to Any File", [this]() {
+        try{
+            Any x(Any::TABLE, "Planet");
+            x["recursions"] =  m_recursionLevel;
+            x["landBevel"] = m_landBevel;
+            x["mountainBevel"] = m_mountainBevel;
+            x["mountainHeight"] = m_mountainHeight;
+            x["mountainDiversity"] = m_mountianDiversity;
+            x["oceanLevel"] = m_oceanLevel;
+            x["landNoise"] = m_landNoise;
+            x["oceanNoise"] = m_oceanNoise;
+            x["waterMount"] = m_waterMount;
+            x.save(m_planetSave);
+        }
+        catch (...) {
+            msgBox("Unable to save the image.");
+        }
+    });
 
     planetPane->addButton("Generate", [this]() {
         shared_ptr<G3D::Image> image;
