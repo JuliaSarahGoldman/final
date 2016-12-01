@@ -98,7 +98,8 @@ The following is a description of our design.
 
 Flowchart
 -------------------------------------------------------------------------------------
-GAPP::makePlanetGUI() -> Generate Button -> 
+GAPP::makePlanetGUI() -> Generate Button -> Planet::writeSphere() -> Planet::makeIcohedron() -> Planet::subDivideIcohedron() -> GAPP::makePlanetGUI() 
+-> Planet::generateNoise() -> GAPP::makePlanetGUI() -> GAPP::addPlanetToScene()
 
 Class Descriptions
 -----------------------------------------------------------------------------------------------------------------------------
@@ -162,19 +163,20 @@ Quality Results
 Here, we show high quality images that show both the advantages and limitations of our project.  
 
 ![](low-poly.jpg)
-
 ![](quality2.jpg)
+![](1.jpg)
 
 
 Evocative Results
 -------------------------------------------------------------------------------------
 Here, we demonstrate how our planets could be used to create with various models to create interesting scenes and beautiful images. 
+    
+![](video.mp4)
 
 ![](qualityTex.jpg)
 ![](qualityTex2.jpg)
 ![](lava.jpg)
 ![](lava2.jpg)
-
 Schedule
 ===================================================================
 

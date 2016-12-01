@@ -10,9 +10,6 @@ void Planet::writeSphere(String filename, float radius, int depths, Array<Vector
         subdivideIcoHedron(radius, vertices, faces);
     }
 
-    Array<Vector2> textVerts = Array<Vector2>();
-    Array<Vector3int32> textPos = Array<Vector3int32>();
-
     Array<Vector2> texture;
     Array<Vector3> normals;
     Array<Vector3> verts = vertices;

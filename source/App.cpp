@@ -119,15 +119,20 @@ void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String any
         String anyStr("VisibleEntity { model = \"" + name + "Model\"; };");
         Any any = Any::parse(anyStr);
         planet = scene()->createEntity(name, any);
-        PhysicsFrame frame(Matrix3().identity());
+        Matrix3 startMat = Matrix3::identity();
+        PhysicsFrame frame(startMat);
         PhysicsFrameSpline spline(frame.toAny());
-        spline.append(PhysicsFrame(Matrix3(1,0,0,0,1,0,0,0,1)));
-        /*planet = scene()->createEntity("planet",
-            PARSE_ANY(
-                VisibleEntity {
-                    model = "planetModel";
-                };
-            ));*/
+        spline.extrapolationMode = SplineExtrapolationMode::CYCLIC;
+        spline.interpolationMode = SplineInterpolationMode::LINEAR;
+        float cosrot = cos(pif()/4.0f);
+        float sinrot = sin(pif()/4.0f);
+        Matrix3 rotMat(cosrot, 0, sinrot, 0, 1, 0, -sinrot, 0, cosrot);
+        int t(1);
+        for(int i(0); i < 32; i++){
+            startMat *= rotMat;
+            spline.append(PhysicsFrame(startMat));
+        }
+        planet->setFrameSpline(spline);
     }
     else {
         // Change the model on the existing planet entity
@@ -135,7 +140,6 @@ void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String any
     }
 
     //planet->setFrame(CFrame::fromXYZYPRDegrees(0.0f, 1.8f, 0.0f, 45.0f, 45.0f));
-    planet->setFrame(CFrame::fromXYZYPRDegrees(position.x, position.y, position.z, 45.0f, 45.0f));
 }
 
 void App::makePentagon() {
@@ -646,3 +650,9 @@ void App::onCleanup() {
     // here instead of in the constructor so that exceptions can be caught.
 }
 
+        /*planet = scene()->createEntity("planet",
+            PARSE_ANY(
+                VisibleEntity {
+                    model = "planetModel";
+                };
+            ));*/
