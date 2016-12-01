@@ -101,7 +101,7 @@ void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, s
     }
 }
 
-void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float power, float multiplier) {
+void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, bool waterMount, float power, float multiplier) {
     for (int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
 
@@ -128,7 +128,7 @@ void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> nois
                 elevation[y][x] = Math.pow(e, 3.00);*/
         test->get(Point2int32(ix, iy), color);
 
-        if (bump > 0.75f || color.average() != 0.0f) {
+        if (!waterMount && (bump > 0.75f || color.average() != 0.0f)) {
             bump = 0.0f;
         }
         //else bump *= 1.25f;

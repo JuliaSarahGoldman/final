@@ -25,6 +25,9 @@ protected:
     float m_mountainHeight;
     float m_mountianDiversity;
     float m_oceanLevel;
+    float m_landNoise;
+    float m_oceanNoise;
+    bool m_waterMount;
 
     /** Called from onInit */
     void makeGUI();
