@@ -25,17 +25,8 @@ protected:
 
     /** Called by collapseEdges()
         true if not a boundary edge, if collapsing it doesn't create a manifold and doesn't flip face normals*/
-    bool isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices);
+    bool isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) const;
 
-    /** Returns true if the angle between the normal of the adjacent faces of elem1 is greater than that of 
-        the adjacent faces of elem2 */
-    //bool greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2);
-
-    MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data);
-
-    void merge(Array<MeshAlg::Edge>& data, const Array<MeshAlg::Edge>& temp, int low, int middle, int hight);
-    void mergeSortRecursive(Array<MeshAlg::Edge>& data, Array<MeshAlg::Edge>& temp, int low, int hight);
-    void mergeSort(Array<MeshAlg::Edge>& data);
 
 public:
     static int edgeLength(const MeshAlg::Edge& edge, const Array<Vector3>& vertexArray);

@@ -6,6 +6,45 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
+2016-12-01: Edge Collapsing - so close...
+=============================================================
+How it works now: 
+1. collapseEdges(numEdges) is invoked; 
+2. For each x in numEdges: 
+    1. Compute adjacency info; 
+    2. Compute face normals;
+    3. Select the edge to collapse:
+        1. Determine if it is collapsable: 
+            1. is the edge not a boundary edge?
+            2. will the normals of the adjacent faces not flip if the edge is collapsed?
+        2. Select the collapsable edge whose angle between adjacent face normals weighted by edge length is the greatest.
+    4. Collapse the edge: 
+        1. Remap Indices so index of vertex 0 of edge is replaced by index of vertex 1 of the edge in the index array, and remove vertex 0 from the vertex array.
+        2. remove degenerate faces.
+3. Done
+
+Functions used: 
+- computeAdjacency; 
+- computeFaceNormals; 
+- isCollapsable: 
+    - isManifold;
+    - normalsFlip:
+        - isSignOpposite;
+        - computeCurNormal; 
+        - computeNewNormal.
+- collapseOneEdge: 
+    - remapIndices; 
+    - removeDegenerateFaces: 
+        - isDegenerate. 
+
+This approach, although generating considerably better results than previously, still doesn't guarantee water tightness... I think this is due to some inconsistency on the way I determine whether or not the face normals will flip, but I can't seem to find it. I wonder if it may also be a round off error in the normal flipping determination.
+
+![800 edges collapsed - inside sphere view](2016-12-01_003_starter_r2623_g3d_r981__800_edges_collapsed_-_inside_sphere_view.jpg)     
+
+![800 edges collapsed - outside sphere view](2016-12-01_005_starter_r2623_g3d_r981__800_edges_collapsed_-_outside_sphere_view.jpg) 
+
+![Weird overlapping ](2016-12-01_006_starter_r2623_g3d_r981__Weird_overlapping_.jpg)  
+
 2016-12-01: Added Interesting Coloring
 =============================================================
 

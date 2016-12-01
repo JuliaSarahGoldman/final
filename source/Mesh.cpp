@@ -51,7 +51,7 @@ void Mesh::computeFaceNormals(Array<Vector3>& faceNormals, bool normalize) {
 };
 
 static int edgeLength(const MeshAlg::Edge& edge, const Array<Vector3>& vertexArray) {
-    return length(vertexArray[edge.vertexIndex[0]] - vertexArray[edge.vertexIndex[1]]);
+    return length(vertexArray[edge.vertexIndex[1]] - vertexArray[edge.vertexIndex[0]]);
 };
 
 int Mesh::edgeLength(const MeshAlg::Edge& edge) {
@@ -134,14 +134,23 @@ static Vector3 computeCurNormal(const MeshAlg::Face& face, const Array<Vector3>&
     return cross(a, b).direction();
 }
 
+static bool isDegenerate(int v0, int v1, int v2) {
+    return (v0 == v1) || (v0 == v2) || (v1 == v2);
+}
+
 static Vector3 computeNewNormal(const MeshAlg::Face& face, const Array<Vector3>& vertices, const MeshAlg::Edge& edgeToCollapse) {
     int toReplace(edgeToCollapse.vertexIndex[0]);   // Vertex at index 0 of edge is replaced by vertex at index 1
     int replacement(edgeToCollapse.vertexIndex[1]);
 
-    Array<int> vertexIndices;  // Used to compute the new normal
-    for (int i(0); i < 3; ++i) { // Fill both arrays with the proper index
+    Array<int> vertexIndices; // Vertex indices after edge collapse
+    for (int i(0); i < 3; ++i) {
         int index(face.vertexIndex[i] == toReplace ? replacement : face.vertexIndex[i]);
         vertexIndices.append(index);
+    }
+
+    // If face is degenerate, then it will be discarded after collapsing, so we don't want to prevent collapsing.
+    if (isDegenerate(vertexIndices[0], vertexIndices[1], vertexIndices[2])) {
+        return computeCurNormal(face, vertices);
     }
 
     Vector3 v0(vertices[vertexIndices[0]]);
@@ -155,7 +164,7 @@ static Vector3 computeNewNormal(const MeshAlg::Face& face, const Array<Vector3>&
 }
 
 static bool isSignOpposite(const Vector3& v1, const Vector3& v2) {
-    return v1.dot(v2) < 0;
+    return float(v1.dot(v2)) < 0.0f;
 }
 
 static bool normalsFlipped(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Vertex>& vertices, const Array<Vector3>& vertexPositions) {
@@ -172,27 +181,22 @@ static bool normalsFlipped(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>
 
     // Check normal signs only for non-overlapping faces, since overlapping faces are collapsed
     for (int i(0); i < faces0.size(); ++i) {
-        if (!faces1.contains(faces0[i])) {
-            MeshAlg::Face face(faces[faces0[i]]);
-            if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
-                return true;
-            }
+        MeshAlg::Face face(faces[faces0[i]]);
+        if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
+            return true;
         }
     }
 
     for (int i(0); i < faces1.size(); ++i) {
-        if (!faces0.contains(faces1[i])) {
-            MeshAlg::Face face(faces[faces1[i]]);
-            if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
-                return true;
-            }
+        MeshAlg::Face face(faces[faces1[i]]);
+        if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
+            return true;
         }
     }
-
     return false;
 }
 
-bool Mesh::isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) {
+bool Mesh::isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) const {
     bool isInside(!edge.boundary());
     if (isInside) { // If the edge is an inside edge
         // Edge is not collapsable if by collapsing it we get a many fold or the normals flip
@@ -211,7 +215,7 @@ static bool greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2,
     float x2(computeAngle(faceNormals[elem2.faceIndex[0]], faceNormals[elem2.faceIndex[1]]));
     float l1(edgeLength(elem1, vertices));
     float l2(edgeLength(elem2, vertices));
-    return (fabs(x1) / cbrt(l1)) > (fabs(x2) / cbrt(l2));
+    return (fabs(x1) / sqrt(l1)) > (fabs(x2) / sqrt(l2));
 }
 
 
@@ -254,10 +258,6 @@ static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, in
     }
 }
 
-static bool isDegenerate(int v0, int v1, int v2) {
-    return (v0 == v1) || (v0 == v2) || (v1 == v2);
-}
-
 static void removeDegenerateFaces(Array<int>& indexArray) {
     for (int i(0); i < indexArray.size(); i += 3) {
         if (isDegenerate(indexArray[i], indexArray[i + 1], indexArray[i + 2])) {
@@ -293,8 +293,16 @@ void Mesh::collapseEdges(int numEdges) {
 
         MeshAlg::Edge edge(edges[0]);
         int collapsable(0);
+        //Array<ComparableEdge> compEdges;
         for (int i(0); i < edges.size(); ++i) {
             if (isCollapsable(edges[i], faces, edges, vertices)) {
+                //ComparableEdge ce; 
+                //ce.edge = edges[i]; 
+                //ce.leftFaceNormal = faceNormals[edges[i].faceIndex[0]]; 
+                //ce.rightFaceNormal = faceNormals[edges[i].faceIndex[1]];
+                //ce.v0 = m_vertexPositions[edges[i].vertexIndex[0]];
+                //ce.v1 = m_vertexPositions[edges[i].vertexIndex[1]]; 
+                //compEdges.append(ce);
                 collapsable++;
                 if (greaterAngle(edges[i], edge, faceNormals, m_vertexPositions)) {
                     edge = edges[i];
@@ -306,6 +314,11 @@ void Mesh::collapseEdges(int numEdges) {
         }
         collapseOneEdge(edge, m_vertexPositions, m_indexArray);
 
+        //compEdges.sort(SORT_DECREASING);
+        //numEdges = min(numEdges, compEdges.size()); 
+        //for(int i(0); i < numEdges; ++i) { 
+        //    collapseOneEdge(compEdges[i].edge, m_vertexPositions, m_indexArray);
+        //}
     }
 }
 
