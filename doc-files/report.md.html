@@ -74,7 +74,13 @@ Noise is used to generate the heights at varying locations of our three heightfi
 
 Meshes
 ----------------------------------------------------------
-Thes heightfields are stored as meshes. To create a low-poly planet, we use an edge collapsing algorithm. Smoothing is performed through beveling.
+The heightfields are stored as meshes. The low-polyness of the planet comes from the heightfield's mesh structure. A decimation algorithm is used to simplify the mesh. Then Beveling adds rectangles between mesh triangles to smooth out corners.
+
+Decimation Algorithms
+----------------------------------------------------------
+Decimation algorithms are used, among other things, to simplify meshes by reducing the number of faces while still keeping its underlying shape and topology. 
+
+The decimation algorithm we chose is edge collapsing, which consists of taking the $n$ least important edges away from the mesh, which takes away its adjacent faces. For our purposes we chose the least important edge to be the edge whose anlge between its adjacent face normals is closest to 180 degrees, weighted by the edge length.
 
 Beveling
 -----------------------------------------------------------
@@ -130,7 +136,7 @@ Class Descriptions
 |[Mesh](class_mesh.html): | |
 |------------|---|
 |[bevelEdges](class_mesh.html#adc7558052d2c7fb4ee0697805ef7cd72) | Creates new vertex and index arrays in which the original triangles are separated and shrunk andvthe gaps between them are filled in with more triangles |
-|[collapseEdges](class_mesh.html#a015dfb6334430099b0061bbdc24a7289) | As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf Calls toCollapse() Collapses one edge for each block of regionSize indices.  |
+|[collapseEdges](class_mesh.html#a015dfb6334430099b0061bbdc24a7289) | As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf Calls isCollapsable(). Collapses the numEdges most unimportant edges. |
 |[computeAgency](class_mesh.html#a8b7b39f416aee6d204de79cb65226d05) | Fills buffers with information about the mesh's topology |
 |[computeFaceNormals](class_mesh.html#ad2d3073f94942602441016a2ae5c7191) | Calculates normals for each face |
 |[computeNormals](class_mesh.html#a80fe9c1e1a35dc5aa5cd088dbe0d08d6) | vertexNormalArray and faceNormalArray filled with appropriate normal values |
@@ -138,9 +144,8 @@ Class Descriptions
 |[toObj](class_mesh.html#aa6aa873a3f810e2c0bfdb9e08aaf3908) | Writes an object file of the mesh |
 |[create](class_mesh.html#acf65d30a393e0e492fa08878472b4847) | Returns a shared pointer to a mesh |
 |[edgeLength](class_mesh.html#ac5a3107caa5fd891de64985be4e653aa) | Returns the length of a given edge |
-|[greaterAngle](class_mesh.html#a71bb93a4e76f8c6bc9f2ef7c1d70c80d) | Compares two angles and returns the greater one |
-|[isCollapsable](class_mesh.html#a927969b67bb759490deab1acd701354f) | Checks is an edge can be safely collapsed |
-|[toCollapse](class_mesh.html#a8a5a605a02f702b5d25433ee1d50c6a9) | Determines which edge to collapse next |
+|[greaterAngle](class_mesh.html#a71bb93a4e76f8c6bc9f2ef7c1d70c80d) | Returns true if the angle between the normal of the adjacent faces of elem1 is greater than that of the adjacent faces of elem2  |
+|[isCollapsable](class_mesh.html#a927969b67bb759490deab1acd701354f) | Called by collapseEdges(). Checks if an edge can be safely collapsed. True if not a boundary edge, if collapsing it doesn't create a manifold and doesn't flip adjacent face normals. |
 
 |[Angled Vertex](class_angled_vertex.html): | |
 |------------|---|

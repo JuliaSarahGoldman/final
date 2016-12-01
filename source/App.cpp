@@ -72,11 +72,11 @@ void App::onInit() {
     // developerWindow->videoRecordDialog->setScreenShotFormat("PNG");
     // developerWindow->videoRecordDialog->setCaptureGui(false);
     developerWindow->cameraControlWindow->moveTo(Point2(developerWindow->cameraControlWindow->rect().x0(), 0));
-    loadScene(
-        //"G3D Sponza"
-        "Ground" // Load something simple
-        //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
-    );
+    //loadScene(
+    //    //"G3D Sponza"
+    //    "Ground" // Load something simple
+    //    //developerWindow->sceneEditorWindow->selectedSceneName()  // Load the first scene encountered 
+    //);
 }
 
 void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename) {
@@ -163,10 +163,20 @@ void App::makePentagon() {
 
     });
 
+    pentPane->addButton("Reset", [this]() {
+        Array<Vector3> vertices1(Vector3(0, 0, -2), Vector3(0, 2, -2), Vector3(-2, 0, -2), Vector3(-1, -2, -2), Vector3(1, -2, -2), Vector3(2, 0, -2));
+        Array<Vector3int32> indices1(Vector3int32(0, 1, 2), Vector3int32(0, 2, 3), Vector3int32(0, 3, 4), Vector3int32(0, 4, 5), Vector3int32(0, 5, 1));
+        m_myMesh = Mesh::create(vertices1, indices1);
+        m_myMesh->toObj("pentagon");
+        G3D::ArticulatedModel::clearCache();
+        loadScene("Little Heightfield");
+
+    });
+
     pentPane->pack();
 }
 
-void App::makeBunny(const GuiControl* leftPane) {
+void App::makeBunny() {
     m_myMesh = Mesh::create("bunny.ifs");
     m_myMesh->toObj("bunny");
 
@@ -186,11 +196,19 @@ void App::makeBunny(const GuiControl* leftPane) {
         loadScene("Bunny");
 
     });
-    bunnyPane->moveRightOf(leftPane, 4.0);
+
+    bunnyPane->addButton("Reset", [this]() {
+        m_myMesh = Mesh::create("bunny.ifs");
+        m_myMesh->toObj("bunny");
+        G3D::ArticulatedModel::clearCache();
+        loadScene("Little Heightfield");
+
+    });
+
     bunnyPane->pack();
 }
 
-void App::makeLittleHeightfield(const GuiControl* leftPane) {
+void App::makeLittleHeightfield() {
     Array<Vector3> vertices;
     Array<Vector3int32> indices;
 
@@ -199,15 +217,15 @@ void App::makeLittleHeightfield(const GuiControl* leftPane) {
         int i(x*base->height());
 
         for (int z = 0; z < base->height(); ++z) {
-            Color3 color; 
+            Color3 color;
             base->get(Point2int32(x, z), color);
             float y(color.average());
-            vertices.append(Vector3(x, y*5, z));
+            vertices.append(Vector3(x, y * 5, z));
 
-            if(x < base->width()-1 && z < base->height()-1){ 
-                int c(i+z); 
+            if (x < base->width() - 1 && z < base->height() - 1) {
+                int c(i + z);
                 int h(base->height());
-                indices.append(Vector3int32(c, c+1, c+h), Vector3int32(c+1, c+h+1, c+h));
+                indices.append(Vector3int32(c, c + 1, c + h), Vector3int32(c + 1, c + h + 1, c + h));
             }
         }
     }
@@ -231,7 +249,35 @@ void App::makeLittleHeightfield(const GuiControl* leftPane) {
         loadScene("Little Heightfield");
 
     });
-    hfPane->moveRightOf(leftPane, 4.0);
+
+    hfPane->addButton("Reset", [this]() {
+        Array<Vector3> vertices;
+        Array<Vector3int32> indices;
+
+        shared_ptr<Image>base(Image::fromFile("heightmap.png"));
+        for (int x = 0; x < base->width(); ++x) {
+            int i(x*base->height());
+
+            for (int z = 0; z < base->height(); ++z) {
+                Color3 color;
+                base->get(Point2int32(x, z), color);
+                float y(color.average());
+                vertices.append(Vector3(x, y * 5, z));
+
+                if (x < base->width() - 1 && z < base->height() - 1) {
+                    int c(i + z);
+                    int h(base->height());
+                    indices.append(Vector3int32(c, c + 1, c + h), Vector3int32(c + 1, c + h + 1, c + h));
+                }
+            }
+        }
+        m_myMesh = Mesh::create(vertices, indices);
+        m_myMesh->toObj("littleHf");
+        G3D::ArticulatedModel::clearCache();
+        loadScene("Little Heightfield");
+
+    });
+
     hfPane->pack();
 }
 
@@ -243,10 +289,10 @@ void App::makePlanetGUI() {
     planetPane->addNumberBox("Recursion Level", &m_recursionLevel, "",
         GuiTheme::LINEAR_SLIDER, 1, 8)->setUnitsSize(1);
 
-     planetPane->addNumberBox("Land Bevel", &m_landBevel, "",
+    planetPane->addNumberBox("Land Bevel", &m_landBevel, "",
         GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
 
-      planetPane->addNumberBox("Mount Bevel", &m_mountainBevel, "",
+    planetPane->addNumberBox("Mount Bevel", &m_mountainBevel, "",
         GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
 
     /*planetPane->addNumberBox("Frequency", &m_frequency, "",
@@ -328,7 +374,7 @@ void App::makePlanetGUI() {
             image4->save("image4.png");*/
 
             loadScene("Ground");
-            
+
 
             /*String material1 = "UniversalMaterial::Specification { lambertian = \"space.png\"; }";
             addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), material1, 1000, 1000);
@@ -456,23 +502,23 @@ void App::makeGUI() {
     planet.writeSphere("mountains.obj", 10.1f, 5, vertices, faces);*/
 
     //makeHeightfield();
-    makePlanetGUI();
+    //makePlanetGUI();
 
-    // makeBunny(infoPane);
-    //makeLittleHeightfield(infoPane);
+    //makeBunny();
+    makeLittleHeightfield();
     //makePentagon();
 
-     Array<Vector3> verticeArray(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
-     Array<Vector3int32> triangles(Vector3int32(3, 1, 0), Vector3int32(1, 2, 0), Vector3int32(3, 2, 1), Vector3int32(3, 0, 2));
+    Array<Vector3> verticeArray(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
+    Array<Vector3int32> triangles(Vector3int32(3, 1, 0), Vector3int32(1, 2, 0), Vector3int32(3, 2, 1), Vector3int32(3, 0, 2));
 
-     //Mesh mesh(*vertices, *faces);
-     //Mesh mesh(verticeArray, triangles);
-     //mesh.bevelEdges(.3);
-     //mesh.toObj("wtf.obj");
+    //Mesh mesh(*vertices, *faces);
+    //Mesh mesh(verticeArray, triangles);
+    //mesh.bevelEdges(.3);
+    //mesh.toObj("wtf.obj");
 
-     //loadScene("Ground");
-     //mesh.toArticulatedModel("test");
-     //addPlanetToScene(mesh);
+    //loadScene("Ground");
+    //mesh.toArticulatedModel("test");
+    //addPlanetToScene(mesh);
 
     debugWindow->pack();
     debugWindow->setRect(Rect2D::xywh(0, 0, (float)window()->width(), debugWindow->rect().height()));

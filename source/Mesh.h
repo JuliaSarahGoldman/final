@@ -24,8 +24,12 @@ protected:
     int edgeLength(const MeshAlg::Edge& edge);
     int Mesh::edgeLength(int i0, int i1);
 
+    /** Called by collapseEdges()
+        true if not a boundary edge, if collapsing it doesn't create a manifold and doesn't flip face normals*/
     bool isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices);
 
+    /** Returns true if the angle between the normal of the adjacent faces of elem1 is greater than that of 
+        the adjacent faces of elem2 */
     bool greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2);
 
     MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data);
@@ -49,9 +53,9 @@ public:
     void computeFaceNormals(Array<Vector3>& faceNormals, bool normalize = true);
 
     /** As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf
-        Calls toCollapse()
-        Collapses one edge for each block of regionSize indices */
-    void collapseEdges(int regionSize);
+        Calls isCollapsable()
+        Collapses the numEdges most unimportant edges*/
+    void collapseEdges(int numEdges);
 
     //bump is how much we expand the panet's radius by
     //Only works on completely closed and welded meshes.
