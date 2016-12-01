@@ -22,6 +22,9 @@ protected:
     float m_frequency;
     float m_landBevel;
     float m_mountainBevel;
+    float m_mountainHeight;
+    float m_mountianDiversity;
+    float m_oceanLevel;
 
     /** Called from onInit */
     void makeGUI();

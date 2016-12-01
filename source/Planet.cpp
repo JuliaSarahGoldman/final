@@ -68,7 +68,7 @@ void Planet::applyNoiseWater(Array<Vector3>& vertices, shared_ptr<Image> image) 
     }
 }
 
-void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test) {
+void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float oceanLevel) {
     for (int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
 
@@ -89,14 +89,14 @@ void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, s
         else if (bump < 0.3f) bump = 0.1f;
         else bump = 1.0f;*/
 
-        if (bump < 0.4f) { 
+        if (bump < oceanLevel) { 
             bump = 0.0f;
             test->set(Point2int32(ix, iy), Color1(1.0f));
-        } else if(bump < 0.7f) {
+        /*} else if(bump < 0.7f) {
             bump *= 2.857f;
-            test->set(Point2int32(ix, iy), Color1(0.0f));
+            test->set(Point2int32(ix, iy), Color1(0.0f));*/
         } else {
-            bump = 2.0f;
+            bump *= 4.0f;
             test->set(Point2int32(ix, iy), Color1(0.0f));
         }
 
