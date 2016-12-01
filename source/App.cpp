@@ -119,6 +119,9 @@ void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String any
         String anyStr("VisibleEntity { model = \"" + name + "Model\"; };");
         Any any = Any::parse(anyStr);
         planet = scene()->createEntity(name, any);
+        PhysicsFrame frame(Matrix3().identity());
+        PhysicsFrameSpline spline(frame.toAny());
+        spline.append(PhysicsFrame(Matrix3(1,0,0,0,1,0,0,0,1)));
         /*planet = scene()->createEntity("planet",
             PARSE_ANY(
                 VisibleEntity {
@@ -380,9 +383,9 @@ void App::makePlanetGUI() {
             String material3 = "UniversalMaterial::Specification { lambertian = \"texture.jpg\"; }";
             addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), material3, 1000, 1000);*/
 
-            //addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));
+            addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));
             addPlanetToScene(mesh2, "land", Point3(0, 0, 0), Color3(0, 1, 0));
-            //addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));
+            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));
 
             /*addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), "space.png");
             addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "texture2.jpg");

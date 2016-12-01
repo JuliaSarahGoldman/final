@@ -19,11 +19,11 @@
                 nearPlaneZ = -0.1; 
             }; 
         }; 
-        
+      /*
         skybox = Skybox { 
             texture = "cubemap/noonclouds/noonclouds_*.png"; 
         }; 
-        
+        */
         sun = Light { 
             attenuation = ( 0, 0, 1 ); 
             bulbPower = Power3(1e+006 ); 
@@ -43,6 +43,39 @@
         groundModel = ArticulatedModel::Specification { 
             filename = "square.ifs"; 
             scale = 50; 
+        }; 
+        
+    }; 
+
+    lightingEnvironment = LightingEnvironment { 
+        ambientOcclusionSettings = AmbientOcclusionSettings { 
+            bias = 0.012; 
+            blurRadius = 4; 
+            blurStepSize = 2; 
+            depthPeelSeparationHint = 0.872287; 
+            edgeSharpness = 1; 
+            enabled = false; 
+            intensity = 1; 
+            monotonicallyDecreasingBilateralWeights = false; 
+            numSamples = 19; 
+            radius = 1.5; 
+            temporalFilterSettings = TemporalFilter::Settings { 
+                hysteresis = 0; 
+                falloffEndDistance = 0.07; 
+                falloffStartDistance = 0.05; 
+            }; 
+            
+            temporallyVarySamples = false; 
+            useDepthPeelBuffer = true; 
+            useNormalBuffer = true; 
+            useNormalsInBlur = true; 
+        }; 
+        
+        environmentMap = Texture::Specification { 
+            encoding = Texture::Encoding { 
+                readMultiplyFirst = 1.0; 
+            }; 
+            filename = "cubemap/hipshot_m9_sky/16_*.png";             
         }; 
         
     }; 

@@ -23,7 +23,7 @@ Specification
 	2. Use a noise function to generate these heightfields based on the planet's radius
 	3. Use an edge-collapse algorithm to reduce the number of triangles
 	4. Bevel the edges of the heightfields' triangles for smoother transitions
-	5. Color each position on the heightfield's based on their distance away from the center of the planet
+	5. Color each position on the heightfields based on constants from a file.  #Ask Ryan about this
 	5. Add low-poly objects on the planet:
 		1. Small Cars
 		2. Fir Trees
@@ -69,7 +69,7 @@ The planets are represented through a combination of layered, spherical heightfi
 
 Noise
 -----------------------------------------------------------
-Noise is used to generate the heights at varying locations of our three heightfields. Each field has its own unique noise functions, which rely on each other, in order to make sure the three do not interfere with one another. Perling Noise is especially useful for this, because it gives enough variation to allow for unique planet formations.
+Perling noise is used to generate the heights at varying locations of our three heightfields. Each field has its own unique noise functions, which rely on each other, in order to make sure the three do not interfere with one another.
 
 
 Meshes
@@ -97,28 +97,7 @@ The following is a description of our design.
 
 Flowchart
 -------------------------------------------------------------------------------------
-*****************************************************************************************************************************************
-*                                                                                                                                       *
-*   .---------.                  .------------.        .-------------.                                                                  *
-*  |   GAPP    |                 | Rasterizer +------>+ drawThickLine |           .----------------------.     .------------------.     *
-*   '----+----'                  '-----+------'        '-----+-------'            |  CoralSceneGenerator +---->| writeTankScene   |     *
-*        |                             ^                     | draw quadrant      '------+---------------'     | or writeSeaScene |     *
-*        v                             |                     | bump and                  ^                     '-------+----------'     *
-*   .----+---.                  .------+---.                 v lambertian                |                             |                * 
-*   | onInit |                 | writeCoral |          .-----+--------.                  |                             v                *
-*   '----+---'                  '------+---'           | GAPP::onInit |          .-------+-------------.        .------+------.         *
-*        |                             ^               '-----+--------'          | GAPP::generateScene |        | writeModels |         *
-*        v                             |                     | 4 map             '-------+-------------'        '-+--------+--'         *
-*    .------------------.         .----+-------.             | quadrants                 ^                        | tank   | sea        *
-*   /  Planet          /         / Subdivide  /              v bump & lambertian         |                        v sceme  v scene      *
-*  '-----+------------'         '-----+------'          .----+---------.                 |               .--------+--.  .--+-------.    *
-*        |                            ^                | Rasterizer     |  2 maps    .---+--------.      | writeTank |  | writeSea |    *
-*        v                            |                | mergeQuadrants +---------->| GAPP::onInit |     | Entities  |  | Entities |    *
-*  .------------.                 .---+----------.      '--------------'             '--+-------+-'      '--------+--'  '--------+-'    *
-*  | writePlanet+---------------->| makeIcohedron|                                      | save  | save            ^  load bump   ^      *
-*  '------------'                 '--------------'                                      v bump  v lambertian      | & lambertian |      *
-*****************************************************************************************************************************************
-
+GAPP::makePlanetGUI() -> Generate Button -> 
 
 Class Descriptions
 -----------------------------------------------------------------------------------------------------------------------------
