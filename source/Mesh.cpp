@@ -226,7 +226,7 @@ void collapseOneEdge(const MeshAlg::Edge& edge, Array<Vector3>& vertexArray, Arr
             indexArray[j] = index1;
         }
     }
-   // vertexArray[index0] = vertexArray[index1];
+   vertexArray[index0] = vertexArray[index1];
 }
 
 void Mesh::collapseEdges(int numEdges) {
@@ -259,7 +259,10 @@ void Mesh::collapseEdges(int numEdges) {
         collapseOneEdge(compEdges[x].edge, m_vertexPositions, m_indexArray);
     }
 
-    //Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, Welder::Settings());
+    Welder::Settings settings; 
+    settings.normalWeldRadius = 0.1;
+    Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, settings);
+    Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, Welder::Settings());
 };
 
 class AngledVertex {
