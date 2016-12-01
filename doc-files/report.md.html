@@ -62,17 +62,27 @@ Specification
   
 Topic Overview
 =====================================================================================
-Noise
------------------------------------------------------------
-Noise is used to create natural seeming planets.
 
 Heightfields
 -----------------------------------------------------------
-The planets are represented through a combination of spherical heightfields.
+The planets are represented through a combination of layered, spherical heightfields. From top to bottom, these spheres represent the mountains, land, and water planes of our planet. Each has a unique noise algorithm, which creates the variation in their heights. 
+
+Noise
+-----------------------------------------------------------
+Noise is used to generate the heights at varying locations of our three heightfields. Each field has its own unique noise functions, which rely on each other, in order to make sure the three do not interfere with one another. Perling Noise is especially useful for this, because it gives enough variation to allow for unique planet formations.
+
 
 Meshes
 ----------------------------------------------------------
 Thes heightfields are stored as meshes. To create a low-poly planet, we use an edge collapsing algorithm. Smoothing is performed through beveling.
+
+Beveling
+-----------------------------------------------------------
+In order to create a smooth transition between triangles, we used a bevelling function. This functions shrinks each triangle face by a specified amount, causing each face to become disconnected from one another. It then fills in the missing spaces with rectangles, reconnecting the triangles together. 
+
+![A planet with shrunken faces](beveling1.jpg)![A beveled surface](beveling.jpg)![Close-up shot](bevelingclose.jpg)
+
+The result is a more cartoon-like feel for the planet, because it gets rid of extremely sharp edges.
 
 Design
 =====================================================================================
@@ -151,8 +161,19 @@ Planet is responsible for building the actual layout of the planet and uses our 
 
 Mesh is responsible for building and editting the planet's mesh.
 
-Quality Results
+Results
 =====================================================================================
+
+Correctness Results
+---------------------------------------------------------------------------------------
+
+![](noise.png)
+![](a.jpg)
+![](low-poly.jpg)
+
+
+Quality Results
+--------------------------------------------------------------------------------------
 Here, we show high quality images that show both the advantages and limitations of our project.  
 
 ![](low-poly.jpg)
@@ -190,6 +211,10 @@ Change Log
 1. Created initial plans. All 11/10/16.
 2. Created a seperate mesh class. Julia and Matheus 11/12/16.
 3. Created a sperate class for our sphere generator. John and Jose 11/13/16.
+4. Sphere generator renamed to Planet. John and Jose 11/14/16
+5. Created a noise class to create images with noise. Jose 11/16/16
+6. Added GUI to APP. Julia 11/17/16
+7. Moved noise class functions to planet class. Not using NoiseGen anymore. John 11/18/16
 
 Acknowledgements and Bibliography
 ============================================
