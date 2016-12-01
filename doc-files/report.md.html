@@ -72,7 +72,7 @@ The planets are represented through a combination of spherical heightfields.
 
 Meshes
 ----------------------------------------------------------
-Thes heightfields are stored as meshes. To create a low-poly planet, we use an edge collapsing algorithm. Smoothing is performe dthrough beveling.
+Thes heightfields are stored as meshes. To create a low-poly planet, we use an edge collapsing algorithm. Smoothing is performed through beveling.
 
 Design
 =====================================================================================
@@ -109,22 +109,43 @@ Class Descriptions
 
 |[Planet](class_planet.html): | |
 |------------|---|
-|[]() |  |
-|[]() |  |
-|[]() |  |
-|[]() |  |
-|[]() |  |
+|[applyNoiseLand](class_planet.html#acef025087d323d0d14c68ed8e808f784) | Generates and maps noise for land |
+|[applyNoiseMountain](class_planet.html#a61f483ef01185744916f3d5c880a6737) | Generates and maps noise for mountains |
+|[applyNoiseWater](class_planet.html#aae1f673f08375154a869ca9df9547718) | Generates and maps noise for ocean |
+|[writeSphere](class_planet.html#a4e6161f7106c7800e162213210cc23bb) | Constructs a sphere of a given recursion depth |
+|[getMiddle](class_planet.html#a9264b1a5ed9484f6de3a802b674ccd3e) | Finds the middle between two points |
+|[makeIcohedron](class_planet.html#a73f0047f85c0d7138283e9006cc5b729) | Makes an icohedron |
+|[subdivideIcoHedron](class_planet.html#a8da7fb007fbfb344c150382ab774629a) | Divides the faces of the icohedron |
 
 |[Mesh](class_mesh.html): | |
 |------------|---|
-|[]() |  |
-|[]() |  |
-|[]() |  |
-|[]() |  |
-|[]() |  |
+|[bevelEdges](class_mesh.html#adc7558052d2c7fb4ee0697805ef7cd72) | Creates new vertex and index arrays in which the original triangles are separated and shrunk andvthe gaps between them are filled in with more triangles |
+|[collapseEdges](class_mesh.html#a015dfb6334430099b0061bbdc24a7289) | As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf Calls toCollapse() Collapses one edge for each block of regionSize indices.  |
+|[computeAgency](class_mesh.html#a8b7b39f416aee6d204de79cb65226d05) | Fills buffers with information about the mesh's topology |
+|[computeFaceNormals](class_mesh.html#ad2d3073f94942602441016a2ae5c7191) | Calculates normals for each face |
+|[computeNormals](class_mesh.html#a80fe9c1e1a35dc5aa5cd088dbe0d08d6) | vertexNormalArray and faceNormalArray filled with appropriate normal values |
+|[toArticulatedModel](class_mesh.html#aa25e2fa35851d7660871190eaeab737b) | Returns an articulated model of the mesh |
+|[toObj](class_mesh.html#aa6aa873a3f810e2c0bfdb9e08aaf3908) | Writes an object file of the mesh |
+|[create](class_mesh.html#acf65d30a393e0e492fa08878472b4847) | Returns a shared pointer to a mesh |
+|[edgeLength](class_mesh.html#ac5a3107caa5fd891de64985be4e653aa) | Returns the length of a given edge |
+|[greaterAngle](class_mesh.html#a71bb93a4e76f8c6bc9f2ef7c1d70c80d) | Compares two angles and returns the greater one |
+|[isCollapsable](class_mesh.html#a927969b67bb759490deab1acd701354f) | Checks is an edge can be safely collapsed |
+|[toCollapse](class_mesh.html#a8a5a605a02f702b5d25433ee1d50c6a9) | Determines which edge to collapse next |
+
+|[Angled Vertex](class_angled_vertex.html): | |
+|------------|---|
+|[operator<](class_angled_vertex.html#af8dea9a741ccba035b79f5015adc7572) | Used for sorting vertices by angle |
+|[operator>](class_angled_vertex.html#ae6d68c335a0bf593ac5b9d9e85c1407a) | Used for sorting vertices by angle |
+
+|[App](class_app.html): | |
+|------------|---|
+|[addPlanetToScene](class_app.html#aa16db878375c7fa7a16108e7b9edb898) | Adds an articulated model of a mesh to the current scene |
+|[makePlanetGUI](class_app.html#a9bc72b237ac25e5c1e793c9104221320) | Provides the ability to generate a planet on command |
 
 Justification
 ------------------------------------------------------------------------------------------------------------------------------
+
+Our planet class is used for creating spherical heightfield using noise, which are then modified and outputted from inside our mesh class. Our planet heightfield is built by applying noise to a sphere. We build our own sphere from an icohedron so we can make it as low or high poly as we desire.
 
 Planet is responsible for building the actual layout of the planet and uses our Mesh class to create its 3D mesh.
 
@@ -157,6 +178,12 @@ Schedule
 |Sphere Creation Draft| 13 Nov. 2016 | John and Jose|
 |Mesh Class Draft| 13 Nov. 2016 | Julia and Matheus|
 |Report Draft | 14 Nov. 2016 | John and Jose|
+|Sphere Creation MVP| 17 Nov. 2016 | John and Jose|
+|Mesh Class MVP| 17 Nov. 2016 | Julia and Matheus|
+|Report MVP | 1 Dec. 2016 | All|
+|Sphere Creation Polish| 7 Dec. 2016 | John and Jose|
+|Mesh Class Polish| 7 Dec. 2016 | Julia and Matheus|
+|Report Polish | 7 Dec. 2016 | All|
 
 Change Log
 ===================================================================
