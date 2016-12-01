@@ -17,7 +17,7 @@
             texture = "cubemap/whiteroom/whiteroom-*.png";
        };
 
-        WATER = VisibleEntity {
+        Pentagon = VisibleEntity {
             model = "pentagon";
             frame = CFrame::fromXYZYPRDegrees(0, 0, -2, 45, 0, 0);
         };

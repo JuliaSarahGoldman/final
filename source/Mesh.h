@@ -29,7 +29,7 @@ protected:
 
     /** Returns true if the angle between the normal of the adjacent faces of elem1 is greater than that of 
         the adjacent faces of elem2 */
-    bool greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2);
+    //bool greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2);
 
     MeshAlg::Edge Mesh::toCollapse(const Array<MeshAlg::Edge>& data);
 
@@ -63,8 +63,8 @@ public:
 
     void toObj(String filename);
 
-    shared_ptr<Model> toArticulatedModel(String name, Color3& color);
-    shared_ptr<Model> toArticulatedModel(String name, String anyStr, int width, int height);
+    shared_ptr<Model> toArticulatedModel(String name, Color3& color) const;
+    shared_ptr<Model> toArticulatedModel(String name, String anyStr, int width, int height) const;
 
     static std::shared_ptr<Mesh> Mesh::create(const String& filename);
     static std::shared_ptr<Mesh> create(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
