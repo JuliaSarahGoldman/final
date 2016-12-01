@@ -322,7 +322,7 @@ void App::makePlanetGUI() {
             planet.applyNoiseWater(vertices, image);
             Mesh mesh(vertices, faces);
             mesh.bevelEdges2(0.1f);
-            mesh.toObj("ocean");
+            //mesh.toObj("ocean");
 
             vertices = Array<Vector3>();
             faces = Array<Vector3int32>();
@@ -336,7 +336,7 @@ void App::makePlanetGUI() {
             test->save("test.png");
             Mesh mesh2(vertices, faces);
             mesh2.bevelEdges2(m_landBevel);
-            mesh2.toObj("land");
+            //mesh2.toObj("land");
 
             /*vertices = Array<Vector3>();
             faces = Array<Vector3int32>();
@@ -366,7 +366,7 @@ void App::makePlanetGUI() {
             Mesh mesh3(vertices, faces);
             //mesh3.collapseEdges(1000);
             mesh3.bevelEdges2(m_mountainBevel);
-            mesh3.toObj("mountain");
+            //mesh3.toObj("mountain");
 
             image->save("image.png");
             /*image2->save("image2.png");
@@ -383,9 +383,9 @@ void App::makePlanetGUI() {
             String material3 = "UniversalMaterial::Specification { lambertian = \"texture.jpg\"; }";
             addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), material3, 1000, 1000);*/
 
-            addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));
+            //addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));
             addPlanetToScene(mesh2, "land", Point3(0, 0, 0), Color3(0, 1, 0));
-            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));
+            //addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));
 
             /*addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), "space.png");
             addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "texture2.jpg");

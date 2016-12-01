@@ -12,11 +12,6 @@ void Planet::writeSphere(String filename, float radius, int depths, Array<Vector
 
     Array<Vector2> textVerts = Array<Vector2>();
     Array<Vector3int32> textPos = Array<Vector3int32>();
-    makeIcohedron(radius, textVerts, textPos);
-
-    for (int i(0); i < depths; ++i) {
-        subdivideIcoHedron(radius, textVerts, textPos);
-    }
 
     Array<Vector2> texture;
     Array<Vector3> normals;
@@ -37,28 +32,6 @@ void Planet::writeSphere(String filename, float radius, int depths, Array<Vector
         faces.append(Vector3int32(indices[i], indices[i + 1], indices[i + 2]));
     }
     
-    /*for (int i(0); i < vertices.size(); ++i) {
-        Vector3 vertex = vertices[i];
-
-        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
-
-        float nx = image->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
-        float ny = image->height() * (0.5f - asinf(d.y) * 1 / pif());
-
-        int ix = (int)abs((int)nx % image->width());
-        int iy = (int)abs((int)ny % image->height());
-
-        Color3 color = Color3();
-
-        image->get(Point2int32(ix, iy), color);
-
-        float bump = color.average();
-        if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
-        else if (bump < 0.3f) bump = 0.1f;
-        else bump = 1.0f;
-
-        vertices[i] += vertex.unit() * bump * radius;
-    }*/
     vertices = verts;
 }
 
@@ -253,114 +226,6 @@ void Planet::subdivideIcoHedron(float radius, Array<Vector3>& vertices, Array<Ve
     faces = newFaces;
 }
 
-
-
-
-
-//Creates an initial icohedron with the given radius to be tessellated to create a sphere
-void Planet::makeIcohedron(float radius, Array<Vector2>& vertices, Array<Vector3int32>& faces) {
-    //The number of points horizontally
-    float w = 5.5f;
-    //The number of points vertically
-    float h = 3.0f;
-
-    vertices.append(Vector2(0.5f / w, 0));
-    vertices.append(Vector2(1.5f / w, 0));
-    vertices.append(Vector2(2.5f / w, 0));
-    vertices.append(Vector2(3.5f / w, 0));
-    vertices.append(Vector2(4.5f / w, 0));
-
-    vertices.append(Vector2(0.0f, 1.0f / h));
-    vertices.append(Vector2(1.0f / w, 1.0f / h));
-    vertices.append(Vector2(2.0f / w, 1.0f / h));
-    vertices.append(Vector2(3.0f / w, 1.0f / h));
-    vertices.append(Vector2(4.0f / w, 1.0f / h));
-    vertices.append(Vector2(5.0f / w, 1.0f / h));
-
-    vertices.append(Vector2(0.5f / w, 2.0f / h));
-    vertices.append(Vector2(1.5f / w, 2.0f / h));
-    vertices.append(Vector2(2.5f / w, 2.0f / h));
-    vertices.append(Vector2(3.5f / w, 2.0f / h));
-    vertices.append(Vector2(4.5f / w, 2.0f / h));
-    vertices.append(Vector2(1.0f, 2.0f / h));
-
-    vertices.append(Vector2(1.0f / w, 1.0f));
-    vertices.append(Vector2(2.0f / w, 1.0f));
-    vertices.append(Vector2(3.0f / w, 1.0f));
-    vertices.append(Vector2(4.0f / w, 1.0f));
-    vertices.append(Vector2(5.0f / w, 1.0f));
-
-    // First Row
-    faces.append(Vector3int32(0, 5, 6));
-    faces.append(Vector3int32(1, 6, 7));
-    faces.append(Vector3int32(2, 7, 8));
-    faces.append(Vector3int32(3, 8, 9));
-    faces.append(Vector3int32(4, 9, 10));
-
-    // Second Row
-    faces.append(Vector3int32(7, 6, 12));
-    faces.append(Vector3int32(6, 5, 11));
-    faces.append(Vector3int32(10, 9, 15));
-    faces.append(Vector3int32(9, 8, 14));
-    faces.append(Vector3int32(8, 7, 13));
-
-    // Third Row
-    faces.append(Vector3int32(11, 12, 6));
-    faces.append(Vector3int32(15, 16, 10));
-    faces.append(Vector3int32(14, 15, 9));
-    faces.append(Vector3int32(13, 14, 8));
-    faces.append(Vector3int32(12, 13, 7));
-
-    // Fourth Row
-    faces.append(Vector3int32(17, 12, 11));
-    faces.append(Vector3int32(21, 16, 15));
-    faces.append(Vector3int32(20, 15, 14));
-    faces.append(Vector3int32(19, 14, 13));
-    faces.append(Vector3int32(18, 13, 12));
-}
-
-void Planet::subdivideIcoHedron(float radius, Array<Vector2>& vertices, Array<Vector3int32>& faces) {
-    Vector2 newVec1;
-    Vector2 newVec2;
-    Vector2 newVec3;
-
-    int numFaces = faces.length();
-
-    Array<Vector3int32> newFaces = Array<Vector3int32>();
-
-    for (int i(0); i < numFaces; ++i) {
-
-        int numVertices = vertices.length();
-        Vector3int32 face = faces.operator[](i);
-
-        Vector2 vert1 = vertices.operator[](face.x);
-        Vector2 vert2 = vertices.operator[](face.y);
-        Vector2 vert3 = vertices.operator[](face.z);
-
-        //Find the midpoints
-        getMiddle(radius, vert1, vert2, newVec1);
-        getMiddle(radius, vert2, vert3, newVec2);
-        getMiddle(radius, vert3, vert1, newVec3);
-
-        vertices.append(newVec1, newVec2, newVec3);
-
-        int posVec1 = numVertices;
-        int posVec2 = numVertices + 1;
-        int posVec3 = numVertices + 2;
-
-        //add the new faces
-        newFaces.append(Vector3int32(posVec3, face.x, posVec1));
-        newFaces.append(Vector3int32(posVec1, face.y, posVec2));
-        newFaces.append(Vector3int32(posVec2, face.z, posVec3));
-        newFaces.append(Vector3int32(posVec1, posVec2, posVec3));
-    }
-    faces = newFaces;
-}
-
-void Planet::getMiddle(float radius, Vector2& v1, Vector2& v2, Vector2& newVector) {
-    newVector = (v2 + v1) / 2.0f;
-}
-
 /*
     Table<Vector3, int> vertexPositions;
     for(int i(0); i < vertices->length(); ++i) {
@@ -459,3 +324,27 @@ vertices = std::make_shared<Array<Vector3>>(verts);*/
                 }
             }
             */
+
+
+    /*for (int i(0); i < vertices.size(); ++i) {
+        Vector3 vertex = vertices[i];
+
+        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
+
+        float nx = image->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
+        float ny = image->height() * (0.5f - asinf(d.y) * 1 / pif());
+
+        int ix = (int)abs((int)nx % image->width());
+        int iy = (int)abs((int)ny % image->height());
+
+        Color3 color = Color3();
+
+        image->get(Point2int32(ix, iy), color);
+
+        float bump = color.average();
+        if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
+        else if (bump < 0.3f) bump = 0.1f;
+        else bump = 1.0f;
+
+        vertices[i] += vertex.unit() * bump * radius;
+    }*/
