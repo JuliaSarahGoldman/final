@@ -79,69 +79,6 @@ void App::onInit() {
     );
 }
 
-void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename) {
-    String anyStr = "UniversalMaterial::Specification { lambertian = \"" + filename + "\"; }";
-    shared_ptr<Image> im(Image::fromFile(filename));
-    addPlanetToScene(mesh, name, position, anyStr, im->width(), im->height());
-}
-
-void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color) {
-    String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
-    addPlanetToScene(mesh, name, position, anyStr, 1, 1);
-}
-
-void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String anyStr, int width, int height) {
-    // Replace any existing torus model. Models don't 
-    // have to be added to the model table to use them 
-    // with a VisibleEntity.
-    const shared_ptr<Model>& planetModel = mesh.toArticulatedModel(name + "Model", anyStr, width, height);
-    if (scene()->modelTable().containsKey(planetModel->name())) {
-        scene()->removeModel(planetModel->name());
-    }
-    scene()->insert(planetModel);
-
-    // Replace any existing planet entity that has the wrong type
-    shared_ptr<Entity> planet = scene()->entity(name);
-    if (notNull(planet) && isNull(dynamic_pointer_cast<VisibleEntity>(planet))) {
-        logPrintf("The scene contained an Entity named %s that was not a VisibleEntity\n", name);
-        scene()->remove(planet);
-        planet.reset();
-    }
-
-    if (isNull(planet)) {
-        // There is no torus entity in this scene, so make one.
-        //
-        // We could either explicitly instantiate a VisibleEntity or simply
-        // allow the Scene parser to construct one. The second approach
-        // has more consise syntax for this case, since we are using all constant
-        // values in the specification.
-        //planet = scene()->createEntity();
-        String anyStr("VisibleEntity { model = \"" + name + "Model\"; };");
-        Any any = Any::parse(anyStr);
-        planet = scene()->createEntity(name, any);
-        Matrix3 startMat = Matrix3::identity();
-        PhysicsFrame frame(startMat);
-        PhysicsFrameSpline spline(frame.toAny());
-        spline.extrapolationMode = SplineExtrapolationMode::CYCLIC;
-        spline.interpolationMode = SplineInterpolationMode::LINEAR;
-        float cosrot = cos(pif()/4.0f);
-        float sinrot = sin(pif()/4.0f);
-        Matrix3 rotMat(cosrot, 0, sinrot, 0, 1, 0, -sinrot, 0, cosrot);
-        int t(1);
-        for(int i(0); i < 32; i++){
-            startMat *= rotMat;
-            spline.append(PhysicsFrame(startMat));
-        }
-        planet->setFrameSpline(spline);
-    }
-    else {
-        // Change the model on the existing planet entity
-        dynamic_pointer_cast<VisibleEntity>(planet)->setModel(planetModel);
-    }
-
-    //planet->setFrame(CFrame::fromXYZYPRDegrees(0.0f, 1.8f, 0.0f, 45.0f, 45.0f));
-}
-
 void App::makePentagon() {
     Array<Vector3> vertices = Array<Vector3>();
     Array<Vector3int32> faces = Array<Vector3int32>();
@@ -288,6 +225,67 @@ void App::makeLittleHeightfield() {
     hfPane->pack();
 }
 
+void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename, Matrix3& rotation) {
+    String anyStr = "UniversalMaterial::Specification { lambertian = \"" + filename + "\"; }";
+    shared_ptr<Image> im(Image::fromFile(filename));
+    addPlanetToScene(mesh, name, position, anyStr, im->width(), im->height(), rotation);
+}
+
+void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation) {
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
+    addPlanetToScene(mesh, name, position, anyStr, 1, 1, rotation);
+}
+
+void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String anyStr, int width, int height, Matrix3& rotation) {
+    // Replace any existing torus model. Models don't 
+    // have to be added to the model table to use them 
+    // with a VisibleEntity.
+    const shared_ptr<Model>& planetModel = mesh.toArticulatedModel(name + "Model", anyStr, width, height);
+    if (scene()->modelTable().containsKey(planetModel->name())) {
+        scene()->removeModel(planetModel->name());
+    }
+    scene()->insert(planetModel);
+
+    // Replace any existing planet entity that has the wrong type
+    shared_ptr<Entity> planet = scene()->entity(name);
+    if (notNull(planet) && isNull(dynamic_pointer_cast<VisibleEntity>(planet))) {
+        logPrintf("The scene contained an Entity named %s that was not a VisibleEntity\n", name);
+        scene()->remove(planet);
+        planet.reset();
+    }
+
+    if (isNull(planet)) {
+        // There is no torus entity in this scene, so make one.
+        //
+        // We could either explicitly instantiate a VisibleEntity or simply
+        // allow the Scene parser to construct one. The second approach
+        // has more consise syntax for this case, since we are using all constant
+        // values in the specification.
+        //planet = scene()->createEntity();
+        String anyStr("VisibleEntity { model = \"" + name + "Model\"; };");
+        //frame = CFrame::fromXYZYPRDegrees(" + (String) std::to_string(position.x) +", " + (String) std::to_string(position.y) + ", " + (String) std::to_string(position.z) + ", 0,0,0);
+        Any any = Any::parse(anyStr);
+        planet = scene()->createEntity(name, any);
+        Matrix3 startMat = Matrix3::identity();
+        PhysicsFrame frame(startMat);
+        PhysicsFrameSpline spline(frame.toAny());
+        spline.extrapolationMode = SplineExtrapolationMode::CYCLIC;
+        spline.interpolationMode = SplineInterpolationMode::LINEAR;
+
+        for(int i(0); i < 128; i++){
+            startMat *= rotation;
+            spline.append(PhysicsFrame(startMat));
+        }
+        planet->setFrameSpline(spline);
+    }
+    else {
+        // Change the model on the existing planet entity
+        dynamic_pointer_cast<VisibleEntity>(planet)->setModel(planetModel);
+    }
+
+    planet->setFrame(CFrame::fromXYZYPRDegrees(position.x, position.y, position.z, 45.0f, 45.0f));
+}
+
 void App::makePlanetGUI() {
 
     GuiPane* planetPane = debugPane->addPane("Planet");
@@ -429,10 +427,24 @@ void App::makePlanetGUI() {
             addPlanetToScene(mesh2, "land", Point3(0, 0, 0), material2, 1000, 1000);
             String material3 = "UniversalMaterial::Specification { lambertian = \"texture.jpg\"; }";
             addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), material3, 1000, 1000);*/
+                        
+            float cosrot = cos(pif()/4.0f);
+            float sinrot = sin(pif()/4.0f);
 
-            addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), Color3(0, 0, 1));
-            addPlanetToScene(mesh2, "land", Point3(0, 0, 0), Color3(0, 1, 0));
-            addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), Color3(.5, .5, .5));
+            Matrix3 rotation(cosrot, 0, sinrot, 0, 1, 0, -sinrot, 0, cosrot);
+
+            cosrot = cos(pif()/5.0f);
+            sinrot = sin(pif()/5.0f);
+
+            Matrix3 waterRotation(cosrot, 0, sinrot, 0, 1, 0, -sinrot, 0, cosrot); 
+
+            addPlanetToScene(mesh, "ocean", Point3(100, 0, 0), Color3(0, 0, 1), waterRotation);
+            addPlanetToScene(mesh2, "land", Point3(100, 0, 0), Color3(0, 1, 0), rotation);
+            addPlanetToScene(mesh3, "mountain", Point3(100, 0, 0), Color3(.5, .5, .5), rotation);
+
+            addPlanetToScene(mesh, "lava", Point3(0, 0, 0), "orange.jpg", waterRotation);
+            addPlanetToScene(mesh2, "twin", Point3(0, 0, 0), "deep_red.jpg", rotation);
+            addPlanetToScene(mesh3, "mount", Point3(0, 0, 0), "texture2.jpg", rotation);
 
             /*addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), "orange.jpg");
             addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "deep_red.jpg");

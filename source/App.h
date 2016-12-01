@@ -39,9 +39,10 @@ protected:
     void makeBunny(); 
     void makeLittleHeightfield();
 
-    void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color);
-    void addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename);
-    void addPlanetToScene(Mesh& mesh, String name, Point3& position, String anyStr, int width, int height);
+    void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation);
+    void addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename, Matrix3& rotation);
+    void addPlanetToScene(Mesh& mesh, String name, Point3& position, String anyStr, int width, int height, Matrix3& rotation);
+
     void makePlanetGUI();
 
 public:
