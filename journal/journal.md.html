@@ -6,6 +6,19 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
+2016-12-01: Edge Collapsing outline and problems
+=============================================================
+Right now edge collapsing still doesn't conserve the mesh topology, but I'm not able to spot the problem. Conceptually it should work. 
+The algorithm works as follows: 
+
+- Finds MeshAlg::Edges, Faces and Vertices with computeAdjacency; 
+- Computes Face normals; 
+- Finds collapsable edges (not boundary, which don't generate a manifold or flip face normals after collapsed);
+- Sorts the collapsable edges by angle of adjacent face normals weighted by length;
+- For each collapsable edge, goes through index array and collapses the edge by replacing the index to vertex0 of the edge by the index of vertex1 of the edge; 
+- Sets vertexArray[index of vertex 0 of edge] = vertexArray[index of vertex 1 of edge]; 
+- Welds the mesh. 
+
 2016-12-01: ???
 =============================================================
 
