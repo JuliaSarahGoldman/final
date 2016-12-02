@@ -9,7 +9,6 @@ Mesh::Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& tri
     }
     m_vertexPositions = vertexPositions;
     m_triArray = triArray;
-    //Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, Welder::Settings());
 };
 
 Mesh::Mesh(const String& filename) {
@@ -20,7 +19,6 @@ Mesh::Mesh(const String& filename) {
         m_vertexPositions.append(geometryArray[0]->cpuVertexArray.vertex[i].position);
     }
     m_indexArray = meshArray[0]->cpuIndexArray;
-    //Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, Welder::Settings());
 };
 
 Mesh::~Mesh() {};
@@ -35,7 +33,6 @@ std::shared_ptr<Mesh> Mesh::create(const String& filename) {
 
 void Mesh::computeAdjacency(Array<MeshAlg::Face>& faceArray, Array<MeshAlg::Edge>& edgeArray, Array<MeshAlg::Vertex>& vertexArray) {
     //debugPrintf(STR(%d %d \n), m_indexArray.size(), m_vertexPositions.size());
-    //Welder::weld(m_vertexPositions, Array<Point2>(), Array<Vector3>(), m_indexArray, Welder::Settings());
     MeshAlg::computeAdjacency(m_vertexPositions, m_indexArray, faceArray, edgeArray, vertexArray);
 };
 
@@ -64,40 +61,88 @@ int Mesh::edgeLength(int i0, int i1) {
 
 static bool isManifold(const MeshAlg::Edge& edge, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) {
     // Check how many end points of the adjacent edges to edge coincide. 
-    // A manifold will be formed if there are more than two such endpoints. 
-    MeshAlg::Vertex v0(vertices[edge.vertexIndex[0]]);
-    SmallArray<int, 6> adjacentEdges0(v0.edgeIndex); //indices of edges adjacent to vertex 0
+    // If there are more than two such endpoints, the manifold is not maintained. 
 
-    MeshAlg::Vertex v1(vertices[edge.vertexIndex[1]]);
-    SmallArray<int, 6> adjacentEdges1(v1.edgeIndex); //indices of edges adjacent to vertex 1
+    int vIndex0(edge.vertexIndex[0]);
+    int vIndex1(edge.vertexIndex[1]);
 
-    Array<int> endPoints0;
-    Array<int> endPoints1;
+    const SmallArray<int, 6>& adjacentEdgesIndices0(vertices[vIndex0].edgeIndex); //indices of edges adjacent to vertex 0
+    const SmallArray<int, 6>& adjacentEdgesIndices1(vertices[vIndex1].edgeIndex); //indices of edges adjacent to vertex 1
 
-    int maxSize(max(adjacentEdges0.size(), adjacentEdges1.size()));
-    // Fill both endPoints arrays
-    for (int i(0); i < maxSize; ++i) {
-        if (i < adjacentEdges0.size()) {
-            int e0 = adjacentEdges0[i];
-            endPoints0.append(edges[e0 >= 0 ? e0 : ~e0].vertexIndex[1]);
+    SmallArray<int, 6> endPoints0;
+    //Array<int> endPoints1;
+
+    //int maxSize(max(adjacentEdgesIndices0.size(), adjacentEdgesIndices1.size()));
+
+    //// Fill both endPoints arrays
+    //for (int i(0); i < maxSize; ++i) {
+    //    if (i < adjacentEdgesIndices0.size()) {
+    //        int e0(adjacentEdgesIndices0[i]);
+    //        const MeshAlg::Edge& adjacentEdge(edges[e0 >= 0 ? e0 : ~e0]);
+
+    //        if (vIndex0 != adjacentEdge.vertexIndex[0]) {
+    //            endPoints0.append(adjacentEdge.vertexIndex[1]);
+    //        }
+    //        else {
+    //            endPoints0.append(adjacentEdge.vertexIndex[0]);
+    //        }
+    //    }
+
+    //    if (i < adjacentEdgesIndices1.size()) {
+    //        int e1(adjacentEdgesIndices1[i]);
+    //        const MeshAlg::Edge& adjacentEdge(edges[e1 >= 0 ? e1 : ~e1]);
+
+    //        if (vIndex1 != adjacentEdge.vertexIndex[0]) {
+    //            endPoints1.append(adjacentEdge.vertexIndex[1]);
+    //        }
+    //        else {
+    //            endPoints1.append(adjacentEdge.vertexIndex[0]);
+    //        }
+    //    }
+    //}
+
+    //int counter(0); // Count how many common end points there are
+    //for (int i(0); i < endPoints0.size(); ++i) {
+    //    if (endPoints1.contains(endPoints0[i])) {
+    //        counter += 1;
+    //        if (counter > 2) { // If there are more than 2 common end points, collapsing it's not anymore a manifold
+    //            return false;
+    //        }
+    //    }
+    //}
+    //return true;
+
+    for (int i(0); i < adjacentEdgesIndices0.size(); ++i) {
+
+        int e0(adjacentEdgesIndices0[i]);
+        const MeshAlg::Edge& adjacentEdge(edges[e0 >= 0 ? e0 : ~e0]);
+
+        if (vIndex0 != adjacentEdge.vertexIndex[0]) {
+            endPoints0.append(adjacentEdge.vertexIndex[1]);
         }
-
-        if (i < adjacentEdges1.size()) {
-            int e1 = adjacentEdges1[i];
-            endPoints1.append(edges[e1 >= 0 ? e1 : ~e1].vertexIndex[1]);
+        else {
+            endPoints0.append(adjacentEdge.vertexIndex[0]);
         }
     }
 
-    int counter(0); // Count how many common end points there are
-    for (int i(0); i < endPoints0.size(); ++i) {
-        if (endPoints1.contains(endPoints0[i])) {
+    int counter(0);
+    for (int i(0); i < adjacentEdgesIndices1.size(); ++i) {
+        int e1(adjacentEdgesIndices1[i]);
+        const MeshAlg::Edge& adjacentEdge(edges[e1 >= 0 ? e1 : ~e1]);
+        int toCheck(adjacentEdge.vertexIndex[1]);
+
+        if (vIndex1 == adjacentEdge.vertexIndex[0]) {
+            toCheck = adjacentEdge.vertexIndex[1];
+        }
+
+        if (endPoints0.contains(toCheck)) {
             counter += 1;
-            if (counter > 2) { // If there are more than 2 common end points, collapsing it creates a manifold.
-                return true;
+            if (counter > 2) {
+                return false;
             }
         }
     }
-    return false;
+    return true;
 }
 
 // Finds faces that are not collapsed with the edge
@@ -124,12 +169,12 @@ static Array<MeshAlg::Face> findRemainingFaces(const MeshAlg::Edge& edge, const 
 }
 
 static Vector3 computeCurNormal(const MeshAlg::Face& face, const Array<Vector3>& vertices) {
-    Vector3 v0(vertices[face.vertexIndex[0]]);
-    Vector3 v1(vertices[face.vertexIndex[1]]);
-    Vector3 v2(vertices[face.vertexIndex[2]]);
+    const Vector3& v0(vertices[face.vertexIndex[0]]);
+    const Vector3& v1(vertices[face.vertexIndex[1]]);
+    const Vector3& v2(vertices[face.vertexIndex[2]]);
 
-    Vector3 a(v0 - v2);
-    Vector3 b(v1 - v2);
+    const Vector3& a(v0 - v2);
+    const Vector3& b(v1 - v2);
 
     return cross(a, b);
 }
@@ -158,23 +203,15 @@ static Vector3 computeNewNormal(const MeshAlg::Face& face, const Array<Vector3>&
     return cross(a, b);
 }
 
-static bool isSignOpposite(const Vector3& v1, const Vector3& v2) {
+inline static bool isSignOpposite(const Vector3& v1, const Vector3& v2) {
     return v1.dot(v2) < -0.0001f;
 }
 
 static bool normalsFlipped(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Vertex>& vertices, const Array<Vector3>& vertexPositions) {
-    //Array<MeshAlg::Face> facesToCheck(findRemainingFaces(edge, vertices, faces));
-    //for (int i(0); i < facesToCheck.size(); ++i) {
-    //    MeshAlg::Face face(facesToCheck[i]);
-    //    if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
-    //        return true;
-    //    }
-    //}
+    const SmallArray<int, 6>& faces0(vertices[edge.vertexIndex[0]].faceIndex); // Faces containing vertex 0 of edge
+    const SmallArray<int, 6>& faces1(vertices[edge.vertexIndex[1]].faceIndex); // Faces containing vertex 1 of edge
 
-    SmallArray<int, 6> faces0(vertices[edge.vertexIndex[0]].faceIndex); // Faces containing vertex 0 of edge
-    SmallArray<int, 6> faces1(vertices[edge.vertexIndex[1]].faceIndex); // Faces containing vertex 1 of edge
-
-    // Check normal signs only for non-overlapping faces, since overlapping faces are collapsed
+    // For each face, check if normal signs flip with collapsing
     for (int i(0); i < faces0.size(); ++i) {
         const MeshAlg::Face& face(faces[faces0[i]]);
         if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
@@ -194,14 +231,14 @@ static bool normalsFlipped(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>
 bool Mesh::isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) const {
     const bool isInside(!edge.boundary());
     // Edge is not collapsable if by collapsing it we get a many fold or the normals flip
-    return isInside && (!isManifold(edge, edges, vertices) && !normalsFlipped(edge, faces, vertices, m_vertexPositions));
+    return isInside && (isManifold(edge, edges, vertices) && !normalsFlipped(edge, faces, vertices, m_vertexPositions));
 };
 
 inline static float cosAngle(const Vector3& v1, const Vector3& v2) {
     return v1.dot(v2);
 }
 
-static bool greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2, const Array<Vector3>& faceNormals, const Array<Vector3>& vertices) {
+static bool moreCollapsable(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2, const Array<Vector3>& faceNormals, const Array<Vector3>& vertices) {
     debugAssertM(!elem1.boundary() && !elem2.boundary(), "Boundary Edge encountered!");
     const float cos1(cosAngle(faceNormals[elem1.faceIndex[0]], faceNormals[elem1.faceIndex[1]]));
     const float cos2(cosAngle(faceNormals[elem2.faceIndex[0]], faceNormals[elem2.faceIndex[1]]));
@@ -222,16 +259,16 @@ public:
     Vector3 v0;
     Vector3 v1;
     bool operator>(const ComparableEdge& other) const {
-        const float x1(computeAngle(leftFaceNormal, rightFaceNormal));
-        const float x2(computeAngle(other.leftFaceNormal, other.rightFaceNormal));
+        const float x1(cosAngle(leftFaceNormal, rightFaceNormal));
+        const float x2(cosAngle(other.leftFaceNormal, other.rightFaceNormal));
         float l1(length(v1 - v0));
         float l2(length(other.v1 - other.v0));
         return (fabs(x1) / cbrt(l1)) > (fabs(x2) / cbrt(l2));
     }
 
     bool operator<(const ComparableEdge& other) const {
-        const float x1(computeAngle(leftFaceNormal, rightFaceNormal));
-        const float x2(computeAngle(other.leftFaceNormal, other.rightFaceNormal));
+        const float x1(cosAngle(leftFaceNormal, rightFaceNormal));
+        const float x2(cosAngle(other.leftFaceNormal, other.rightFaceNormal));
         float l1(length(v1 - v0));
         float l2(length(other.v1 - other.v0));
         return (fabs(x1) / cbrt(l1)) < (fabs(x2) / cbrt(l2));
@@ -299,7 +336,7 @@ void Mesh::collapseEdges(int numEdges) {
                 //ce.v1 = m_vertexPositions[edges[i].vertexIndex[1]]; 
                 //compEdges.append(ce);
                 collapsable++;
-                if (greaterAngle(edges[i], edge, faceNormals, m_vertexPositions)) {
+                if (moreCollapsable(edges[i], edge, faceNormals, m_vertexPositions)) {
                     edge = edges[i];
                 }
             }
@@ -308,12 +345,6 @@ void Mesh::collapseEdges(int numEdges) {
             return;
         }
         collapseOneEdge(edge, m_vertexPositions, m_indexArray);
-
-        //compEdges.sort(SORT_DECREASING);
-        //numEdges = min(numEdges, compEdges.size()); 
-        //for(int i(0); i < numEdges; ++i) { 
-        //    collapseOneEdge(compEdges[i].edge, m_vertexPositions, m_indexArray);
-        //}
     }
 }
 

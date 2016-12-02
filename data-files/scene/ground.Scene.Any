@@ -28,7 +28,7 @@
             attenuation = ( 0, 0, 1 ); 
             bulbPower = Power3(1e+006 ); 
             castsShadows = true; 
-			shadowMapBias = 0.01;
+			shadowMapBias = 0.05;
             track = lookAt(Point3(-15, 200, 40), Point3(0, 0, 0));
             shadowMapSize = Vector2int16(2048, 2048 ); 
             spotHalfAngleDegrees = 8; 
