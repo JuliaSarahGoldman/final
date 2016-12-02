@@ -131,7 +131,7 @@ static Vector3 computeCurNormal(const MeshAlg::Face& face, const Array<Vector3>&
     Vector3 a(v0 - v2);
     Vector3 b(v1 - v2);
 
-    return cross(a, b).direction();
+    return cross(a, b);
 }
 
 static bool isDegenerate(int v0, int v1, int v2) {
@@ -139,32 +139,27 @@ static bool isDegenerate(int v0, int v1, int v2) {
 }
 
 static Vector3 computeNewNormal(const MeshAlg::Face& face, const Array<Vector3>& vertices, const MeshAlg::Edge& edgeToCollapse) {
-    int toReplace(edgeToCollapse.vertexIndex[0]);   // Vertex at index 0 of edge is replaced by vertex at index 1
-    int replacement(edgeToCollapse.vertexIndex[1]);
+    const int toReplace(edgeToCollapse.vertexIndex[0]);   // Vertex at index 0 of edge is replaced by vertex at index 1
+    const int replacement(edgeToCollapse.vertexIndex[1]);
 
-    Array<int> vertexIndices; // Vertex indices after edge collapse
+    int vertexIndices[3]; // Vertex indices after edge collapse
     for (int i(0); i < 3; ++i) {
-        int index(face.vertexIndex[i] == toReplace ? replacement : face.vertexIndex[i]);
-        vertexIndices.append(index);
+        const int j = face.vertexIndex[i];
+        vertexIndices[i] = j == toReplace ? replacement : j;
     }
 
-    // If face is degenerate, then it will be discarded after collapsing, so we don't want to prevent collapsing.
-    if (isDegenerate(vertexIndices[0], vertexIndices[1], vertexIndices[2])) {
-        return computeCurNormal(face, vertices);
-    }
+    const Vector3& v0(vertices[vertexIndices[0]]);
+    const Vector3& v1(vertices[vertexIndices[1]]);
+    const Vector3& v2(vertices[vertexIndices[2]]);
 
-    Vector3 v0(vertices[vertexIndices[0]]);
-    Vector3 v1(vertices[vertexIndices[1]]);
-    Vector3 v2(vertices[vertexIndices[2]]);
+    const Vector3& a(v0 - v2);
+    const Vector3& b(v1 - v2);
 
-    Vector3 a(v0 - v2);
-    Vector3 b(v1 - v2);
-
-    return cross(a, b).direction();
+    return cross(a, b);
 }
 
 static bool isSignOpposite(const Vector3& v1, const Vector3& v2) {
-    return float(v1.dot(v2)) < 0.0f;
+    return v1.dot(v2) < -0.0001f;
 }
 
 static bool normalsFlipped(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Vertex>& vertices, const Array<Vector3>& vertexPositions) {
@@ -205,17 +200,20 @@ bool Mesh::isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& 
     return isInside;
 };
 
-static float computeAngle(const Vector3& v1, const Vector3& v2) {
-    return G3D::acos(v1.dot(v2) / (length(v1)*length(v2)));
+inline static float cosAngle(const Vector3& v1, const Vector3& v2) {
+    return v1.dot(v2);
 }
 
 static bool greaterAngle(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2, const Array<Vector3>& faceNormals, const Array<Vector3>& vertices) {
     debugAssertM(!elem1.boundary() && !elem2.boundary(), "Boundary Edge encountered!");
-    float x1(computeAngle(faceNormals[elem1.faceIndex[0]], faceNormals[elem1.faceIndex[1]]));
-    float x2(computeAngle(faceNormals[elem2.faceIndex[0]], faceNormals[elem2.faceIndex[1]]));
-    float l1(edgeLength(elem1, vertices));
-    float l2(edgeLength(elem2, vertices));
-    return (fabs(x1) / sqrt(l1)) > (fabs(x2) / sqrt(l2));
+    const float cos1(cosAngle(faceNormals[elem1.faceIndex[0]], faceNormals[elem1.faceIndex[1]]));
+    const float cos2(cosAngle(faceNormals[elem2.faceIndex[0]], faceNormals[elem2.faceIndex[1]]));
+
+    const float len1(edgeLength(elem1, vertices));
+    const float len2(edgeLength(elem2, vertices));
+    const float angleWeight = 0.0f;
+
+    return cos1 * (len1 + angleWeight) < cos2 * (len2 + angleWeight);
 }
 
 
