@@ -80,15 +80,15 @@ void App::onInit() {
 }
 
 void App::makePentagon() {
+    //Array<Vector3> vertices1(Vector3(0, 0, -2), Vector3(0, 2, -2), Vector3(-2, 0, -2), Vector3(-1, -2, -2), Vector3(1, -2, -2), Vector3(2, 0, -2));
+    //Array<Vector3int32> indices1(Vector3int32(0, 1, 2), Vector3int32(0, 2, 3), Vector3int32(0, 3, 4), Vector3int32(0, 4, 5), Vector3int32(0, 5, 1));
+    //m_myMesh = Mesh::create(vertices1, indices1);
+
     Array<Vector3> vertices = Array<Vector3>();
     Array<Vector3int32> faces = Array<Vector3int32>();
-    Array<Vector3> vertices1(Vector3(0, 0, -2), Vector3(0, 2, -2), Vector3(-2, 0, -2), Vector3(-1, -2, -2), Vector3(1, -2, -2), Vector3(2, 0, -2));
-    Array<Vector3int32> indices1(Vector3int32(0, 1, 2), Vector3int32(0, 2, 3), Vector3int32(0, 3, 4), Vector3int32(0, 4, 5), Vector3int32(0, 5, 1));
-    //Planet planet;
-    //planet.writeSphere("pentagon", 12.0f, 5, vertices, faces);
-    //m_myMesh = Mesh::create(vertices, faces);
-
-    m_myMesh = Mesh::create(vertices1, indices1);
+    Planet planet;
+    planet.writeSphere("pentagon", 12.0f, 5, vertices, faces);
+    m_myMesh = Mesh::create(vertices, faces);
     m_myMesh->toObj("pentagon");
 
     loadScene("Pentagon");
@@ -101,16 +101,21 @@ void App::makePentagon() {
 
     pentPane->addButton("Collapse!", [this]() {
         m_myMesh->collapseEdges(m_edgesToCollapse);
-        m_myMesh->toObj("pentagon");
-        G3D::ArticulatedModel::clearCache();
-        loadScene("Pentagon");
-
+        m_myMesh->bevelEdges2(0.2);
+        scene()->typedEntity<VisibleEntity>("Pentagon")->setModel(m_myMesh->toArticulatedModel("pentagon", Color3(.5,.7,.2)));
     });
 
     pentPane->addButton("Reset", [this]() {
-        Array<Vector3> vertices1(Vector3(0, 0, -2), Vector3(0, 2, -2), Vector3(-2, 0, -2), Vector3(-1, -2, -2), Vector3(1, -2, -2), Vector3(2, 0, -2));
-        Array<Vector3int32> indices1(Vector3int32(0, 1, 2), Vector3int32(0, 2, 3), Vector3int32(0, 3, 4), Vector3int32(0, 4, 5), Vector3int32(0, 5, 1));
-        m_myMesh = Mesh::create(vertices1, indices1);
+        //Array<Vector3> vertices1(Vector3(0, 0, -2), Vector3(0, 2, -2), Vector3(-2, 0, -2), Vector3(-1, -2, -2), Vector3(1, -2, -2), Vector3(2, 0, -2));
+        //Array<Vector3int32> indices1(Vector3int32(0, 1, 2), Vector3int32(0, 2, 3), Vector3int32(0, 3, 4), Vector3int32(0, 4, 5), Vector3int32(0, 5, 1));
+        //m_myMesh = Mesh::create(vertices1, indices1);
+
+        Array<Vector3> vertices = Array<Vector3>();
+        Array<Vector3int32> faces = Array<Vector3int32>();
+        Planet planet;
+        planet.writeSphere("pentagon", 12.0f, 5, vertices, faces);
+        m_myMesh = Mesh::create(vertices, faces);
+
         m_myMesh->toObj("pentagon");
         G3D::ArticulatedModel::clearCache();
         loadScene("Little Heightfield");
@@ -272,7 +277,7 @@ void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String any
         spline.extrapolationMode = SplineExtrapolationMode::CYCLIC;
         spline.interpolationMode = SplineInterpolationMode::LINEAR;
 
-        for(int i(0); i < 128; i++){
+        for (int i(0); i < 128; i++) {
             startMat *= rotation;
             spline.append(PhysicsFrame(startMat));
         }
@@ -321,23 +326,23 @@ void App::makePlanetGUI() {
         GuiTheme::LOG_SLIDER, -1.0f, 10.0f)->setUnitsSize(1);
 
     planetPane->addTextBox("Save to:", &m_planetSave);
-    
-   /* heightfieldPane->beginRow(); {
+
+    /* heightfieldPane->beginRow(); {
 
 
-    /*planetPane->addNumberBox("Frequency", &m_frequency, "",
-        GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
-    /*
-    heightfieldPane->beginRow(); {
-        heightfieldPane->addTextBox("Input Image", &m_heightfieldSource)->setWidth(210);
-        heightfieldPane->addButton("...", [this]() {
-            FileDialog::getFilename(m_heightfieldSource, "png", false);
-        })->setWidth(30);
-    } heightfieldPane->endRow();*/
+     /*planetPane->addNumberBox("Frequency", &m_frequency, "",
+         GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
+     /*
+     heightfieldPane->beginRow(); {
+         heightfieldPane->addTextBox("Input Image", &m_heightfieldSource)->setWidth(210);
+         heightfieldPane->addButton("...", [this]() {
+             FileDialog::getFilename(m_heightfieldSource, "png", false);
+         })->setWidth(30);
+     } heightfieldPane->endRow();*/
 
     planetPane->addButton("Get Constants from Any File", [this]() {
         FileDialog::getFilename(m_planetSource, "", false);
-        try{
+        try {
             Any any(Any::TABLE, "Planet");
             any.load(m_planetSource);
             AnyTableReader x(any);
@@ -357,9 +362,9 @@ void App::makePlanetGUI() {
     });
 
     planetPane->addButton("Save Constants to Any File", [this]() {
-        try{
+        try {
             Any x(Any::TABLE, "Planet");
-            x["recursions"] =  m_recursionLevel;
+            x["recursions"] = m_recursionLevel;
             x["landBevel"] = m_landBevel;
             x["mountainBevel"] = m_mountainBevel;
             x["mountainHeight"] = m_mountainHeight;
@@ -436,16 +441,16 @@ void App::makePlanetGUI() {
             addPlanetToScene(mesh2, "land", Point3(0, 0, 0), material2, 1000, 1000);
             String material3 = "UniversalMaterial::Specification { lambertian = \"texture.jpg\"; }";
             addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), material3, 1000, 1000);*/
-                        
-            float cosrot = cos(pif()/4.0f);
-            float sinrot = sin(pif()/4.0f);
+
+            float cosrot = cos(pif() / 4.0f);
+            float sinrot = sin(pif() / 4.0f);
 
             Matrix3 rotation(cosrot, 0, sinrot, 0, 1, 0, -sinrot, 0, cosrot);
 
-            cosrot = cos(pif()/5.0f);
-            sinrot = sin(pif()/5.0f);
+            cosrot = cos(pif() / 5.0f);
+            sinrot = sin(pif() / 5.0f);
 
-            Matrix3 waterRotation(cosrot, 0, sinrot, 0, 1, 0, -sinrot, 0, cosrot); 
+            Matrix3 waterRotation(cosrot, 0, sinrot, 0, 1, 0, -sinrot, 0, cosrot);
 
             addPlanetToScene(mesh, "ocean", Point3(100, 0, 0), Color3(0, 0, 1), waterRotation);
             addPlanetToScene(mesh2, "land", Point3(100, 0, 0), Color3(0, 1, 0), rotation);
@@ -714,9 +719,9 @@ void App::onCleanup() {
     // here instead of in the constructor so that exceptions can be caught.
 }
 
-        /*planet = scene()->createEntity("planet",
-            PARSE_ANY(
-                VisibleEntity {
-                    model = "planetModel";
-                };
-            ));*/
+/*planet = scene()->createEntity("planet",
+    PARSE_ANY(
+        VisibleEntity {
+            model = "planetModel";
+        };
+    ));*/

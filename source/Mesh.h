@@ -25,12 +25,10 @@ protected:
 
     /** Called by collapseEdges()
         true if not a boundary edge, if collapsing it doesn't create a manifold and doesn't flip face normals*/
-    bool isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) const;
+   bool isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) const;
 
 
 public:
-    static int edgeLength(const MeshAlg::Edge& edge, const Array<Vector3>& vertexArray);
-
     void computeAdjacency(Array<MeshAlg::Face>& faceArray,
         Array<MeshAlg::Edge>& edgeArray = Array<MeshAlg::Edge>(),
         Array<MeshAlg::Vertex>& vertexArray = Array<MeshAlg::Vertex>());
@@ -41,6 +39,7 @@ public:
         Array<Vector3>& vertexNormalArray, Array<Vector3>& faceNormalArray);
 
     void computeFaceNormals(Array<Vector3>& faceNormals, bool normalize = true);
+    void computeFaceNormals(const Array<MeshAlg::Face>& faceArray, Array<Vector3>& faceNormals, bool normalize = true) const;
 
     /** As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf
         Calls isCollapsable()
