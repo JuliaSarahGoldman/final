@@ -176,14 +176,14 @@ static bool normalsFlipped(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>
 
     // Check normal signs only for non-overlapping faces, since overlapping faces are collapsed
     for (int i(0); i < faces0.size(); ++i) {
-        MeshAlg::Face face(faces[faces0[i]]);
+        const MeshAlg::Face& face(faces[faces0[i]]);
         if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
             return true;
         }
     }
 
     for (int i(0); i < faces1.size(); ++i) {
-        MeshAlg::Face face(faces[faces1[i]]);
+        const MeshAlg::Face& face(faces[faces1[i]]);
         if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
             return true;
         }
@@ -192,12 +192,9 @@ static bool normalsFlipped(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>
 }
 
 bool Mesh::isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) const {
-    bool isInside(!edge.boundary());
-    if (isInside) { // If the edge is an inside edge
-        // Edge is not collapsable if by collapsing it we get a many fold or the normals flip
-        return !isManifold(edge, edges, vertices) && !normalsFlipped(edge, faces, vertices, m_vertexPositions);
-    }
-    return isInside;
+    const bool isInside(!edge.boundary());
+    // Edge is not collapsable if by collapsing it we get a many fold or the normals flip
+    return isInside && (!isManifold(edge, edges, vertices) && !normalsFlipped(edge, faces, vertices, m_vertexPositions));
 };
 
 inline static float cosAngle(const Vector3& v1, const Vector3& v2) {
