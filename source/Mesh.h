@@ -44,7 +44,7 @@ public:
     /** As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf
         Calls isCollapsable()
         Collapses the numEdges most unimportant edges*/
-    void collapseEdges(int numEdges);
+    void collapseEdges(int numEdges, float angleWeight = 0.0f);
 
     //bump is how much we expand the panet's radius by
     //Only works on completely closed and welded meshes.

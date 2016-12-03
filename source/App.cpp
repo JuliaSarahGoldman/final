@@ -97,12 +97,15 @@ void App::makePentagon() {
     // Example of how to add debugging controls
     pentPane->addLabel("Pentagon - Collapse Edges");
     pentPane->addNumberBox("# edges", &m_edgesToCollapse, "",
-        GuiTheme::LINEAR_SLIDER, 0, 20000)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0, 100000)->setUnitsSize(1);
+
+    pentPane->addNumberBox("Angle/Length weight\n", &m_angleLengthWeight, "",
+        GuiTheme::LINEAR_SLIDER, 0, 1)->setUnitsSize(0.1);
 
     pentPane->addButton("Collapse!", [this]() {
-        m_myMesh->collapseEdges(m_edgesToCollapse);
-        m_myMesh->bevelEdges2(0.2);
-        scene()->typedEntity<VisibleEntity>("Pentagon")->setModel(m_myMesh->toArticulatedModel("pentagon", Color3(.5,.7,.2)));
+        m_myMesh->collapseEdges(m_edgesToCollapse, m_angleLengthWeight);
+        //m_myMesh->bevelEdges2(0.2);
+        scene()->typedEntity<VisibleEntity>("Pentagon")->setModel(m_myMesh->toArticulatedModel("pentagon", Color3(.5, .7, .2)));
     });
 
     pentPane->addButton("Reset", [this]() {
@@ -118,7 +121,7 @@ void App::makePentagon() {
 
         m_myMesh->toObj("pentagon");
         G3D::ArticulatedModel::clearCache();
-        loadScene("Little Heightfield");
+        loadScene("Pentagon");
 
     });
 

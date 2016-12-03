@@ -12,13 +12,16 @@
 class App : public GApp {
 protected:
     shared_ptr<Mesh> m_myMesh;
+    //variable sof edge collapsing    
+    int m_edgesToCollapse;
+    int m_angleLengthWeight;
+
     //variables for makeHeightfield()
     float m_heightfieldYScale;
     float m_heightfieldXZScale;
     String m_heightfieldSource;
 
     int m_recursionLevel;
-    int m_edgesToCollapse;
     float m_frequency;
     float m_landBevel;
     float m_mountainBevel;

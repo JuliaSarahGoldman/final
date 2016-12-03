@@ -47,7 +47,7 @@ void Mesh::computeFaceNormals(Array<Vector3>& faceNormals, bool normalize) {
     MeshAlg::computeFaceNormals(m_vertexPositions, faceArray, faceNormals, normalize);
 };
 
-inline void Mesh::computeFaceNormals(const Array<MeshAlg::Face>& faceArray, Array<Vector3>& faceNormals, bool normalize) const{
+inline void Mesh::computeFaceNormals(const Array<MeshAlg::Face>& faceArray, Array<Vector3>& faceNormals, bool normalize) const {
     MeshAlg::computeFaceNormals(m_vertexPositions, faceArray, faceNormals, normalize);
 };
 
@@ -68,8 +68,8 @@ static bool isManifoldPreserved(const MeshAlg::Edge& edge, const Array<MeshAlg::
     // Check how many end points of the adjacent edges to edge coincide. 
     // If there are more than two such endpoints, the manifold is not maintained. 
 
-    int vIndex0(edge.vertexIndex[0]);
-    int vIndex1(edge.vertexIndex[1]);
+    const int vIndex0(edge.vertexIndex[0]);
+    const int vIndex1(edge.vertexIndex[1]);
 
     const SmallArray<int, 6>& adjacentEdgesIndices0(vertices[vIndex0].edgeIndex); //indices of edges adjacent to vertex 0
     const SmallArray<int, 6>& adjacentEdgesIndices1(vertices[vIndex1].edgeIndex); //indices of edges adjacent to vertex 1
@@ -77,7 +77,7 @@ static bool isManifoldPreserved(const MeshAlg::Edge& edge, const Array<MeshAlg::
     SmallArray<int, 6> endPoints0; // End points of adjacent edges to vertex 0 
 
     for (int i(0); i < adjacentEdgesIndices0.size(); ++i) {
-        int e0(adjacentEdgesIndices0[i]); // Get adjacent edge
+        const int e0(adjacentEdgesIndices0[i]); // Get adjacent edge
         const MeshAlg::Edge& adjacentEdge(edges[e0 >= 0 ? e0 : ~e0]);
 
         if (vIndex0 != adjacentEdge.vertexIndex[0]) { // Add to the array the vertex that is not in the collapsed edge
@@ -90,16 +90,16 @@ static bool isManifoldPreserved(const MeshAlg::Edge& edge, const Array<MeshAlg::
 
     int counter(0);
     for (int i(0); i < adjacentEdgesIndices1.size(); ++i) { // For each edge adjacent to vertex 1 of collapsed edge
-        int e1(adjacentEdgesIndices1[i]);
+        const int e1(adjacentEdgesIndices1[i]);
         const MeshAlg::Edge& adjacentEdge(edges[e1 >= 0 ? e1 : ~e1]);
-        
+
         int toCheck(adjacentEdge.vertexIndex[1]); // Find vertex not common to collapsed edge
         if (vIndex1 == adjacentEdge.vertexIndex[0]) {
             toCheck = adjacentEdge.vertexIndex[1];
         }
 
         if (endPoints0.contains(toCheck)) { // If it also is in an edge adjacent to vertex 0 of collapsed edge
-            counter += 1; // increment counter
+            ++counter; // increment counter
             if (counter > 2) { // If there are more than two common endPoints, then the manifold is not preserved
                 return false;
             }
@@ -109,9 +109,9 @@ static bool isManifoldPreserved(const MeshAlg::Edge& edge, const Array<MeshAlg::
 }
 
 static Vector3 computeCurNormal(const MeshAlg::Face& face, const Array<Vector3>& vertices) {
-    int i0(face.vertexIndex[0]);
-    int i1(face.vertexIndex[1]);
-    int i2(face.vertexIndex[2]);
+    const int i0(face.vertexIndex[0]);
+    const int i1(face.vertexIndex[1]);
+    const int i2(face.vertexIndex[2]);
 
     const Vector3& v0(vertices[i0]);
     const Vector3& v1(vertices[i1]);
@@ -137,9 +137,9 @@ static Vector3 computeNewNormal(const MeshAlg::Face& face, const Array<Vector3>&
         vertexIndices[i] = j == toReplace ? replacement : j;
     }
 
-    int i0(vertexIndices[0]);
-    int i1(vertexIndices[1]);
-    int i2(vertexIndices[2]);
+    const int i0(vertexIndices[0]);
+    const int i1(vertexIndices[1]);
+    const int i2(vertexIndices[2]);
 
     const Vector3& v0(vertices[i0]);
     const Vector3& v1(vertices[i1]);
@@ -155,22 +155,25 @@ inline static bool isSignOpposite(const Vector3& v1, const Vector3& v2) {
     return v1.dot(v2) < -0.0001f;
 }
 
-static bool normalsFlipped(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Vertex>& vertices, const Array<Vector3>& vertexPositions) {
+static bool normalsFlipped(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Vertex>& vertices, const Array<Vector3>& vertexPositions/*,Array<int>& degenerateFaceIndices*/) {
     const SmallArray<int, 6>& faces0(vertices[edge.vertexIndex[0]].faceIndex); // Faces containing vertex 0 of edge
     const SmallArray<int, 6>& faces1(vertices[edge.vertexIndex[1]].faceIndex); // Faces containing vertex 1 of edge
 
     // For each face, check if normal signs flip with collapsing
-    for (int i(0); i < faces0.size(); ++i) {
-        const MeshAlg::Face& face(faces[faces0[i]]);
-        if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
-            return true;
+    int maxSize(max(faces0.size(), faces1.size()));
+    for (int i(0); i < maxSize; ++i) {
+        if (i < faces0.size()) {
+            const MeshAlg::Face& face(faces[faces0[i]]);
+            if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
+                return true;
+            }
         }
-    }
 
-    for (int i(0); i < faces1.size(); ++i) {
-        const MeshAlg::Face& face(faces[faces1[i]]);
-        if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
-            return true;
+        if (i < faces1.size()) {
+            const MeshAlg::Face& face(faces[faces1[i]]);
+            if (isSignOpposite(computeCurNormal(face, vertexPositions), computeNewNormal(face, vertexPositions, edge))) {
+                return true;
+            }
         }
     }
     return false;
@@ -185,23 +188,21 @@ inline static float cosAngle(const Vector3& v1, const Vector3& v2) {
     return v1.dot(v2);
 }
 
-static bool moreCollapsable(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2, const Array<Vector3>& faceNormals, const Array<Vector3>& vertices) {
-    debugAssertM(!elem1.boundary() && !elem2.boundary(), "Boundary Edge encountered!");
+static bool isMoreCollapsable(const MeshAlg::Edge& elem1, const MeshAlg::Edge& elem2, const Array<Vector3>& faceNormals, const Array<Vector3>& vertices, const float angleWeight = 0.0f) {
     const float cos1(cosAngle(faceNormals[elem1.faceIndex[0]], faceNormals[elem1.faceIndex[1]]));
     const float cos2(cosAngle(faceNormals[elem2.faceIndex[0]], faceNormals[elem2.faceIndex[1]]));
 
     const float len1(edgeLengthSquared(elem1, vertices));
     const float len2(edgeLengthSquared(elem2, vertices));
-    const float angleWeight = 0.0f;
 
     return cos1 * (len1 + angleWeight) < cos2 * (len2 + angleWeight);
 }
 
 
-static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, int i, int j) {
+static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, const int i, const int j) {
     vertexArray[i] = vertexArray.last();
     vertexArray.pop();
-    int old(vertexArray.size());
+    const int old(vertexArray.size());
 
     for (int k(0); k < indexArray.size(); ++k) {
         if (indexArray[k] == i && j != old) {
@@ -211,6 +212,49 @@ static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, in
             indexArray[k] = i;
         }
     }
+}
+
+static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, const Array<MeshAlg::Vertex>& vertices, const int oldIndex, const int newIndex) {
+    // Remove vertex at oldIndex from vertexArray
+    vertexArray[oldIndex] = vertexArray.last();
+    vertexArray.pop();
+
+    const int oldIndexToLast(vertexArray.size());
+
+    // Only faces adjacent to what used to be the Last vertex in the array are affected
+    const MeshAlg::Vertex& vertexMoved(vertices[oldIndexToLast]);
+    const SmallArray<int, 6>& adjacentToMoved(vertexMoved.faceIndex);
+
+    // Collapse Edges in indexArray
+    if (newIndex != oldIndexToLast) { // We're done otherwise
+
+        // Only faces adjacent to the vertex removed by the collapse are affected
+        const MeshAlg::Vertex& toReplace(vertices[oldIndex]);
+        const SmallArray<int, 6>& adjacentToCollapsed(toReplace.faceIndex);
+
+        for (int i(0); i < adjacentToCollapsed.size(); ++i) { // For each such face
+            const int af(adjacentToCollapsed[i]);
+            const int x(3 * af); // Find its vertex indices in the indexArray and replace the oldIndex by the newIndex
+            for (int j(x); j < x + 3; ++j) {
+                if (indexArray[j] == oldIndex) {
+                    indexArray[j] = newIndex;
+                }
+            }
+        }
+    }
+
+
+
+
+    for (int i(0); i < adjacentToMoved.size(); ++i) { // For each such face
+        const int x(3 * adjacentToMoved[i]); // Find its vertex indices in the indexArray and replace the oldIndexToLat by oldIndex
+        for (int j(x); j < x + 3; ++j) {
+            if (indexArray[j] == oldIndexToLast) {
+                indexArray[j] = oldIndex;
+            }
+        }
+    }
+
 }
 
 static void removeDegenerateFaces(Array<int>& indexArray) {
@@ -228,15 +272,40 @@ static void removeDegenerateFaces(Array<int>& indexArray) {
         }
     }
 }
-static void collapseOneEdge(const MeshAlg::Edge& edge, Array<Vector3>& vertexArray, Array<int>& indexArray) {
-    int index0(edge.vertexIndex[0]);
-    int index1(edge.vertexIndex[1]);
+
+inline static void removeFace(Array<int>& indexArray, const int i) {
+    if (i != indexArray.size() - 3) {
+        indexArray[i] = indexArray[indexArray.size() - 3];
+        indexArray[i + 1] = indexArray[indexArray.size() - 2];
+        indexArray[i + 2] = indexArray[indexArray.size() - 1];
+    }
+
+    indexArray.pop();
+    indexArray.pop();
+    indexArray.pop();
+}
+
+static void removeDegenerateFaces(Array<int>& indexArray, const MeshAlg::Edge& edge) {
+    // only the faces adjacent to the collapsed edge are degenerate
+    // for each of such faces
+    const int i0(3 * edge.faceIndex[0]); // Find the location of the face in the indexArray
+    const int i1(3 * edge.faceIndex[1]);
+
+    removeFace(indexArray, i0);
+    removeFace(indexArray, i1);
+}
+
+static void collapseOneEdge(const MeshAlg::Edge& edge, const Array<MeshAlg::Vertex>& vertices, Array<Vector3>& vertexArray, Array<int>& indexArray) {
+    const int index0(edge.vertexIndex[0]);
+    const int index1(edge.vertexIndex[1]);
 
     remapIndices(vertexArray, indexArray, index0, index1);
     removeDegenerateFaces(indexArray);
+    //remapIndices(vertexArray, indexArray, vertices, index0, index1);
+    //removeDegenerateFaces(indexArray, edge);
 }
 
-void Mesh::collapseEdges(int numEdges) {
+void Mesh::collapseEdges(int numEdges, float angleWeight) {
     for (int x(0); x < numEdges; ++x) {
         Array<MeshAlg::Edge> edges;
         Array<MeshAlg::Face> faces;
@@ -244,22 +313,25 @@ void Mesh::collapseEdges(int numEdges) {
         Array<Vector3> faceNormals;
 
         computeAdjacency(faces, edges, vertices);
-        computeFaceNormals(faces, faceNormals, false);
+        computeFaceNormals(faces, faceNormals);
 
-        MeshAlg::Edge& edge(edges[0]);
+        MeshAlg::Edge& edge(edges[Random::threadCommon().integer(0, edges.size() - 1)]);
         int collapsable(0);
         for (int i(0); i < edges.size(); ++i) {
             if (isCollapsable(edges[i], faces, edges, vertices)) {
                 collapsable++;
-                if (moreCollapsable(edges[i], edge, faceNormals, m_vertexPositions)) {
+                if (isMoreCollapsable(edges[i], edge, faceNormals, m_vertexPositions, angleWeight)) {
                     edge = edges[i];
                 }
             }
         }
-        if (collapsable < 1) {
+
+        if (collapsable > 0) {
+            collapseOneEdge(edge, vertices, m_vertexPositions, m_indexArray);
+        }
+        else {
             return;
         }
-        collapseOneEdge(edge, m_vertexPositions, m_indexArray);
     }
 }
 

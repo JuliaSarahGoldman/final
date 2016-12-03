@@ -4,7 +4,28 @@
         **Jose Rivas (jdr3@williams.edu),**
         **John Freeman (jcf1@williams.edu),**
         **Julia Goldman (jdg2@williams.edu),**
-        **and Matheus de Carvalho Souza (mc13@williams.edu)** 
+        **and Matheus de Carvalho Souza (mc13@williams.edu)**
+
+2016-12-03: Edge Collapsing with Random first edge selection
+=============================================================
+
+![4000 edges collapsed](2016-12-03_000_starter_r2642_g3d_r981__4000_edges_collapsed.jpg)
+
+If we choose the first edge at random before we compare edges, we get a nice
+uniform collapsing. However, the randomness adds ~12s to the runtime of the
+algorithm.
+
+2016-12-03: Edge Collapsing speed issue
+=============================================================
+Edge collapsing takes around 1min 5s to collapse 4000 edges on the ocean sphere. 
+
+This is still slow, but it's quite an improvement over what we had initially. Before it would take around 2.5min to collapse 800 edges on the same sphere. Now it takes 16s for the same 800 edges. 
+
+I don't see much room for improvement on the speed of edge collapsing, but I'll keep reviewing and improving the code if I come up with new hacks. If everyone could take a look at the code and tell me if you spot anything that is unecessarily taking too much time, let me know please. The code is commented out and outlined here in the journal.
+
+Nonetheless, there's still a lot we can do to cut time form other sections of the planet generation.
+
+
 
 2016-12-02: Edge Collapsing FINALLY works with bevelling
 =============================================================
