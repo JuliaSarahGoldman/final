@@ -33,6 +33,28 @@ protected:
     float m_landNoise;
     float m_oceanNoise;
     bool m_waterMount;
+    bool m_useWTexture;
+    bool m_useLTexture;
+    bool m_useMTexture;
+    float m_lRed;
+    float m_lGreen;
+    float m_lBlue;
+    float m_wRed;
+    float m_wGreen;
+    float m_wBlue;
+    float m_mRed;
+    float m_mGreen;
+    float m_mBlue;
+    String m_landFile;
+    String m_waterFile;
+    String m_mountainFile;
+    float m_lGlossBase;
+    float m_lGlossPow;
+    float m_wGlossBase;
+    float m_wGlossPow;
+    float m_mGlossBase;
+    float m_mGlossPow;
+    
 
     /** Called from onInit */
     void makeGUI();
@@ -45,6 +67,7 @@ protected:
     void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation);
     void addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename, Matrix3& rotation);
     void addPlanetToScene(Mesh& mesh, String name, Point3& position, String anyStr, int width, int height, Matrix3& rotation);
+    void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation, Color4& gloss);
 
     void makePlanetGUI();
 

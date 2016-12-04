@@ -239,8 +239,17 @@ void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String fil
     addPlanetToScene(mesh, name, position, anyStr, im->width(), im->height(), rotation);
 }
 
+
 void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation) {
-    String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
+    //String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3" + color.toString() +"; }";
+    debugPrintf(STR(%s \n), anyStr);
+    addPlanetToScene(mesh, name, position, anyStr, 1, 1, rotation);
+}
+
+void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation, Color4& gloss) {
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3" + color.toString() +"; glossy = Color4" + gloss.toString() + "; }";
+    debugPrintf(STR(%s \n), anyStr);
     addPlanetToScene(mesh, name, position, anyStr, 1, 1, rotation);
 }
 
@@ -302,17 +311,24 @@ void App::makePlanetGUI() {
     planetPane->addNumberBox("Recursion Level", &m_recursionLevel, "",
         GuiTheme::LINEAR_SLIDER, 1, 8)->setUnitsSize(1);
 
+    planetPane->beginRow();
+
     planetPane->addNumberBox("Land Bevel", &m_landBevel, "",
         GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("Mount Bevel", &m_mountainBevel, "",
         GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
+    planetPane->endRow();
+
+    planetPane->beginRow();
 
     planetPane->addNumberBox("Mount Height", &m_mountainHeight, "",
         GuiTheme::LOG_SLIDER, 10.0f, 500.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("Mount Diversity", &m_mountianDiversity, "",
         GuiTheme::LOG_SLIDER, 1.0f, 5.0f)->setUnitsSize(1);
+
+    planetPane->endRow();
 
     planetPane->addNumberBox("Ocean Level", &m_oceanLevel, "",
         GuiTheme::LOG_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
@@ -325,10 +341,84 @@ void App::makePlanetGUI() {
 
     planetPane->addCheckBox("Water Mountains", &m_waterMount);
 
+
     planetPane->addNumberBox("Land Noise", &m_landNoise, "",
         GuiTheme::LOG_SLIDER, -1.0f, 10.0f)->setUnitsSize(1);
 
-    planetPane->addTextBox("Save to:", &m_planetSave);
+    planetPane->beginRow();
+
+    planetPane->addNumberBox("Land R", &m_lRed, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addNumberBox("G", &m_lGreen, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addNumberBox("B", &m_lBlue, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addNumberBox("Gloss Base", &m_lGlossBase, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+    
+    planetPane->addNumberBox("Gloss Pow", &m_lGlossPow, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addCheckBox("Get texture from file", &m_useLTexture);
+
+    planetPane->addButton("", [this]() {
+        FileDialog::getFilename(m_landFile, "", false);
+    });
+
+    planetPane->endRow();
+
+    planetPane->beginRow();
+
+   planetPane->addNumberBox("Water R", &m_wRed, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addNumberBox("G", &m_wGreen, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addNumberBox("B", &m_wBlue, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+   planetPane->addNumberBox("Gloss Base", &m_wGlossBase, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+    
+    planetPane->addNumberBox("Gloss Pow", &m_wGlossPow, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addCheckBox("Get texture from file", &m_useWTexture);
+
+    planetPane->addButton("", [this]() {
+        FileDialog::getFilename(m_waterFile, "", false);
+    });
+
+    planetPane->endRow();
+
+    planetPane->beginRow();
+
+   planetPane->addNumberBox("Mountain R", &m_mRed, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addNumberBox("G", &m_mGreen, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addNumberBox("B", &m_mBlue, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addNumberBox("Gloss Base", &m_mGlossBase, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+    
+    planetPane->addNumberBox("Gloss Pow", &m_mGlossPow, "",
+       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
+    planetPane->addCheckBox("Get texture from file", &m_useMTexture);
+
+    planetPane->addButton("", [this]() {
+        FileDialog::getFilename(m_mountainFile, "", false);
+    });
+
+    planetPane->endRow();
 
     /* heightfieldPane->beginRow(); {
 
@@ -342,6 +432,10 @@ void App::makePlanetGUI() {
              FileDialog::getFilename(m_heightfieldSource, "png", false);
          })->setWidth(30);
      } heightfieldPane->endRow();*/
+
+    planetPane->beginRow();
+
+    planetPane->addTextBox("Save to:", &m_planetSave);
 
     planetPane->addButton("Get Constants from Any File", [this]() {
         FileDialog::getFilename(m_planetSource, "", false);
@@ -358,11 +452,36 @@ void App::makePlanetGUI() {
             x.getIfPresent("landNoise", m_landNoise);
             x.getIfPresent("oceanNoise", m_oceanNoise);
             x.getIfPresent("waterMount", m_waterMount);
+
+            x.getIfPresent("useMountainTexture",  m_useMTexture);
+            x.getIfPresent("mRed", m_mRed);
+            x.getIfPresent("mGreen", m_mGreen);
+            x.getIfPresent("mBlue", m_mBlue);
+            x.getIfPresent("mountainTexture", m_mountainFile);
+            x.getIfPresent("mBase", m_mGlossBase);
+            x.getIfPresent("mPow", m_mGlossPow);
+
+            x.getIfPresent("useLandTexture",  m_useLTexture);
+            x.getIfPresent("lRed", m_lRed);
+            x.getIfPresent("lGreen", m_lGreen);
+            x.getIfPresent("lBlue", m_lBlue);
+            x.getIfPresent("landTexture", m_landFile);
+            x.getIfPresent("lBase", m_lGlossBase);
+            x.getIfPresent("lPow", m_lGlossPow);
+
+            x.getIfPresent("useWaterTexture",  m_useWTexture);
+            x.getIfPresent("wRed", m_wRed);
+            x.getIfPresent("wGreen", m_wGreen);
+            x.getIfPresent("wBlue", m_wBlue);
+            x.getIfPresent("waterTexture", m_waterFile);
+            x.getIfPresent("wBase", m_wGlossBase);
+            x.getIfPresent("wPow", m_wGlossPow);
+
         }
         catch (...) {
             msgBox("Unable to load the image.");
         }
-    });
+    }); 
 
     planetPane->addButton("Save Constants to Any File", [this]() {
         try {
@@ -376,12 +495,39 @@ void App::makePlanetGUI() {
             x["landNoise"] = m_landNoise;
             x["oceanNoise"] = m_oceanNoise;
             x["waterMount"] = m_waterMount;
+
+            x["useMountainTexture"] =  m_useMTexture;
+            x["mRed"] = m_mRed;
+            x["mGreen"] = m_mGreen;
+            x["mBlue"] = m_mBlue;
+            x["mountainTexture"] = m_mountainFile;
+            x["mBase"] = m_mGlossBase;
+            x["mPow"] = m_mGlossPow;
+
+            x["useLandTexture"] = m_useLTexture;
+            x["lRed"] = m_lRed;
+            x["lGreen"] = m_lGreen;
+            x["lBlue"] =  m_lBlue;
+            x["landTexture"] = m_landFile;
+            x["lBase"] = m_lGlossBase;
+            x["lPow"] = m_lGlossPow;
+
+            x["useWaterTexture"] = m_useWTexture;
+            x["wRed"] = m_wRed;
+            x["wGreen"] = m_wGreen;
+            x["wBlue"] = m_wBlue;
+            x["waterTexture"] = m_waterFile;
+            x["wBase"] = m_wGlossBase;
+            x["wPow"] = m_wGlossPow;
+
             x.save(m_planetSave);
         }
         catch (...) {
             msgBox("Unable to save the image.");
         }
     });
+
+    planetPane->endRow();
 
     planetPane->addButton("Generate", [this]() {
         shared_ptr<G3D::Image> image;
@@ -455,11 +601,30 @@ void App::makePlanetGUI() {
 
             Matrix3 waterRotation(cosrot, 0, sinrot, 0, 1, 0, -sinrot, 0, cosrot);
 
-            addPlanetToScene(mesh, "ocean", Point3(100, 0, 0), Color3(0, 0, 1), waterRotation);
+            /*addPlanetToScene(mesh, "ocean", Point3(100, 0, 0), Color3(0, 0, 1), waterRotation);
             addPlanetToScene(mesh2, "land", Point3(100, 0, 0), Color3(0, 1, 0), rotation);
-            addPlanetToScene(mesh3, "mountain", Point3(100, 0, 0), Color3(.5, .5, .5), rotation);
+            addPlanetToScene(mesh3, "mountain", Point3(100, 0, 0), Color3(.5, .5, .5), rotation);*/
+            if (m_useWTexture){
+                addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), "blue.jpg", waterRotation);
+            }
+            else{
+                addPlanetToScene(mesh, "ocean", Point3(100, 0, 0), Color3(m_wRed, m_wGreen, m_wBlue), waterRotation, Color4(Color3(m_wGlossBase),m_wGlossPow));
+            }
+            if (m_useLTexture){
+                debugPrintf(STR(%s ************* \n), m_landFile);
+                addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "blue.jpg", rotation);
+            }
+            else{
+                addPlanetToScene(mesh2, "land", Point3(100, 0, 0), Color3(m_lRed, m_lGreen, m_lBlue), rotation, Color4(Color3(m_lGlossBase),m_lGlossPow));
+            }
+            if (m_useMTexture){
+                addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), "blue.jpg", rotation);
+            }
+            else{
+                addPlanetToScene(mesh3, "mountain", Point3(100, 0, 0), Color3(m_mRed, m_mGreen, m_mBlue), rotation, Color4(Color3(m_mGlossBase),m_mGlossPow));
+            }
 
-            addPlanetToScene(mesh, "lava", Point3(0, 0, 0), "orange.jpg", waterRotation);
+            /*addPlanetToScene(mesh, "lava", Point3(0, 0, 0), "orange.jpg", waterRotation);
             addPlanetToScene(mesh2, "twin", Point3(0, 0, 0), "deep_red.jpg", rotation);
             addPlanetToScene(mesh3, "mount", Point3(0, 0, 0), "texture2.jpg", rotation);
 
@@ -482,7 +647,7 @@ void App::makePlanetGUI() {
             addPlanetToScene(mesh, "sphere2", Point3(10,12,10), Color3(0,0,1));*/
         }
         catch (...) {
-            msgBox("Unable to load the image.", m_heightfieldSource);
+            msgBox("Unable to generate planet.");
         }
     });
 }
