@@ -60,6 +60,18 @@ protected:
     float m_mGlossPow;
     
 
+    // Options for Planet as a whole
+    float m_scale;
+    float m_xPos;
+    float m_yPos;
+    float m_zPos;
+    String m_planetName;
+    String m_orbitPlanet;
+    float m_orbitDistance;
+    Any m_scene;
+    Any m_models;
+    Any m_entities;
+
     /** Called from onInit */
     void makeGUI();
     void makeHeightfield();
@@ -68,12 +80,16 @@ protected:
     void makeBunny(); 
     void makeLittleHeightfield();
 
-    void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation);
-    void addPlanetToScene(Mesh& mesh, String name, Point3& position, String filename, Matrix3& rotation);
-    void addPlanetToScene(Mesh& mesh, String name, Point3& position, String anyStr, int width, int height, Matrix3& rotation);
-    void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation, Color4& gloss);
-
+    void addPlanetToScene(Any& scene, Any& models, Mesh& mesh, String name, Point3& position, Color3& color, Color4& gloss, String& dependentModel);
+    void addPlanetToScene(Any& scene, Any& models, Mesh& mesh, String name, Point3& position, String filename, String& dependentModel);
+    void addPlanetToScene(Any& scene, Any& models, Mesh& mesh, String name, Point3& position, String anyStr, int width, int height, String& dependentModel);
+    void addCloudsToPlanet(Any& models, Any& entities, String& name, Point3& position);
     void makePlanetGUI();
+    void addEntityToAnyTable(String& name, Any& any, Point3& position, String& model, String& dependentEntity, String& spec);
+    void makeSceneTable(Any& scene, const Any& models, const Any& entities, const String& name);
+    void createInitialEntityTable(Any& entities);
+    
+    void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation, Color4& gloss);
 
 public:
     
