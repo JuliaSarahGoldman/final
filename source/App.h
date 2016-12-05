@@ -88,7 +88,7 @@ protected:
     void addEntityToAnyTable(String& name, Any& any, Point3& position, String& model, String& dependentEntity, String& spec);
     void makeSceneTable(Any& scene, const Any& models, const Any& entities, const String& name);
     void createInitialEntityTable(Any& entities);
-    
+    void createInitialModelsTable(Any& models);
     void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation, Color4& gloss);
 
 public:

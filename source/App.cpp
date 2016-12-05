@@ -61,6 +61,8 @@ void App::onInit() {
     m_models = Any(Any::TABLE);
     m_entities = Any(Any::TABLE);
     createInitialEntityTable(m_entities);
+    
+    createInitialModelsTable(m_models);
 
     debugPrintf("Target frame rate = %f Hz\n", realTimeTargetDuration());
     GApp::onInit();
@@ -281,9 +283,33 @@ void App::addPlanetToScene(Any& entities, Any& models, Mesh& mesh, String name, 
 }
 
  void App::addCloudsToPlanet(Any& models, Any& entities, String& name, Point3& position){
-    
- }
+    Any cloud0(Any::TABLE, "ParticleSystem");
 
+    cloud0["canChange"] = false;
+    cloud0["particlesAreInWorldSpace"] = true;
+
+    int t[5] = {2, 3, 5, 7, 11};
+
+    for(int i(0); i < 5; ++i){
+        Any cloud1 = cloud0;
+        cloud1["model"] = (String) "cloud" + (String) std::to_string(Random::threadCommon().integer(1,3));
+        cloud1["track"] = Any::parse( (String)
+            "transform(" + 
+                "Matrix4::rollDegrees(90), " + 
+                "transform("
+                    "orbit(" + 
+                        (String) std::to_string(Random::threadCommon().integer(10, 20)) + ", " + (String) std::to_string(t[Random::threadCommon().integer(0,4)]) + 
+                    "), " + 
+                    "combine(" +
+                        "Matrix4::pitchDegrees(" + (String) std::to_string(Random::threadCommon().integer(-89,89)) + "), entity(" + name + ")" +
+                    ")"
+                "), " + 
+            ");"
+        );
+
+        entities["cloud" + (String) std::to_string(i)] = cloud1;
+    }
+ }
 
 void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation, Color4& gloss) {
     String anyStr = "UniversalMaterial::Specification { lambertian = Color3" + color.toString() + "; glossy = Color4" + gloss.toString() + "; }";
@@ -775,7 +801,7 @@ void App::makeSceneTable(Any& scene, const Any& models, const Any& entities, con
     Any lightingEnvironment(Any::TABLE, "LightingEnvironment");
 
     String occlusionSettings = (String) "AmbientOcclusionSettings { bias = 0.12; blurRadius = 4; blurStepSize = 2;" +
-        "depthPeelSeparationHint = 0.2; edgeSharpness = 1; enabled = true; intensity = 3; " +
+        "depthPeelSeparationHint = 0.2; edgeSharpness = 1; enabled = false; intensity = 3; " +
         "monotonicallyDecreasingBilateralWeights = false; numSamples = 19; radius = 2; " +
         "temporalFilterSettings = TemporalFilter::Settings { hysteresis = 0.9; falloffEndDistance = 0.07; " +
         "falloffStartDistance = 0.05; }; temporallyVarySamples = true; useDepthPeelBuffer = true; useNormalBuffer = true; " +
@@ -821,6 +847,39 @@ void App::createInitialEntityTable(Any& entities) {
     Any skybox(Any::TABLE, "Skybox");
     skybox["texture"] = "cubemap/hipshot_m9_sky/16_*.png";
     entities["skybox"] = skybox;
+}
+
+void App::createInitialModelsTable(Any& models){
+    
+    Any cloud(Any::TABLE, "ParticleSystemModel::Emitter::Specification");
+    cloud["material"] = "material/smoke/smoke.png";
+    cloud["initialDensity"] = 8;
+    cloud["radiusMean"] = 3;
+    cloud["radiusVariance"] = 0.5;
+    cloud["noisePower"] = 0;
+    cloud["angularVelocityMean"] = 0.5;
+    cloud["angularVelocityVariance"] = 0.25;
+
+    Any cloud2 = cloud;
+    Any cloud3 = cloud;
+
+    Any cloudShape(Any::TABLE, "ArticulatedModel::Specification");
+    cloudShape["scale"] = 0.05;
+    
+    Any cloudShape2 = cloudShape;
+    Any cloudShape3 = cloudShape;
+
+    cloudShape ["filename"] = "model/cloud/cloud.zip/cumulus02.obj";
+    cloudShape2["filename"] = "model/cloud/cloud.zip/cumulus01.obj";
+    cloudShape3["filename"] = "model/cloud/cloud.zip/cumulus00.obj";
+
+    cloud ["shape"] = cloudShape;
+    cloud2["shape"] = cloudShape2;
+    cloud3["shape"] = cloudShape3;
+
+    models["cloud1"] = cloud;
+    models["cloud2"] = cloud2;
+    models["cloud3"] = cloud3;
 }
 
 void App::addEntityToAnyTable(String& name, Any& any, Point3& position, String& model, String& dependentEntity, String& planetToOrbit) {

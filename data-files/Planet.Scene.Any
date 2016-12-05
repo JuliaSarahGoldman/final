@@ -26,8 +26,71 @@
             
         }; 
         
+        cloud0 = ParticleSystem { 
+            canChange = true; 
+            model = "cloud2"; 
+            particlesAreInWorldSpace = true; 
+            track = orbit(25,1);
+        }; 
+        
+        cloud1 = ParticleSystem { 
+            canChange = true; 
+            model = "cloud3"; 
+            particlesAreInWorldSpace = true; 
+            track = transform(
+                Matrix4::rollDegrees(90 ), 
+                transform(
+                    orbit(16, 7 ), 
+                    combine(
+                        Matrix4::pitchDegrees(79 ), 
+                        entity("planetmountain") ) ) ); 
+            
+        }; 
+        
+        cloud2 = ParticleSystem { 
+            canChange = true; 
+            model = "cloud3"; 
+            particlesAreInWorldSpace = true; 
+            track = transform(
+                Matrix4::rollDegrees(90 ), 
+                transform(
+                    orbit(19, 7 ), 
+                    combine(
+                        Matrix4::pitchDegrees(74 ), 
+                        entity("planetmountain") ) ) ); 
+            
+        }; 
+        
+        cloud3 = ParticleSystem { 
+            canChange = false; 
+            model = "cloud1"; 
+            particlesAreInWorldSpace = true; 
+            track = transform(
+                Matrix4::rollDegrees(90 ), 
+                transform(
+                    orbit(12, 7 ), 
+                    combine(
+                        Matrix4::pitchDegrees(23 ), 
+                        entity("planetmountain") ) ) ); 
+            
+        }; 
+        
+        cloud4 = ParticleSystem { 
+            canChange = false; 
+            model = "cloud2"; 
+            particlesAreInWorldSpace = true; 
+            track = transform(
+                Matrix4::rollDegrees(90 ), 
+                transform(
+                    orbit(16, 11 ), 
+                    combine(
+                        Matrix4::pitchDegrees(-28 ), 
+                        entity("planetmountain") ) ) ); 
+            
+        }; 
+        
         planet = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 2.35099e-38, 0 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 0 ); 
             model = "planet"; 
             track = transform(
                 orbit(0, 20 ), 
@@ -36,13 +99,13 @@
         }; 
         
         planetland = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 2.35099e-38, 0 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 0 ); 
             model = "planetland"; 
             track = entity("planet"); 
         }; 
         
         planetmountain = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 2.35099e-38, 0 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 0 ); 
             model = "planetmountain"; 
             track = entity("planet"); 
         }; 
@@ -75,7 +138,7 @@
             blurStepSize = 2; 
             depthPeelSeparationHint = 0.2; 
             edgeSharpness = 1; 
-            enabled = true; 
+            enabled = false; 
             intensity = 3; 
             monotonicallyDecreasingBilateralWeights = false; 
             numSamples = 19; 
@@ -103,6 +166,52 @@
     }; 
     
     models = { 
+        cloud1 = ParticleSystemModel::Emitter::Specification { 
+            angularVelocityMean = 0.5; 
+            angularVelocityVariance = 0.25; 
+            initialDensity = 8; 
+            material = "material/smoke/smoke.png"; 
+            noisePower = 0; 
+            radiusMean = 3; 
+            radiusVariance = 0.5; 
+            shape = ArticulatedModel::Specification { 
+                filename = "model/cloud/cloud.zip/cumulus02.obj"; 
+                scale = 0.05; 
+            }; 
+            
+        }; 
+        
+        cloud2 = ParticleSystemModel::Emitter::Specification { 
+            angularVelocityMean = 0.5; 
+            angularVelocityVariance = 0.25; 
+            initialDensity = 8; 
+            material = "material/smoke/smoke.png"; 
+            noisePower = 0.5; 
+            radiusMean = 3; 
+            radiusVariance = 0.5; 
+            shape = ArticulatedModel::Specification { 
+                filename = "model/cloud/cloud.zip/cumulus01.obj"; 
+                scale = 0.05; 
+            
+            }; 
+            
+        }; 
+        
+        cloud3 = ParticleSystemModel::Emitter::Specification { 
+            angularVelocityMean = 0.5; 
+            angularVelocityVariance = 0.25; 
+            initialDensity = 8; 
+            material = "material/smoke/smoke.png"; 
+            noisePower = 0; 
+            radiusMean = 3; 
+            radiusVariance = 0.5; 
+            shape = ArticulatedModel::Specification { 
+                filename = "model/cloud/cloud.zip/cumulus00.obj"; 
+                scale = 0.05; 
+            }; 
+            
+        }; 
+        
         planet = ArticulatedModel::Specification { 
             filename = "planet.obj"; 
             preprocess = { 
@@ -138,5 +247,5 @@
         
     }; 
     
-    name = "Planet"; 
+    name = "PlanetTest"; 
 } 
