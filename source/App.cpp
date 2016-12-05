@@ -104,7 +104,7 @@ void App::makePentagon() {
 
     pentPane->addButton("Collapse!", [this]() {
         m_myMesh->collapseEdges(m_edgesToCollapse, m_angleLengthWeight);
-        //m_myMesh->bevelEdges2(0.2);
+        m_myMesh->bevelEdges2(0.2);
         scene()->typedEntity<VisibleEntity>("Pentagon")->setModel(m_myMesh->toArticulatedModel("pentagon", Color3(.5, .7, .2)));
     });
 
@@ -242,13 +242,13 @@ void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, String fil
 
 void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation) {
     //String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
-    String anyStr = "UniversalMaterial::Specification { lambertian = Color3" + color.toString() +"; }";
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3" + color.toString() + "; }";
     debugPrintf(STR(%s \n), anyStr);
     addPlanetToScene(mesh, name, position, anyStr, 1, 1, rotation);
 }
 
 void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation, Color4& gloss) {
-    String anyStr = "UniversalMaterial::Specification { lambertian = Color3" + color.toString() +"; glossy = Color4" + gloss.toString() + "; }";
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3" + color.toString() + "; glossy = Color4" + gloss.toString() + "; }";
     debugPrintf(STR(%s \n), anyStr);
     addPlanetToScene(mesh, name, position, anyStr, 1, 1, rotation);
 }
@@ -339,6 +339,21 @@ void App::makePlanetGUI() {
     planetPane->addNumberBox("Ocean Noise", &m_oceanNoise, "",
         GuiTheme::LOG_SLIDER, 0.0f, 10.0f)->setUnitsSize(1);
 
+    planetPane->beginRow();
+
+    planetPane->addCheckBox("Enable Edge Collapsing", &m_collapsingEnabled);
+
+    planetPane->addNumberBox("# edges - water", &m_oceanEdgesToCollapse, "",
+        GuiTheme::LOG_SLIDER, 0, 20000)->setUnitsSize(1);
+
+    planetPane->addNumberBox("# edges - land", &m_landEdgesToCollapse, "",
+        GuiTheme::LOG_SLIDER, 0, 20000)->setUnitsSize(1);
+
+    planetPane->addNumberBox("# edges - mountain", &m_mountainEdgesToCollapse, "",
+        GuiTheme::LOG_SLIDER, 0, 20000)->setUnitsSize(1);
+
+    planetPane->endRow();
+
     planetPane->addCheckBox("Water Mountains", &m_waterMount);
 
 
@@ -348,19 +363,19 @@ void App::makePlanetGUI() {
     planetPane->beginRow();
 
     planetPane->addNumberBox("Land R", &m_lRed, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("G", &m_lGreen, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("B", &m_lBlue, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("Gloss Base", &m_lGlossBase, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
-    
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
     planetPane->addNumberBox("Gloss Pow", &m_lGlossPow, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addCheckBox("Get texture from file", &m_useLTexture);
 
@@ -372,20 +387,20 @@ void App::makePlanetGUI() {
 
     planetPane->beginRow();
 
-   planetPane->addNumberBox("Water R", &m_wRed, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+    planetPane->addNumberBox("Water R", &m_wRed, "",
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("G", &m_wGreen, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("B", &m_wBlue, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
-   planetPane->addNumberBox("Gloss Base", &m_wGlossBase, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
-    
+    planetPane->addNumberBox("Gloss Base", &m_wGlossBase, "",
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
     planetPane->addNumberBox("Gloss Pow", &m_wGlossPow, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addCheckBox("Get texture from file", &m_useWTexture);
 
@@ -397,20 +412,20 @@ void App::makePlanetGUI() {
 
     planetPane->beginRow();
 
-   planetPane->addNumberBox("Mountain R", &m_mRed, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+    planetPane->addNumberBox("Mountain R", &m_mRed, "",
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("G", &m_mGreen, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("B", &m_mBlue, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addNumberBox("Gloss Base", &m_mGlossBase, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
-    
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+
     planetPane->addNumberBox("Gloss Pow", &m_mGlossPow, "",
-       GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f)->setUnitsSize(1);
 
     planetPane->addCheckBox("Get texture from file", &m_useMTexture);
 
@@ -451,9 +466,15 @@ void App::makePlanetGUI() {
             x.getIfPresent("oceanLevel", m_oceanLevel);
             x.getIfPresent("landNoise", m_landNoise);
             x.getIfPresent("oceanNoise", m_oceanNoise);
+            
+            x.getIfPresent("collapsingEnabled",m_collapsingEnabled);
+            x.getIfPresent("oceanCollapsing",m_oceanEdgesToCollapse);
+            x.getIfPresent("landCollapsing",m_landEdgesToCollapse);
+            x.getIfPresent("mountainCollapsing",m_mountainEdgesToCollapse);
+
             x.getIfPresent("waterMount", m_waterMount);
 
-            x.getIfPresent("useMountainTexture",  m_useMTexture);
+            x.getIfPresent("useMountainTexture", m_useMTexture);
             x.getIfPresent("mRed", m_mRed);
             x.getIfPresent("mGreen", m_mGreen);
             x.getIfPresent("mBlue", m_mBlue);
@@ -461,7 +482,7 @@ void App::makePlanetGUI() {
             x.getIfPresent("mBase", m_mGlossBase);
             x.getIfPresent("mPow", m_mGlossPow);
 
-            x.getIfPresent("useLandTexture",  m_useLTexture);
+            x.getIfPresent("useLandTexture", m_useLTexture);
             x.getIfPresent("lRed", m_lRed);
             x.getIfPresent("lGreen", m_lGreen);
             x.getIfPresent("lBlue", m_lBlue);
@@ -469,7 +490,7 @@ void App::makePlanetGUI() {
             x.getIfPresent("lBase", m_lGlossBase);
             x.getIfPresent("lPow", m_lGlossPow);
 
-            x.getIfPresent("useWaterTexture",  m_useWTexture);
+            x.getIfPresent("useWaterTexture", m_useWTexture);
             x.getIfPresent("wRed", m_wRed);
             x.getIfPresent("wGreen", m_wGreen);
             x.getIfPresent("wBlue", m_wBlue);
@@ -481,7 +502,7 @@ void App::makePlanetGUI() {
         catch (...) {
             msgBox("Unable to load the image.");
         }
-    }); 
+    });
 
     planetPane->addButton("Save Constants to Any File", [this]() {
         try {
@@ -494,9 +515,14 @@ void App::makePlanetGUI() {
             x["oceanLevel"] = m_oceanLevel;
             x["landNoise"] = m_landNoise;
             x["oceanNoise"] = m_oceanNoise;
+            x["collapsingEnabled"] = m_collapsingEnabled; 
+            x["oceanCollapsing"] = m_oceanEdgesToCollapse; 
+            x["landCollapsing"] = m_landEdgesToCollapse; 
+            x["mountainCollapsing"] = m_mountainEdgesToCollapse;
+
             x["waterMount"] = m_waterMount;
 
-            x["useMountainTexture"] =  m_useMTexture;
+            x["useMountainTexture"] = m_useMTexture;
             x["mRed"] = m_mRed;
             x["mGreen"] = m_mGreen;
             x["mBlue"] = m_mBlue;
@@ -507,7 +533,7 @@ void App::makePlanetGUI() {
             x["useLandTexture"] = m_useLTexture;
             x["lRed"] = m_lRed;
             x["lGreen"] = m_lGreen;
-            x["lBlue"] =  m_lBlue;
+            x["lBlue"] = m_lBlue;
             x["landTexture"] = m_landFile;
             x["lBase"] = m_lGlossBase;
             x["lPow"] = m_lGlossPow;
@@ -546,6 +572,9 @@ void App::makePlanetGUI() {
             planet.writeSphere("ocean", 12.5f, m_recursionLevel, vertices, faces);
             planet.applyNoiseWater(vertices, image);
             Mesh mesh(vertices, faces);
+            if (m_collapsingEnabled) {
+                mesh.collapseEdges(m_oceanEdgesToCollapse);
+            }
             mesh.bevelEdges2(0.1f);
 
             vertices = Array<Vector3>();
@@ -563,6 +592,9 @@ void App::makePlanetGUI() {
             planet.applyNoiseLand(vertices, image, test, m_oceanLevel);
             test->save("test.png");
             Mesh mesh2(vertices, faces);
+            if (m_collapsingEnabled) {
+                mesh.collapseEdges(m_landEdgesToCollapse);
+            }
             mesh2.bevelEdges2(m_landBevel);
 
             vertices = Array<Vector3>();
@@ -577,6 +609,9 @@ void App::makePlanetGUI() {
             cImage->save("mountColor.png");
             planet.applyNoiseMountain(vertices, image, test, m_waterMount, m_mountianDiversity, m_mountainHeight);
             Mesh mesh3(vertices, faces);
+            if (m_collapsingEnabled) {
+                mesh.collapseEdges(m_mountainEdgesToCollapse);
+            }
             mesh3.bevelEdges2(m_mountainBevel);
 
             image->save("image.png");
@@ -604,24 +639,24 @@ void App::makePlanetGUI() {
             /*addPlanetToScene(mesh, "ocean", Point3(100, 0, 0), Color3(0, 0, 1), waterRotation);
             addPlanetToScene(mesh2, "land", Point3(100, 0, 0), Color3(0, 1, 0), rotation);
             addPlanetToScene(mesh3, "mountain", Point3(100, 0, 0), Color3(.5, .5, .5), rotation);*/
-            if (m_useWTexture){
+            if (m_useWTexture) {
                 addPlanetToScene(mesh, "ocean", Point3(0, 0, 0), "blue.jpg", waterRotation);
             }
-            else{
-                addPlanetToScene(mesh, "ocean", Point3(100, 0, 0), Color3(m_wRed, m_wGreen, m_wBlue), waterRotation, Color4(Color3(m_wGlossBase),m_wGlossPow));
+            else {
+                addPlanetToScene(mesh, "ocean", Point3(100, 0, 0), Color3(m_wRed, m_wGreen, m_wBlue), waterRotation, Color4(Color3(m_wGlossBase), m_wGlossPow));
             }
-            if (m_useLTexture){
+            if (m_useLTexture) {
                 debugPrintf(STR(%s ************* \n), m_landFile);
                 addPlanetToScene(mesh2, "land", Point3(0, 0, 0), "blue.jpg", rotation);
             }
-            else{
-                addPlanetToScene(mesh2, "land", Point3(100, 0, 0), Color3(m_lRed, m_lGreen, m_lBlue), rotation, Color4(Color3(m_lGlossBase),m_lGlossPow));
+            else {
+                addPlanetToScene(mesh2, "land", Point3(100, 0, 0), Color3(m_lRed, m_lGreen, m_lBlue), rotation, Color4(Color3(m_lGlossBase), m_lGlossPow));
             }
-            if (m_useMTexture){
+            if (m_useMTexture) {
                 addPlanetToScene(mesh3, "mountain", Point3(0, 0, 0), "blue.jpg", rotation);
             }
-            else{
-                addPlanetToScene(mesh3, "mountain", Point3(100, 0, 0), Color3(m_mRed, m_mGreen, m_mBlue), rotation, Color4(Color3(m_mGlossBase),m_mGlossPow));
+            else {
+                addPlanetToScene(mesh3, "mountain", Point3(100, 0, 0), Color3(m_mRed, m_mGreen, m_mBlue), rotation, Color4(Color3(m_mGlossBase), m_mGlossPow));
             }
 
             /*addPlanetToScene(mesh, "lava", Point3(0, 0, 0), "orange.jpg", waterRotation);
@@ -747,7 +782,7 @@ void App::makeGUI() {
 
     //makeBunny();
     //makeLittleHeightfield();
-    //makePentagon();
+   // makePentagon();
 
     Array<Vector3> verticeArray(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(.5, 0, 1), Vector3(.5, 1, .5));
     Array<Vector3int32> triangles(Vector3int32(3, 1, 0), Vector3int32(1, 2, 0), Vector3int32(3, 2, 1), Vector3int32(3, 0, 2));

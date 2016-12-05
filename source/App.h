@@ -12,9 +12,13 @@
 class App : public GApp {
 protected:
     shared_ptr<Mesh> m_myMesh;
-    //variable sof edge collapsing    
+    //variable sof edge collapsing   
     int m_edgesToCollapse;
+    int m_landEdgesToCollapse;
+    int m_mountainEdgesToCollapse;
+    int m_oceanEdgesToCollapse;
     int m_angleLengthWeight;
+    bool m_collapsingEnabled;
 
     //variables for makeHeightfield()
     float m_heightfieldYScale;

@@ -215,18 +215,14 @@ static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, co
 }
 
 static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, const Array<MeshAlg::Vertex>& vertices, const int oldIndex, const int newIndex) {
-    // Remove vertex at oldIndex from vertexArray
+    // Remove vertex at oldIndex from vertex Array
     vertexArray[oldIndex] = vertexArray.last();
     vertexArray.pop();
 
     const int oldIndexToLast(vertexArray.size());
 
-    // Only faces adjacent to what used to be the Last vertex in the array are affected
-    const MeshAlg::Vertex& vertexMoved(vertices[oldIndexToLast]);
-    const SmallArray<int, 6>& adjacentToMoved(vertexMoved.faceIndex);
-
     // Collapse Edges in indexArray
-    if (newIndex != oldIndexToLast) { // We're done otherwise
+    if (newIndex != oldIndexToLast) { // Otherwise, by updating the indexArray to accomodate the vertex removal from vertexArray also deals with collapsing the edge
 
         // Only faces adjacent to the vertex removed by the collapse are affected
         const MeshAlg::Vertex& toReplace(vertices[oldIndex]);
@@ -239,12 +235,16 @@ static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, co
                 if (indexArray[j] == oldIndex) {
                     indexArray[j] = newIndex;
                 }
+                else if (indexArray[j] == oldIndexToLast) {
+                    indexArray[j] = oldIndex;
+                }
             }
         }
     }
 
-
-
+    // Only faces adjacent to what used to be the Last vertex in the array are affected
+    const MeshAlg::Vertex& vertexMoved(vertices[oldIndexToLast]);
+    const SmallArray<int, 6>& adjacentToMoved(vertexMoved.faceIndex);
 
     for (int i(0); i < adjacentToMoved.size(); ++i) { // For each such face
         const int x(3 * adjacentToMoved[i]); // Find its vertex indices in the indexArray and replace the oldIndexToLat by oldIndex
@@ -254,7 +254,6 @@ static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, co
             }
         }
     }
-
 }
 
 static void removeDegenerateFaces(Array<int>& indexArray) {
@@ -518,20 +517,20 @@ void Mesh::toObj(String filename) {
 }
 
 shared_ptr<Model> Mesh::toArticulatedModel(String name, Color3& color) const {
-    String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
+    String anyStr("UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }");
     return toArticulatedModel(name, anyStr, 1, 1);
 }
 
 shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width, int height) const {
-    const shared_ptr<ArticulatedModel>& model = ArticulatedModel::createEmpty(name);
-    ArticulatedModel::Part*     part = model->addPart("root");
-    ArticulatedModel::Geometry* geometry = model->addGeometry("geom");
-    ArticulatedModel::Mesh*     mesh = model->addMesh("mesh", part, geometry);
+    const shared_ptr<ArticulatedModel>& model(ArticulatedModel::createEmpty(name));
+    ArticulatedModel::Part*     part(model->addPart("root"));
+    ArticulatedModel::Geometry* geometry(model->addGeometry("geom"));
+    ArticulatedModel::Mesh*     mesh(model->addMesh("mesh", part, geometry));
 
     //Any any = Any::parse("UniversalMaterial::Specification { lambertian = Color3(" + String(color.r) + ", " + String(color.g) + ", " + String(color.b) + "); }");
     //String test = (String) std::to_string(color.r);
     //String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
-    Any any = Any::parse(anyStr);
+    const Any& any(Any::parse(anyStr));
     mesh->material = UniversalMaterial::create(any);
     /*        PARSE_ANY(
             UniversalMaterial::Specification {
@@ -545,11 +544,11 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width
                 lambertian = Color3(0,1,.2);
             }));*/
 
-    Array<CPUVertexArray::Vertex>& vertexArray = geometry->cpuVertexArray.vertex;
-    Array<int>& indexArray = mesh->cpuIndexArray;
+    Array<CPUVertexArray::Vertex>& vertexArray(geometry->cpuVertexArray.vertex);
+    Array<int>& indexArray(mesh->cpuIndexArray);
 
     for (int i = 0; i < m_vertexPositions.size(); ++i) {
-        CPUVertexArray::Vertex& v = vertexArray.next();
+        CPUVertexArray::Vertex& v(vertexArray.next());
         v.position = m_vertexPositions[i];
 
         //fix
@@ -564,15 +563,15 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width
         }
         v.tangent = Vector4::nan();
 
-        Vector3 vertex = m_vertexPositions[i];
+        const Vector3& vertex(m_vertexPositions[i]);
 
-        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
+        const Vector3& d((vertex - Vector3(0, 0, 0)).unit());
 
-        float nx = width * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
-        float ny = height * (0.5f - asinf(d.y) * 1 / pif());
+        const float nx(width * (0.5f + atanf(d.z / d.x) / (2.0f*pif())));
+        const float ny(height * (0.5f - asinf(d.y) * 1 / pif()));
 
-        int ix = (int)abs((int)nx % width);
-        int iy = (int)abs((int)ny % height);
+        const int ix((int)abs((int)nx % width));
+        const int iy((int)abs((int)ny % height));
         //v.texCoord0 = Vector2(nx, ny);
         //v.texCoord0 = Vector2(ix, iy);
         v.texCoord0 = Vector2((ix*1.0) / width, (iy*1.0) / height);
