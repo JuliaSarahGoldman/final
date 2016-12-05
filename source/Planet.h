@@ -26,6 +26,9 @@ protected:
     float m_mountainBevel;
     float m_mountainHeight;
     float m_mountianDiversity;
+    float m_mountianNoise1;
+    float m_mountianNoise2;
+    float m_mountianNoise3;
     float m_oceanLevel;
 
     String m_planetSource;

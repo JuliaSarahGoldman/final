@@ -21,6 +21,9 @@ bool Planet::readSpec(const Any& planetSpec) {
         x.getIfPresent("mountainBevel", m_mountainBevel);
         x.getIfPresent("mountainHeight", m_mountainHeight);
         x.getIfPresent("mountainDiversity", m_mountianDiversity);
+        x.getIfPresent("mountainNoise1", m_mountianNoise1);
+        x.getIfPresent("mountainNoise2", m_mountianNoise2);
+        x.getIfPresent("mountainNoise3", m_mountianNoise3);
         x.getIfPresent("oceanLevel", m_oceanLevel);
         x.getIfPresent("landNoise", m_landNoise);
         x.getIfPresent("oceanNoise", m_oceanNoise);
@@ -99,13 +102,13 @@ bool Planet::generatePlanet() {
         shared_ptr<Image> colorImage = Image::create(1024, 1024, ImageFormat::RGBA8());
         shared_ptr<Image> testImage = Image::create(1024, 1024, ImageFormat::RGBA8());
 
-        noise.generateSeaImage(noiseImage, m_oceanNoise);
-        writeSphere(m_planetName, 12.5f, m_recursionLevel, vertices, faces);
-        applyNoiseWater(vertices, noiseImage);
-        noiseImage->save(m_planetName + "water.png");
+        //noise.generateSeaImage(noiseImage, m_oceanNoise);
+        writeSphere(m_planetName, 12.5f, 5, vertices, faces);
+        //applyNoiseWater(vertices, noiseImage);
+        //noiseImage->save(m_planetName + "water.png");
 
         Mesh mesh(vertices, faces);
-        mesh.bevelEdges2(0.1f);
+        //mesh.bevelEdges2(0.1f);
         m_waterObjFile = m_planetName + "water";
 
         mesh.toObj(m_waterObjFile);
@@ -141,12 +144,12 @@ bool Planet::generatePlanet() {
 
         writeSphere(m_planetName + "mountain", 11.5f, m_recursionLevel, vertices, faces);
 
-        noise.generateMountainImage(noiseImage, 0.125f, 1.0f);
-        noise.generateMountainImage(noiseImage, 0.25f, 0.5f);
-        noise.generateMountainImage(noiseImage, 0.5f, 0.25f);
+        noise.generateMountainImage(noiseImage, m_mountianNoise1, 1.0f);
+        noise.generateMountainImage(noiseImage, m_mountianNoise2, 0.5f);
+        noise.generateMountainImage(noiseImage, m_mountianNoise1, 0.25f);
 
         noise.colorMountainImage(noiseImage, colorImage);
-
+        noiseImage->save(m_planetName + "mountain.png");
         colorImage->save(m_planetName + "mountainColor.png");
         applyNoiseMountain(vertices, noiseImage, testImage, m_waterMount, m_mountianDiversity, m_mountainHeight);
 

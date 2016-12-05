@@ -48,9 +48,6 @@
     <None Include="Doxyfile" />
     <None Include="journal\journal.md.html" />
     <None Include="doc-files\report.md.html" />
-    <None Include="data-files\Scene\Planet.Scene.Any">
-      <Filter>Scene Files</Filter>
-    </None>
     <None Include="data-files\Scene\ground.Scene.Any">
       <Filter>Scene Files</Filter>
     </None>
@@ -64,6 +61,9 @@
       <Filter>Scene Files</Filter>
     </None>
     <None Include="data-files\Planet.Scene.Any">
+      <Filter>Scene Files</Filter>
+    </None>
+    <None Include="data-files\Scene\BadPlanet.Scene.Any">
       <Filter>Scene Files</Filter>
     </None>
   </ItemGroup>

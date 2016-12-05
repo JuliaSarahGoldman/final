@@ -292,11 +292,20 @@ void App::makePlanetGUI() {
     mountainPane->addNumberBox("Mount Height", &m_mountainHeight, "",
         GuiTheme::LOG_SLIDER, 10.0f, 500.0f)->setUnitsSize(1);
 
-    mountainPane->addNumberBox("Mount Noise", &m_mountianDiversity, "",
+    mountainPane->addNumberBox("Mount Diversity", &m_mountianDiversity, "",
         GuiTheme::LOG_SLIDER, 1.0f, 5.0f)->setUnitsSize(1);
 
     mountainPane->addNumberBox("Mount Bevel", &m_mountainBevel, "",
         GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
+
+    mountainPane->addNumberBox("Mount Noise 1", &m_mountianNoise1, "",
+        GuiTheme::LOG_SLIDER, 0.0f, 5.0f)->setUnitsSize(1);
+
+    mountainPane->addNumberBox("Mount Noise 2", &m_mountianNoise2, "",
+        GuiTheme::LOG_SLIDER, 0.0f, 5.0f)->setUnitsSize(1);
+
+    mountainPane->addNumberBox("Mount Noise 3", &m_mountianNoise3, "",
+        GuiTheme::LOG_SLIDER, 0.0f, 5.0f)->setUnitsSize(1);
 
     mountainPane->addCheckBox("Water Mountains", &m_waterMount);
 
@@ -462,6 +471,9 @@ void App::unpackagePlanetSpecs(Any& any) {
         x.getIfPresent("mountainBevel", m_mountainBevel);
         x.getIfPresent("mountainHeight", m_mountainHeight);
         x.getIfPresent("mountainDiversity", m_mountianDiversity);
+        x.getIfPresent("mountainNoise1", m_mountianNoise1);
+        x.getIfPresent("mountainNoise2", m_mountianNoise2);
+        x.getIfPresent("mountainNoise3", m_mountianNoise3);
         x.getIfPresent("oceanLevel", m_oceanLevel);
         x.getIfPresent("landNoise", m_landNoise);
         x.getIfPresent("oceanNoise", m_oceanNoise);
@@ -517,6 +529,9 @@ void App::packagePlanetSpecs(Any& x) {
         x["mountainBevel"] = m_mountainBevel;
         x["mountainHeight"] = m_mountainHeight;
         x["mountainDiversity"] = m_mountianDiversity;
+        x["mountainNoise1"] = m_mountianNoise1;
+        x["mountainNoise2"] = m_mountianNoise2;
+        x["mountainNoise3"] = m_mountianNoise3;
         x["oceanLevel"] = m_oceanLevel;
         x["landNoise"] = m_landNoise;
         x["oceanNoise"] = m_oceanNoise;

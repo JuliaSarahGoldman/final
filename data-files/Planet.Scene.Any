@@ -1,5 +1,6 @@
 { 
     entities = { 
+
         camera = Camera { 
             filmSettings = FilmSettings { 
                 antialiasingEnabled = true; 
@@ -16,7 +17,7 @@
                 vignetteTopStrength = 0.5; 
             }; 
             
-            frame = CFrame::fromXYZYPRDegrees(50, 50, 50 ); 
+            frame = CFrame::fromXYZYPRDegrees(0.90151, 1.8599, 63.627, -0.39264, -1.1459, 0); 
             projection = Projection { 
                 farPlaneZ = -inf; 
                 fovDegrees = 50; 
@@ -120,6 +121,11 @@
         skybox = Skybox { 
             texture = "cubemap/hipshot_m9_sky/16_*.png"; 
         }; 
+
+        gradient = VisibleEntity {
+            model = "boardModel";
+            frame = CFrame::fromXYZYPRDegrees(0, 0, -20, 0, 0, 0);
+        };
         
         sun = Light { 
             attenuation = Vector3(0, 0, 1 ); 
@@ -222,8 +228,8 @@
             filename = "rand.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.236111, 0.236111, 0.236111, 0.347222 ); 
-                        lambertian = Color3(0, 0, 0.833333 ); 
+                        glossy = Color4(7.78067e-22, 7.78067e-22, 7.78067e-22, 5.57296e-42 ); 
+                        lambertian = Color3(1.92677e-39, 0, 1 ); 
                     } ); 
                 transformGeometry(all(), Matrix4::scale(0.5, 0.5, 0.5 ) ) }; 
             
@@ -233,8 +239,8 @@
             filename = "randland.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.236111, 0.236111, 0.236111, 0.347222 ); 
-                        lambertian = Color3(0.208333, 0.791667, 0 ); 
+                        glossy = Color4(7.78067e-22, 7.78067e-22, 7.78067e-22, 5.57296e-42 ); 
+                        lambertian = Color3(0, 1, 0 ); 
                     } ); 
                 transformGeometry(all(), Matrix4::scale(0.5, 0.5, 0.5 ) ) }; 
             
@@ -244,13 +250,37 @@
             filename = "randmountain.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.236111, 0.236111, 0.236111, 0.347222 ); 
-                        lambertian = Color3(0.413793, 0.165517, 0 ); 
+                        glossy = Color4(7.78067e-22, 7.78067e-22, 7.78067e-22, 5.57296e-42 ); 
+                        lambertian = Color3(0.482759, 0.496552, 0.496552 ); 
                     } ); 
                 transformGeometry(all(), Matrix4::scale(0.5, 0.5, 0.5 ) ) }; 
             
         }; 
-        
+
+         boardModel = ArticulatedModel::Specification {
+            filename = "ifs/square.ifs";
+            scale = 2;
+            preprocess = {
+                setMaterial(all(), 
+                    UniversalMaterial::Specification {
+                        /*lambertian = Texture::Specification{ 
+                            filename = "gradient.jpg"; 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color4(Color3(1.0f), 1.0f);  
+                            };
+                        };
+                        emissive = Color4(Color3(1.0f), 0.0f);*/
+                        transmissive = Texture::Specification{ 
+                            filename = "gradient.jpg"; 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color4(Color3(1.0f), 1.0f);  
+                            };
+                        };
+                        lambertian = Color4(Color3(1.0f), 0.0f);
+                    });
+                transformGeometry(all(), Matrix4::scale(40,40,0));
+            };
+        };
     }; 
     
     name = "Planet"; 
