@@ -1,0 +1,145 @@
+{ 
+    entities = { 
+        camera = Camera { 
+            frame = CFrame::fromXYZYPRDegrees(50, 50, 50 ); 
+            projection = Projection { 
+                farPlaneZ = -inf; 
+                fovDegrees = 50; 
+                fovDirection = "VERTICAL"; 
+                nearPlaneZ = -0.1; 
+            }; 
+            
+        }; 
+        
+        skybox = Skybox { 
+            texture = 0.05; 
+        }; 
+        jrssr = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(9.80909e-45, 4.59121e-41, -1.02631e-31 ); 
+            model = "jrssr"; 
+            track = orbit(0, 70 ); 
+        }; 
+        
+        jrssrland = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(9.80909e-45, 4.59121e-41, -1.02631e-31 ); 
+            model = "jrssrland"; 
+            track = entity("jrssr"); 
+        }; 
+        
+        jrssrmountain = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(9.80909e-45, 4.59121e-41, -1.02631e-31 ); 
+            model = "jrssrmountain"; 
+            track = entity("jrssr"); 
+        }; 
+        
+        cloud1 = VisibleEntity { 
+            model = "cloud"; 
+            track = transform(orbit(18, 10), combine(Matrix4::pitchDegrees(90), entity("jssr"))); 
+        }; 
+
+        cloud2 = VisibleEntity { 
+            model = "cloud"; 
+            track = transform(Matrix4::rollDegrees(90), transform(orbit(15, 23), combine(Matrix4::pitchDegrees(90), entity("jssr")))); 
+        }; 
+
+        sun = Light { 
+            attenuation = Vector3(0, 0, 1 ); 
+            bulbPower = Color3(3e+05); 
+enabled = true;
+            castsShadows = true; 
+            shadowMapBias = 0.05; 
+            shadowMapSize = Vector2int16(2048, 2048 ); 
+            spotHalfAngleDegrees = 8; 
+            spotSquare = true; 
+            track = lookAt(
+                Point3(-15, 200, 40 ), 
+                Point3(0, 0, 0 ) ); 
+            
+            type = "SPOT"; 
+        }; 
+        
+    }; 
+    
+    lightingEnvironment = LightingEnvironment { 
+        ambientOcclusionSettings = AmbientOcclusionSettings { 
+            bias = 0.12; 
+            blurRadius = 4; 
+            blurStepSize = 2; 
+            depthPeelSeparationHint = 0.2; 
+            edgeSharpness = 1; 
+            enabled = true; 
+            intensity = 3; 
+            monotonicallyDecreasingBilateralWeights = false; 
+            numSamples = 19; 
+            radius = 2; 
+            temporalFilterSettings = TemporalFilter::Settings { 
+                falloffEndDistance = 0.07; 
+                falloffStartDistance = 0.05; 
+                hysteresis = 0.9; 
+            }; 
+            
+            temporallyVarySamples = true; 
+            useDepthPeelBuffer = true; 
+            useNormalBuffer = true; 
+            useNormalsInBlur = true; 
+        }; 
+        
+        environmentMap = Texture::Specification { 
+            encoding = Texture::Encoding { 
+                readMultiplyFirst = 1.9; 
+            }; 
+            
+            filename = "cubemap/majestic/majestic512_*.jpg"; 
+        }; 
+        
+    }; 
+    
+    models = { 
+        jrssr = ArticulatedModel::Specification { 
+            filename = "jrssr.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        lambertian = Color3(0, 0, 1 ); 
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.5, 0.5, 0.5 ) ) }; 
+            
+        }; 
+        
+        jrssrland = ArticulatedModel::Specification { 
+            filename = "jrssrland.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        lambertian = Color3(0, 1, 0.1 );
+                        glossy = Color4(Color3(0.2), 0.2);
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.5, 0.5, 0.5 ) ) }; 
+            
+        }; 
+        
+        jrssrmountain = ArticulatedModel::Specification { 
+            filename = "jrssrmountain.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        lambertian = Color3(0.5, 0.5, 0.5 ); 
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.5, 0.5, 0.5 ) ) }; 
+            
+        }; 
+
+        cloud = ArticulatedModel::Specification { 
+            filename = "model/cloud/cloud.zip/altostratus00.obj"; 
+scale = 0.05;
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        lambertian = Color4(0.8,0.8,0.8,  1.0); 
+                         emissive = Color3(0.1);
+                    } ); }; 
+            
+        }; 
+
+       
+        
+    }; 
+    
+    name = "PlanetandCloud"; 
+} 
