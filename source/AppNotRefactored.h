@@ -7,15 +7,11 @@
 #pragma once
 #include <G3D/G3DAll.h>
 #include "Mesh.h""
-#include "SolarSystem.h"
 
 /** \brief Application framework. */
 class App : public GApp {
 protected:
-
-    SolarSystem m_solarSystem;
     shared_ptr<Mesh> m_myMesh;
-
     //variable sof edge collapsing   
     int m_edgesToCollapse;
     int m_landEdgesToCollapse;
@@ -23,6 +19,11 @@ protected:
     int m_oceanEdgesToCollapse;
     int m_angleLengthWeight;
     bool m_collapsingEnabled;
+
+    //variables for makeHeightfield()
+    float m_heightfieldYScale;
+    float m_heightfieldXZScale;
+    String m_heightfieldSource;
 
     int m_recursionLevel;
     float m_frequency;
@@ -67,12 +68,9 @@ protected:
     String m_planetName;
     String m_orbitPlanet;
     float m_orbitDistance;
-
-    //variables for makeHeightfield()
-    float m_heightfieldYScale;
-    float m_heightfieldXZScale;
-    String m_heightfieldSource;
-
+    Any m_scene;
+    Any m_models;
+    Any m_entities;
 
     /** Called from onInit */
     void makeGUI();
@@ -82,10 +80,16 @@ protected:
     void makeBunny(); 
     void makeLittleHeightfield();
 
+    void addPlanetToScene(Any& scene, Any& models, Mesh& mesh, String name, Point3& position, Color3& color, Color4& gloss, String& dependentModel);
+    void addPlanetToScene(Any& scene, Any& models, Mesh& mesh, String name, Point3& position, String filename, String& dependentModel);
+    void addPlanetToScene(Any& scene, Any& models, Mesh& mesh, String name, Point3& position, String anyStr, int width, int height, String& dependentModel);
+    void addCloudsToPlanet(Any& models, Any& entities, String& name, Point3& position);
     void makePlanetGUI();
-
-    void packagePlanetSpecs(Any& x);
-    void unpackagePlanetSpecs(Any& x);
+    void addEntityToAnyTable(String& name, Any& any, Point3& position, String& model, String& dependentEntity, String& spec);
+    void makeSceneTable(Any& scene, const Any& models, const Any& entities, const String& name);
+    void createInitialEntityTable(Any& entities);
+    void createInitialModelsTable(Any& models);
+    void addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation, Color4& gloss);
 
 public:
     

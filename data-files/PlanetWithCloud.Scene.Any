@@ -57,13 +57,13 @@
 
         cloud2 = VisibleEntity { 
             model = "cloud"; 
-            track = transform(Matrix4::rollDegrees(90), transform(orbit(15, 23), combine(Matrix4::pitchDegrees(90), entity("jssr")))); 
+            track = transform(Matrix4::rollDegrees(25), transform(orbit(15, 23), combine(Matrix4::pitchDegrees(90), entity("jssr")))); 
         }; 
 
         sun = Light { 
             attenuation = Vector3(0, 0, 1 ); 
             bulbPower = Color3(3e+05); 
-enabled = true;
+            enabled = true;
             castsShadows = true; 
             shadowMapBias = 0.05; 
             shadowMapSize = Vector2int16(2048, 2048 ); 

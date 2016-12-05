@@ -4,7 +4,6 @@
 #include "Planet.h"
 #include "Mesh.h"
 #include "SimpleMesh.h"
-#include "SolarSystem.h"
 
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
 G3D_START_AT_MAIN();
@@ -58,8 +57,12 @@ App::App(const GApp::Settings& settings) : GApp(settings) {
 // not in the constructor so that common exceptions will be
 // automatically caught.
 void App::onInit() {
-    m_solarSystem = SolarSystem();
-    m_solarSystem.onInit();
+    m_scene = Any(Any::TABLE);
+    m_models = Any(Any::TABLE);
+    m_entities = Any(Any::TABLE);
+    createInitialEntityTable(m_entities);
+    
+    createInitialModelsTable(m_models);
 
     debugPrintf("Target frame rate = %f Hz\n", realTimeTargetDuration());
     GApp::onInit();
@@ -237,6 +240,133 @@ void App::makeLittleHeightfield() {
     hfPane->pack();
 }
 
+void App::addPlanetToScene(Any& entities, Any& models, Mesh& mesh, String name, Point3& position, String filename, String& dependentModel) {
+    Any modelDescription(Any::TABLE, "ArticulatedModel::Specification");
+
+
+    String anyStr = "UniversalMaterial::Specification { lambertian = \"" + filename + "\"; }";
+
+    String preprocess = "{ setMaterial(all()," + anyStr + ");" +
+        "transformGeometry(all(), Matrix4::scale(" +
+        (String)std::to_string(m_scale * 0.5f) + ", " + (String)std::to_string(m_scale * 0.5f) + "," + (String)std::to_string(m_scale * 0.5f) + ")); }";
+
+    modelDescription["filename"] = name + ".obj";
+    modelDescription["preprocess"] = Any::parse(preprocess);
+
+    shared_ptr<Image> im(Image::fromFile(filename));
+
+    models[name] = modelDescription;
+
+    addEntityToAnyTable(name, entities, position, name, dependentModel, anyStr);
+    //addPlanetToScene(entities, models, mesh, name, position, anyStr, im->width(), im->height(), rotation, dependentModel);
+}
+
+
+void App::addPlanetToScene(Any& entities, Any& models, Mesh& mesh, String name, Point3& position, Color3& color, Color4& gloss, String& dependentModel) {
+    Any modelDescription(Any::TABLE, "ArticulatedModel::Specification");
+
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3" + color.toString() + "; glossy = Color4" + gloss.toString() + "; }";
+
+    String preprocess = "{ setMaterial(all()," + anyStr + ");" +
+        "transformGeometry(all(), Matrix4::scale(" +
+        (String)std::to_string(0.5f) + ", " + (String)std::to_string(0.5f) + "," + (String)std::to_string(0.5f) + ")); }";
+
+    modelDescription["filename"] = name + ".obj";
+    modelDescription["preprocess"] = Any::parse(preprocess);
+
+    models[name] = modelDescription;
+
+    addEntityToAnyTable(name, entities, position, name, dependentModel, anyStr);
+
+    addCloudsToPlanet(models, entities, name, position);
+    //addPlanetToScene(entities, models, mesh, name, position, anyStr, 1, 1, rotation, dependentModel);
+}
+
+ void App::addCloudsToPlanet(Any& models, Any& entities, String& name, Point3& position){
+    Any cloud0(Any::TABLE, "ParticleSystem");
+
+    cloud0["canChange"] = false;
+    cloud0["particlesAreInWorldSpace"] = true;
+
+    int t[5] = {2, 3, 5, 7, 11};
+
+    for(int i(0); i < 5; ++i){
+        Any cloud1 = cloud0;
+        cloud1["model"] = (String) "cloud" + (String) std::to_string(Random::threadCommon().integer(1,3));
+        cloud1["track"] = Any::parse( (String)
+            "transform(" + 
+                "Matrix4::rollDegrees(90), " + 
+                "transform("
+                    "orbit(" + 
+                        (String) std::to_string(Random::threadCommon().integer(10, 20)) + ", " + (String) std::to_string(t[Random::threadCommon().integer(0,4)]) + 
+                    "), " + 
+                    "combine(" +
+                        "Matrix4::pitchDegrees(" + (String) std::to_string(Random::threadCommon().integer(-89,89)) + "), entity(" + name + ")" +
+                    ")"
+                "), " + 
+            ");"
+        );
+
+        entities["cloud" + (String) std::to_string(i)] = cloud1;
+    }
+ }
+
+void App::addPlanetToScene(Mesh& mesh, String name, Point3& position, Color3& color, Matrix3& rotation, Color4& gloss) {
+    String anyStr = "UniversalMaterial::Specification { lambertian = Color3" + color.toString() + "; glossy = Color4" + gloss.toString() + "; }";
+    debugPrintf(STR(%s \n), anyStr);
+    // addPlanetToScene(mesh, name, position, anyStr, 1, 1, rotation);
+}
+
+void App::addPlanetToScene(Any& entities, Any& models, Mesh& mesh, String name, Point3& position, String anyStr, int width, int height, String& dependentModel) {
+    // Replace any existing torus model. Models don't 
+    // have to be added to the model table to use them 
+    // with a VisibleEntity.
+    const shared_ptr<Model>& planetModel = mesh.toArticulatedModel(name + "Model", anyStr, width, height);
+    if (scene()->modelTable().containsKey(planetModel->name())) {
+        scene()->removeModel(planetModel->name());
+    }
+    scene()->insert(planetModel);
+
+    // Replace any existing planet entity that has the wrong type
+    shared_ptr<Entity> planet = scene()->entity(name);
+    if (notNull(planet) && isNull(dynamic_pointer_cast<VisibleEntity>(planet))) {
+        logPrintf("The scene contained an Entity named %s that was not a VisibleEntity\n", name);
+        scene()->remove(planet);
+        planet.reset();
+    }
+
+    if (isNull(planet)) {
+        // There is no torus entity in this scene, so make one.
+        //
+        // We could either explicitly instantiate a VisibleEntity or simply
+        // allow the Scene parser to construct one. The second approach
+        // has more consise syntax for this case, since we are using all constant
+        // values in the specification.
+        //planet = scene()->createEntity();
+        String anyStr("VisibleEntity { model = \"" + name + "Model\"; };");
+        //frame = CFrame::fromXYZYPRDegrees(" + (String) std::to_string(position.x) +", " + (String) std::to_string(position.y) + ", " + (String) std::to_string(position.z) + ", 0,0,0);
+        Any any = Any::parse(anyStr);
+        planet = scene()->createEntity(name, any);
+        Matrix3 startMat = Matrix3::identity();
+        PhysicsFrame frame(startMat);
+        PhysicsFrameSpline spline(frame.toAny());
+        spline.extrapolationMode = SplineExtrapolationMode::CYCLIC;
+        spline.interpolationMode = SplineInterpolationMode::LINEAR;
+
+        for (int i(0); i < 128; i++) {
+            //startMat *= rotation;
+            spline.append(PhysicsFrame(startMat));
+        }
+        planet->setFrameSpline(spline);
+    }
+    else {
+        // Change the model on the existing planet entity
+        dynamic_pointer_cast<VisibleEntity>(planet)->setModel(planetModel);
+    }
+
+    planet->setFrame(CFrame::fromXYZYPRDegrees(position.x, position.y, position.z, 45.0f, 45.0f));
+}
+
 void App::makePlanetGUI() {
 
     GuiPane* planetPane = debugPane->addPane("Planet Options");
@@ -398,171 +528,208 @@ void App::makePlanetGUI() {
     savePane->addTextBox("Save to:", &m_planetSave);
 
     savePane->addButton("Get Constants from Any File", [this]() {
+        FileDialog::getFilename(m_planetSource, "", false);
         try {
-            FileDialog::getFilename(m_planetSource, "", false);
-
             Any any(Any::TABLE, "Planet");
             any.load(m_planetSource);
-            unpackagePlanetSpecs(any);
+            AnyTableReader x(any);
+            x.getIfPresent("recursions", m_recursionLevel);
+            x.getIfPresent("landBevel", m_landBevel);
+            x.getIfPresent("mountainBevel", m_mountainBevel);
+            x.getIfPresent("mountainHeight", m_mountainHeight);
+            x.getIfPresent("mountainDiversity", m_mountianDiversity);
+            x.getIfPresent("oceanLevel", m_oceanLevel);
+            x.getIfPresent("landNoise", m_landNoise);
+            x.getIfPresent("oceanNoise", m_oceanNoise);
+
+            x.getIfPresent("collapsingEnabled", m_collapsingEnabled);
+            x.getIfPresent("oceanCollapsing", m_oceanEdgesToCollapse);
+            x.getIfPresent("landCollapsing", m_landEdgesToCollapse);
+            x.getIfPresent("mountainCollapsing", m_mountainEdgesToCollapse);
+
+            x.getIfPresent("waterMount", m_waterMount);
+
+            x.getIfPresent("useMountainTexture", m_useMTexture);
+            x.getIfPresent("mRed", m_mRed);
+            x.getIfPresent("mGreen", m_mGreen);
+            x.getIfPresent("mBlue", m_mBlue);
+            x.getIfPresent("mountainTexture", m_mountainFile);
+            x.getIfPresent("mBase", m_mGlossBase);
+            x.getIfPresent("mPow", m_mGlossPow);
+
+            x.getIfPresent("useLandTexture", m_useLTexture);
+            x.getIfPresent("lRed", m_lRed);
+            x.getIfPresent("lGreen", m_lGreen);
+            x.getIfPresent("lBlue", m_lBlue);
+            x.getIfPresent("landTexture", m_landFile);
+            x.getIfPresent("lBase", m_lGlossBase);
+            x.getIfPresent("lPow", m_lGlossPow);
+
+            x.getIfPresent("useWaterTexture", m_useWTexture);
+            x.getIfPresent("wRed", m_wRed);
+            x.getIfPresent("wGreen", m_wGreen);
+            x.getIfPresent("wBlue", m_wBlue);
+            x.getIfPresent("waterTexture", m_waterFile);
+            x.getIfPresent("wBase", m_wGlossBase);
+            x.getIfPresent("wPow", m_wGlossPow);
 
         }
         catch (...) {
-            msgBox("Failed to open file and load specs.");
+            msgBox("Unable to load the image.");
         }
-
     });
 
-    savePane->addButton("Save Constants to Any File", [&]() {
-        if (!m_planetSave.empty()) {
-            Any planetSpecs(Any::TABLE, "Planet");
-            packagePlanetSpecs(planetSpecs);
-            planetSpecs.save(m_planetSave);
+    savePane->addButton("Save Constants to Any File", [this]() {
+        try {
+            Any x(Any::TABLE, "Planet");
+            x["recursions"] = m_recursionLevel;
+            x["landBevel"] = m_landBevel;
+            x["mountainBevel"] = m_mountainBevel;
+            x["mountainHeight"] = m_mountainHeight;
+            x["mountainDiversity"] = m_mountianDiversity;
+            x["oceanLevel"] = m_oceanLevel;
+            x["landNoise"] = m_landNoise;
+            x["oceanNoise"] = m_oceanNoise;
+            x["collapsingEnabled"] = m_collapsingEnabled;
+            x["oceanCollapsing"] = m_oceanEdgesToCollapse;
+            x["landCollapsing"] = m_landEdgesToCollapse;
+            x["mountainCollapsing"] = m_mountainEdgesToCollapse;
+
+            x["waterMount"] = m_waterMount;
+
+            x["useMountainTexture"] = m_useMTexture;
+            x["mRed"] = m_mRed;
+            x["mGreen"] = m_mGreen;
+            x["mBlue"] = m_mBlue;
+            x["mountainTexture"] = m_mountainFile;
+            x["mBase"] = m_mGlossBase;
+            x["mPow"] = m_mGlossPow;
+
+            x["useLandTexture"] = m_useLTexture;
+            x["lRed"] = m_lRed;
+            x["lGreen"] = m_lGreen;
+            x["lBlue"] = m_lBlue;
+            x["landTexture"] = m_landFile;
+            x["lBase"] = m_lGlossBase;
+            x["lPow"] = m_lGlossPow;
+
+            x["useWaterTexture"] = m_useWTexture;
+            x["wRed"] = m_wRed;
+            x["wGreen"] = m_wGreen;
+            x["wBlue"] = m_wBlue;
+            x["waterTexture"] = m_waterFile;
+            x["wBase"] = m_wGlossBase;
+            x["wPow"] = m_wGlossPow;
+
+            x.save(m_planetSave);
+        }
+        catch (...) {
+            msgBox("Unable to save the image.");
         }
     });
 
     planetPane->addButton("Generate", [this]() {
+        shared_ptr<G3D::Image> image;
+        //Noise noise = G3D::Noise::common();
         try {
             m_planetName = (m_planetName.empty()) ? "planet" : m_planetName;
 
-            if (m_solarSystem.containsPlanet(m_planetName)) {
-                m_solarSystem.removePlanet(m_planetName);
-            }
+            Planet planet;
+            NoiseGen noise;
 
-            if (!m_solarSystem.containsPlanet(m_planetName)) {
-                Any planetSpecs(Any::TABLE, "Planet");
-                packagePlanetSpecs(planetSpecs);
+            String planetName = m_planetName;
 
-                Planet planet(m_planetName, planetSpecs);
-                planet.generatePlanet();
-                m_solarSystem.addPlanet(m_planetName, planet);
+            Array<Vector3> vertices = Array<Vector3>();
+            Array<Vector3int32> faces = Array<Vector3int32>();
+            float freq = 3.0f;
+            shared_ptr<Image> image = Image::create(1024, 1024, ImageFormat::RGBA8());
+            noise.generateSeaImage(image, m_oceanNoise);
+            //noise.generateSeaImage(image, freq);
+            image->save(planetName + "water.png");
+            planet.writeSphere(planetName, 12.5f, m_recursionLevel, vertices, faces);
+            planet.applyNoiseWater(vertices, image);
+            Mesh mesh(vertices, faces);
+            mesh.bevelEdges2(0.1f);
+            mesh.toObj(planetName);
 
-                if (m_solarSystem.printSolarSystemToScene("SolarSystem")) {
-                    ArticulatedModel::clearCache();
-                    loadScene("Solar System");
-                }
-                else {
-                    msgBox("The Solar System Scene Failed to Print");
-                }
+            vertices = Array<Vector3>();
+            faces = Array<Vector3int32>();
+            freq = 0.25f;
+            image = Image::create(1024, 1024, ImageFormat::RGBA8());
+            shared_ptr<Image> test = Image::create(1024, 1024, ImageFormat::RGBA8());
+            shared_ptr<Image> cImage = Image::create(1024, 1024, ImageFormat::RGBA8());
+            noise.generateLandImage(image, m_landNoise);
+            //noise.generateLandImage(image, freq);
+            image->save(planetName + "land.png");
+            planet.writeSphere(planetName + "land", 12.0f, m_recursionLevel, vertices, faces);
+            noise.colorLandImage(image, cImage, m_oceanLevel);
+            cImage->save(planetName + "landColor.png");
+            planet.applyNoiseLand(vertices, image, test, m_oceanLevel);
+            test->save("test.png");
+            Mesh mesh2(vertices, faces);
+            mesh2.bevelEdges2(m_landBevel);
+            mesh2.toObj(planetName + "land");
+
+            vertices = Array<Vector3>();
+            faces = Array<Vector3int32>();
+            planet.writeSphere(planetName + "mountain", 11.5f, m_recursionLevel, vertices, faces);
+            cImage = Image::create(1024, 1024, ImageFormat::RGBA8());
+            image = Image::create(1024, 1024, ImageFormat::RGBA8());
+            noise.generateMountainImage(image, 0.125f, 1.0f);
+            noise.generateMountainImage(image, 0.25f, 0.5f);
+            noise.generateMountainImage(image, 0.5f, 0.25f);
+            noise.colorMountainImage(image, cImage);
+            cImage->save(planetName + "mountainColor.png");
+            planet.applyNoiseMountain(vertices, image, test, m_waterMount, m_mountianDiversity, m_mountainHeight);
+            Mesh mesh3(vertices, faces);
+            mesh3.bevelEdges2(m_mountainBevel);
+            mesh3.toObj(planetName + "mountain");
+
+            image->save(planetName + "mountain.png");
+            
+            String dependentModel = m_orbitPlanet;
+
+            Point3 position(m_xPos, m_yPos, m_zPos);
+
+            m_mountainFile = (m_mountainFile.empty()) ? planetName + "mountainColor.png" : m_waterFile;
+            m_landFile = (m_landFile.empty()) ? planetName + "landColor.png" : m_waterFile;
+
+            if (m_useWTexture && !m_waterFile.empty()) {
+                addPlanetToScene(m_entities, m_models, mesh, planetName, position, m_waterFile, dependentModel);
             }
             else {
-                msgBox("A Planet With This Name Already Exists. Please Type Another Name.");
+                addPlanetToScene(m_entities, m_models, mesh, planetName, position, Color3(m_wRed, m_wGreen, m_wBlue), Color4(Color3(m_wGlossBase),m_wGlossPow), dependentModel);
+                //addPlanetToScene(mesh, "ocean", Point3(100, 0, 0), Color3(m_wRed, m_wGreen, m_wBlue), waterRotation, Color4(Color3(m_wGlossBase),m_wGlossPow));
             }
+
+            dependentModel = planetName;
+
+            if (m_useLTexture) {
+                debugPrintf(STR(%s ************* \n), m_landFile);
+                addPlanetToScene(m_entities, m_models, mesh2, planetName + "land", position, m_landFile, dependentModel);
+            }
+            else {
+                addPlanetToScene(m_entities, m_models, mesh2, planetName + "land", position, Color3(m_lRed, m_lGreen, m_lBlue), Color4(Color3(m_wGlossBase),m_wGlossPow), dependentModel);
+            }
+            if (m_useMTexture) {
+                addPlanetToScene(m_entities, m_models, mesh3, planetName + "mountain", position, m_mountainFile, dependentModel);
+            }
+            else {
+                addPlanetToScene(m_entities, m_models, mesh3, planetName + "mountain", position, Color3(m_mRed, m_mGreen, m_mBlue), Color4(Color3(m_wGlossBase),m_wGlossPow), dependentModel);
+            }
+
+            
+            String sceneName = "Planet";
+            makeSceneTable(m_scene, m_models, m_entities, sceneName);
+            m_scene.save(sceneName + ".Scene.Any");
+
+            ArticulatedModel::clearCache();
+            loadScene(sceneName);
         }
         catch (...) {
             msgBox("Unable to generate planet.");
         }
     });
-}
-
-void App::unpackagePlanetSpecs(Any& any) {
-    try {
-        AnyTableReader x(any);
-        x.getIfPresent("recursions", m_recursionLevel);
-        x.getIfPresent("landBevel", m_landBevel);
-        x.getIfPresent("mountainBevel", m_mountainBevel);
-        x.getIfPresent("mountainHeight", m_mountainHeight);
-        x.getIfPresent("mountainDiversity", m_mountianDiversity);
-        x.getIfPresent("oceanLevel", m_oceanLevel);
-        x.getIfPresent("landNoise", m_landNoise);
-        x.getIfPresent("oceanNoise", m_oceanNoise);
-
-        x.getIfPresent("xPos", m_xPos);
-        x.getIfPresent("yPos", m_yPos);
-        x.getIfPresent("zPos", m_zPos);
-        x.getIfPresent("scale", m_scale);
-        x.getIfPresent("planetName", m_planetName);
-        x.getIfPresent("orbitPlanet", m_orbitPlanet);
-        x.getIfPresent("orbitDistance", m_orbitDistance);
-
-        x.getIfPresent("collapsingEnabled", m_collapsingEnabled);
-        x.getIfPresent("oceanCollapsing", m_oceanEdgesToCollapse);
-        x.getIfPresent("landCollapsing", m_landEdgesToCollapse);
-        x.getIfPresent("mountainCollapsing", m_mountainEdgesToCollapse);
-
-        x.getIfPresent("waterMount", m_waterMount);
-
-        x.getIfPresent("useMountainTexture", m_useMTexture);
-        x.getIfPresent("mRed", m_mRed);
-        x.getIfPresent("mGreen", m_mGreen);
-        x.getIfPresent("mBlue", m_mBlue);
-        x.getIfPresent("mountainTexture", m_mountainFile);
-        x.getIfPresent("mBase", m_mGlossBase);
-        x.getIfPresent("mPow", m_mGlossPow);
-
-        x.getIfPresent("useLandTexture", m_useLTexture);
-        x.getIfPresent("lRed", m_lRed);
-        x.getIfPresent("lGreen", m_lGreen);
-        x.getIfPresent("lBlue", m_lBlue);
-        x.getIfPresent("landTexture", m_landFile);
-        x.getIfPresent("lBase", m_lGlossBase);
-        x.getIfPresent("lPow", m_lGlossPow);
-
-        x.getIfPresent("useWaterTexture", m_useWTexture);
-        x.getIfPresent("wRed", m_wRed);
-        x.getIfPresent("wGreen", m_wGreen);
-        x.getIfPresent("wBlue", m_wBlue);
-        x.getIfPresent("waterTexture", m_waterFile);
-        x.getIfPresent("wBase", m_wGlossBase);
-        x.getIfPresent("wPow", m_wGlossPow);
-    }
-    catch (...) {
-        msgBox("failed to load planet specs");
-    }
-}
-
-void App::packagePlanetSpecs(Any& x) {
-    try {
-        x["recursions"] = m_recursionLevel;
-        x["landBevel"] = m_landBevel;
-        x["mountainBevel"] = m_mountainBevel;
-        x["mountainHeight"] = m_mountainHeight;
-        x["mountainDiversity"] = m_mountianDiversity;
-        x["oceanLevel"] = m_oceanLevel;
-        x["landNoise"] = m_landNoise;
-        x["oceanNoise"] = m_oceanNoise;
-        x["collapsingEnabled"] = m_collapsingEnabled;
-        x["oceanCollapsing"] = m_oceanEdgesToCollapse;
-        x["landCollapsing"] = m_landEdgesToCollapse;
-        x["mountainCollapsing"] = m_mountainEdgesToCollapse;
-
-        x["xPos"] = m_xPos;
-        x["yPos"] = m_yPos;
-        x["zPos"] = m_zPos;
-        x["scale"] = m_scale;
-        x["planetName"] = m_planetName;
-        x["orbitPlanet"] = m_orbitPlanet;
-        x["orbitDistance"] = m_orbitDistance;
-
-        x["waterMount"] = m_waterMount;
-
-        x["useMountainTexture"] = m_useMTexture;
-        x["mRed"] = m_mRed;
-        x["mGreen"] = m_mGreen;
-        x["mBlue"] = m_mBlue;
-        x["mountainTexture"] = m_mountainFile;
-        x["mBase"] = m_mGlossBase;
-        x["mPow"] = m_mGlossPow;
-
-        x["useLandTexture"] = m_useLTexture;
-        x["lRed"] = m_lRed;
-        x["lGreen"] = m_lGreen;
-        x["lBlue"] = m_lBlue;
-        x["landTexture"] = m_landFile;
-        x["lBase"] = m_lGlossBase;
-        x["lPow"] = m_lGlossPow;
-
-        x["useWaterTexture"] = m_useWTexture;
-        x["wRed"] = m_wRed;
-        x["wGreen"] = m_wGreen;
-        x["wBlue"] = m_wBlue;
-        x["waterTexture"] = m_waterFile;
-        x["wBase"] = m_wGlossBase;
-        x["wPow"] = m_wGlossPow;
-
-    }
-    catch (...) {
-        msgBox("failed to package planet specs.");
-    }
 }
 
 //Creates a GUI that allows a user to generate a heightfield with a given xz and y scale based on a given image
@@ -624,6 +791,122 @@ void App::makeHeightfield() {
             msgBox("Unable to load the image.", m_heightfieldSource);
         }
     });
+}
+
+void App::makeSceneTable(Any& scene, const Any& models, const Any& entities, const String& name) {
+    scene["name"] = name;
+    scene["entities"] = entities;
+    scene["models"] = models;
+
+    Any lightingEnvironment(Any::TABLE, "LightingEnvironment");
+
+    String occlusionSettings = (String) "AmbientOcclusionSettings { bias = 0.12; blurRadius = 4; blurStepSize = 2;" +
+        "depthPeelSeparationHint = 0.2; edgeSharpness = 1; enabled = false; intensity = 3; " +
+        "monotonicallyDecreasingBilateralWeights = false; numSamples = 19; radius = 2; " +
+        "temporalFilterSettings = TemporalFilter::Settings { hysteresis = 0.9; falloffEndDistance = 0.07; " +
+        "falloffStartDistance = 0.05; }; temporallyVarySamples = true; useDepthPeelBuffer = true; useNormalBuffer = true; " +
+        "useNormalsInBlur = true;}";
+
+    lightingEnvironment["ambientOcclusionSettings"] = Any::parse(occlusionSettings);
+
+    String environmentMapSettings = (String) "Texture::Specification { encoding = Texture::Encoding { readMultiplyFirst = 1.9; " +
+        "}; filename = \"cubemap/majestic/majestic512_*.jpg\"; }";
+    //\"cubemap/hipshot_m9_sky/16_*.png\"
+    lightingEnvironment["environmentMap"] = Any::parse(environmentMapSettings);
+
+    scene["lightingEnvironment"] = lightingEnvironment;
+}
+
+
+void App::createInitialEntityTable(Any& entities) {
+
+    //Create the light source
+    Any light(Any::TABLE, "Light");
+    light["attenuation"] = Vector3(0, 0, 1);
+    light["bulbPower"] = Power3(1e+006);
+    light["castsShadows"] = true;
+    light["shadowMapBias"] = 0.05f;
+    light["track"] = Any::parse("lookAt(Point3(-15, 200, 40), Point3(0, 0, 0));");
+    light["shadowMapSize"] = Vector2int16(2048, 2048);
+    light["spotHalfAngleDegrees"] = 8;
+    light["spotSquare"] = true;
+    light["type"] = "SPOT";
+    entities["sun"] = light;
+
+    Any camera(Any::TABLE, "Camera");
+    camera["frame"] = CFrame::fromXYZYPRDegrees(50, 50, 50);
+    camera["projection"] = Any::parse("Projection { farPlaneZ = -inf; fovDegrees = 50; fovDirection = \"VERTICAL\"; nearPlaneZ = -0.1; }");
+    
+    String filmSettings = (String) "FilmSettings{" + 
+        "antialiasingEnabled = true; antialiasingFilterRadius = 0; antialiasingHighQuality = true; bloomRadiusFraction = 0.009;" 
+        + "bloomStrength = 0.2; debugZoom = 1; gamma = 2.2; sensitivity = 1; toneCurve = \"CELLULOID\";" + 
+        "vignetteBottomStrength = 0.05; vignetteSizeFraction = 0.17; vignetteTopStrength = 0.5; }";
+    camera["filmSettings"] = Any::parse(filmSettings);
+    entities["camera"] = camera;
+
+    Any skybox(Any::TABLE, "Skybox");
+    skybox["texture"] = "cubemap/hipshot_m9_sky/16_*.png";
+    entities["skybox"] = skybox;
+}
+
+void App::createInitialModelsTable(Any& models){
+    
+    Any cloud(Any::TABLE, "ParticleSystemModel::Emitter::Specification");
+    cloud["material"] = "material/smoke/smoke.png";
+    cloud["initialDensity"] = 8;
+    cloud["radiusMean"] = 3;
+    cloud["radiusVariance"] = 0.5;
+    cloud["noisePower"] = 0;
+    cloud["angularVelocityMean"] = 0.5;
+    cloud["angularVelocityVariance"] = 0.25;
+
+    Any cloud2 = cloud;
+    Any cloud3 = cloud;
+
+    Any cloudShape(Any::TABLE, "ArticulatedModel::Specification");
+    cloudShape["scale"] = 0.05;
+    
+    Any cloudShape2 = cloudShape;
+    Any cloudShape3 = cloudShape;
+
+    cloudShape ["filename"] = "model/cloud/cloud.zip/cumulus02.obj";
+    cloudShape2["filename"] = "model/cloud/cloud.zip/cumulus01.obj";
+    cloudShape3["filename"] = "model/cloud/cloud.zip/cumulus00.obj";
+
+    cloud ["shape"] = cloudShape;
+    cloud2["shape"] = cloudShape2;
+    cloud3["shape"] = cloudShape3;
+
+    models["cloud1"] = cloud;
+    models["cloud2"] = cloud2;
+    models["cloud3"] = cloud3;
+}
+
+void App::addEntityToAnyTable(String& name, Any& any, Point3& position, String& model, String& dependentEntity, String& planetToOrbit) {
+    try {
+        Any x(Any::TABLE, "VisibleEntity");
+
+        x["model"] = model;
+
+        x["frame"] = CFrame::fromXYZYPRDegrees(position.x, position.y, position.z);
+        
+        if(planetToOrbit.empty()){
+            x["track"] = (dependentEntity.empty()) ?
+                Any::parse("combine(orbit(0.0f, 20.0f), Point3(" +
+                    (String)std::to_string(position.x) + ", " + (String)std::to_string(position.y) + ", " + (String)std::to_string(position.z) + "))") :
+                Any::parse("entity(" + dependentEntity + ")");
+        } else{
+            x["track"] = (dependentEntity.empty()) ?
+                Any::parse("transform(orbit(0.0f, 20.0f), Point3(" +
+                    (String)std::to_string(position.x) + ", " + (String)std::to_string(position.y) + ", " + (String)std::to_string(position.z) + "))") :
+                Any::parse("entity(" + dependentEntity + ")");
+        }
+        
+        any[name] = x;
+    }
+    catch (...) {
+        msgBox("WHYHHYYHYHY?.", "Oh well");
+    }
 }
 
 void App::makeGUI() {

@@ -3,11 +3,6 @@
 
 using namespace G3D;
 
-float NoiseGen::sampleFloat(int x, int y, int numOctaves) {
-    return 1.0;
-}
-
-
 void NoiseGen::generateMountainImage(shared_ptr<Image> image, float frequency, float multiplier){
     for(int x(0); x < image->width(); ++x){
         for(int y(0); y < image->height(); ++y) {

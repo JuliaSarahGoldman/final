@@ -60,7 +60,7 @@ public:
     static std::shared_ptr<Mesh> create(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
 
     Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray);
-    Mesh(const String& filename);
+    Mesh(const String& filename = String(""));
 
     ~Mesh();
 

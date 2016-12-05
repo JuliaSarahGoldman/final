@@ -6,6 +6,30 @@
         **Julia Goldman (jdg2@williams.edu),**
         **and Matheus de Carvalho Souza (mc13@williams.edu)**
 
+2016-12-05: moons
+=============================================================
+
+![](2016-12-05_001_starter_r2666_g3d_r983__.mp4)
+
+
+
+2016-12-05: They orbit now
+=============================================================
+
+![](2016-12-05_000_starter_r2666_g3d_r983__.mp4)
+
+2016-12-05: Code Refactoring
+=============================================================
+I refactored the code a lot in order to make it more legible and to have better control flow. App now creates generates a planet each time the "generate" button is pressed, but the planet is then passed on to the SolarSystem class, which handles all of the scene editting. The SolarSystem class has a table of all of the planets created, making it easy to look up a past planet if necessary. Honestly, The SolarSystem class really is just for storing the tables of the scene, however. I'm also positive there are some optimizations that could be made. 
+
+If we can find a way to make the list of planets available, though, it would make editting scenes really easy with our gui. We could even delete planets from the scene. Clouds are now going around, as long as we don't use particle clouds. Just have to change the distance that they are orbit from the planet. It has to do with scaling the distance proportional to the size of the planet.
+
+Planet now has a bit more functionality. Before we were just having it create a sphere and return a layer. Now it stores all of its own personal information for how it was created and creates each layer at the same time. This makes app that much more legible, and it also is more intuitive, since when you call on the planet, you expect it to be able to create itself given the right parameters. When adding a planet to the Solar System class, it will automatically add it to the scene tables, but you need to print it out using the printSolarSystemToScene method before you can see it. The code is already doing that in App.cpp. 
+
+Oh, I also added the ability for planets to orbit each other. It's really cool, and it has worked out well so far!
+
+One final thing: If you don't like the refactored code, I saved a version of Planet and App that is not refactored in source and it's committed, so you're safe.
+
 2016-12-04: Clouds, Glossyness, Lights, Visuals
 =============================================================
 

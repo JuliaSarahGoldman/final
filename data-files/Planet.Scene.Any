@@ -27,87 +27,94 @@
         }; 
         
         cloud0 = ParticleSystem { 
-            canChange = true; 
-            model = "cloud2"; 
-            particlesAreInWorldSpace = true; 
-            track = orbit(25,1);
-        }; 
-        
-        cloud1 = ParticleSystem { 
-            canChange = true; 
-            model = "cloud3"; 
-            particlesAreInWorldSpace = true; 
-            track = transform(
-                Matrix4::rollDegrees(90 ), 
-                transform(
-                    orbit(16, 7 ), 
-                    combine(
-                        Matrix4::pitchDegrees(79 ), 
-                        entity("planetmountain") ) ) ); 
-            
-        }; 
-        
-        cloud2 = ParticleSystem { 
-            canChange = true; 
-            model = "cloud3"; 
-            particlesAreInWorldSpace = true; 
-            track = transform(
-                Matrix4::rollDegrees(90 ), 
-                transform(
-                    orbit(19, 7 ), 
-                    combine(
-                        Matrix4::pitchDegrees(74 ), 
-                        entity("planetmountain") ) ) ); 
-            
-        }; 
-        
-        cloud3 = ParticleSystem { 
             canChange = false; 
             model = "cloud1"; 
             particlesAreInWorldSpace = true; 
             track = transform(
                 Matrix4::rollDegrees(90 ), 
                 transform(
-                    orbit(12, 7 ), 
+                    orbit(17, 3 ), 
                     combine(
-                        Matrix4::pitchDegrees(23 ), 
-                        entity("planetmountain") ) ) ); 
+                        Matrix4::pitchDegrees(48 ), 
+                        entity("randmountain") ) ) ); 
             
         }; 
         
-        cloud4 = ParticleSystem { 
+        cloud1 = ParticleSystem { 
+            canChange = false; 
+            model = "cloud3"; 
+            particlesAreInWorldSpace = true; 
+            track = transform(
+                Matrix4::rollDegrees(90 ), 
+                transform(
+                    orbit(11, 3 ), 
+                    combine(
+                        Matrix4::pitchDegrees(-16 ), 
+                        entity("randmountain") ) ) ); 
+            
+        }; 
+        
+        cloud2 = ParticleSystem { 
             canChange = false; 
             model = "cloud2"; 
             particlesAreInWorldSpace = true; 
             track = transform(
                 Matrix4::rollDegrees(90 ), 
                 transform(
-                    orbit(16, 11 ), 
+                    orbit(10, 2 ), 
                     combine(
-                        Matrix4::pitchDegrees(-28 ), 
-                        entity("planetmountain") ) ) ); 
+                        Matrix4::pitchDegrees(-14 ), 
+                        entity("randmountain") ) ) ); 
             
         }; 
         
-        planet = VisibleEntity { 
+        cloud3 = ParticleSystem { 
+            canChange = false; 
+            model = "cloud2"; 
+            particlesAreInWorldSpace = true; 
+            track = transform(
+                Matrix4::rollDegrees(90 ), 
+                transform(
+                    orbit(18, 2 ), 
+                    combine(
+                        Matrix4::pitchDegrees(-86 ), 
+                        entity("randmountain") ) ) ); 
+            
+        }; 
+        
+        cloud4 = ParticleSystem { 
+            canChange = false; 
+            model = "cloud1"; 
+            particlesAreInWorldSpace = true; 
+            track = transform(
+                Matrix4::rollDegrees(90 ), 
+                transform(
+                    orbit(20, 7 ), 
+                    combine(
+                        Matrix4::pitchDegrees(-9 ), 
+                        entity("randmountain") ) ) ); 
+            
+        }; 
+        
+        rand = VisibleEntity { 
             frame = CFrame::fromXYZYPRDegrees(0, 0, 0 ); 
-            model = "planet"; 
+            model = "rand"; 
             track = transform(
                 orbit(0, 20 ), 
                 Point3(0, 0, 0 ) ); 
             
         }; 
         
-        planetland = VisibleEntity { 
+        randland = VisibleEntity { 
             frame = CFrame::fromXYZYPRDegrees(0, 0, 0 ); 
-            model = "planetland"; 
-            track = entity("planet"); 
+            model = "randland"; 
+            track = entity("rand"); 
         }; 
         
-        planetmountain = VisibleEntity { 
+        randmountain = VisibleEntity { 
             frame = CFrame::fromXYZYPRDegrees(0, 0, 0 ); 
-            model = "planetmountain"; 
-            track = entity("planet"); 
+            model = "randmountain"; 
+            track = entity("rand"); 
         }; 
         
         skybox = Skybox { 
@@ -186,13 +193,12 @@
             angularVelocityVariance = 0.25; 
             initialDensity = 8; 
             material = "material/smoke/smoke.png"; 
-            noisePower = 0.5; 
+            noisePower = 0; 
             radiusMean = 3; 
             radiusVariance = 0.5; 
             shape = ArticulatedModel::Specification { 
                 filename = "model/cloud/cloud.zip/cumulus01.obj"; 
                 scale = 0.05; 
-            
             }; 
             
         }; 
@@ -212,8 +218,8 @@
             
         }; 
         
-        planet = ArticulatedModel::Specification { 
-            filename = "planet.obj"; 
+        rand = ArticulatedModel::Specification { 
+            filename = "rand.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
                         glossy = Color4(0.236111, 0.236111, 0.236111, 0.347222 ); 
@@ -223,8 +229,8 @@
             
         }; 
         
-        planetland = ArticulatedModel::Specification { 
-            filename = "planetland.obj"; 
+        randland = ArticulatedModel::Specification { 
+            filename = "randland.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
                         glossy = Color4(0.236111, 0.236111, 0.236111, 0.347222 ); 
@@ -234,8 +240,8 @@
             
         }; 
         
-        planetmountain = ArticulatedModel::Specification { 
-            filename = "planetmountain.obj"; 
+        randmountain = ArticulatedModel::Specification { 
+            filename = "randmountain.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
                         glossy = Color4(0.236111, 0.236111, 0.236111, 0.347222 ); 
@@ -247,5 +253,5 @@
         
     }; 
     
-    name = "PlanetTest"; 
+    name = "Planet"; 
 } 

@@ -91,6 +91,7 @@
     <ClInclude Include="source\NoiseGen.h" />
     <ClInclude Include="source\Planet.h" />
     <ClInclude Include="source\SimpleMesh.h" />
+    <ClInclude Include="source\SolarSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\App.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="source\NoiseGen.cpp" />
     <ClCompile Include="source\Planet.cpp" />
     <ClCompile Include="source\SimpleMesh.cpp" />
+    <ClCompile Include="source\SolarSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources.rc" />
