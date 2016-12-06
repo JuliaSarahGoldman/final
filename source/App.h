@@ -25,6 +25,7 @@ protected:
     bool m_collapsingEnabled;
 
     int m_recursionLevel;
+    int m_numberOfTrees;
     float m_frequency;
     float m_landBevel;
     float m_mountainBevel;

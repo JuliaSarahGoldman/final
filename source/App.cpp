@@ -250,6 +250,9 @@ void App::makePlanetGUI() {
     planPane->addNumberBox("Recursion", &m_recursionLevel, "",
         GuiTheme::LINEAR_SLIDER, 1, 8)->setUnitsSize(1);
 
+    planPane->addNumberBox("# of Trees", &m_numberOfTrees, "",
+        GuiTheme::LINEAR_SLIDER, 1, 100)->setUnitsSize(1);
+
     planPane->addNumberBox("scale", &m_scale, "",
         GuiTheme::LINEAR_SLIDER, 0.01f, 1.0f)->setUnitsSize(0.01f);
 
@@ -473,6 +476,7 @@ void App::unpackagePlanetSpecs(Any& any) {
     try {
         AnyTableReader x(any);
         x.getIfPresent("recursions", m_recursionLevel);
+        x.getIfPresent("trees", m_numberOfTrees);
         x.getIfPresent("landBevel", m_landBevel);
         x.getIfPresent("mountainBevel", m_mountainBevel);
         x.getIfPresent("mountainHeight", m_mountainHeight);
@@ -531,6 +535,7 @@ void App::unpackagePlanetSpecs(Any& any) {
 void App::packagePlanetSpecs(Any& x) {
     try {
         x["recursions"] = m_recursionLevel;
+        x["trees"] = m_numberOfTrees;
         x["landBevel"] = m_landBevel;
         x["mountainBevel"] = m_mountainBevel;
         x["mountainHeight"] = m_mountainHeight;

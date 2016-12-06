@@ -33,6 +33,7 @@ bool Planet::readSpec(const Any& planetSpec) {
         x.getIfPresent("planetName", m_planetName);
         x.getIfPresent("orbitPlanet", m_objectToOrbit);
         x.getIfPresent("orbitDistance", m_orbitDistance);
+        x.getIfPresent("trees", m_numberOfTrees);
 
         x.getIfPresent("collapsingEnabled", m_collapsingEnabled);
         x.getIfPresent("oceanCollapsing", m_oceanEdgesToCollapse);
@@ -98,14 +99,13 @@ bool Planet::generatePlanet() {
         NoiseGen noise;
         AnyTableReader planetReader(m_planetSpec);
 
-        shared_ptr<Image> noiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
+        shared_ptr<Image> landNoiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
+        shared_ptr<Image> mountNoiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
         shared_ptr<Image> colorImage = Image::create(1024, 1024, ImageFormat::RGBA8());
         shared_ptr<Image> testImage = Image::create(1024, 1024, ImageFormat::RGBA8());
+        shared_ptr<Image> landMapImage = Image::create(1024, 1024, ImageFormat::RGBA8());
 
-        //noise.generateSeaImage(noiseImage, m_oceanNoise);
         writeSphere(m_planetName, 12.5f, 5, vertices, faces);
-        //applyNoiseWater(vertices, noiseImage);
-        //noiseImage->save(m_planetName + "water.png");
 
         Mesh mesh(vertices, faces);
         if (m_collapsingEnabled) {
@@ -127,22 +127,16 @@ bool Planet::generatePlanet() {
 
         mesh.toObj(m_waterObjFile, width, height);
 
-
-        noiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
-        colorImage = Image::create(1024, 1024, ImageFormat::RGBA8());
         vertices.clear();
         faces.clear();
 
-        noise.generateLandImage(noiseImage, m_landNoise);
-        noiseImage->save(m_planetName + "land.png");
+        noise.generateLandImage(landNoiseImage, m_landNoise);
+        landNoiseImage->save(m_planetName + "land.png");
 
         writeSphere(m_planetName + "land", 12.0f, m_recursionLevel, vertices, faces);
 
-        noise.colorLandImage(noiseImage, colorImage, m_oceanLevel);
-        applyNoiseLand(vertices, noiseImage, testImage, m_oceanLevel);
-
-        colorImage->save(m_planetName + "landColor.png");
-        //applyNoiseLand(vertices, noiseImage, testImage, m_oceanLevel);
+        Point2int32 range;
+        applyNoiseLand(vertices, landNoiseImage, testImage, m_oceanLevel, range);
         testImage->save(m_planetName + "landTest.png");
 
         Mesh mesh2(vertices, faces);
@@ -164,31 +158,35 @@ bool Planet::generatePlanet() {
 
         mesh2.toObj(m_landObjFile, width, height);
 
+        //vertices.clear();
+        //faces.clear();
+        Array<Vector3> mountVertices = Array<Vector3>();
+        Array<Vector3int32> mountFaces = Array<Vector3int32>();
 
-        noiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
-        colorImage = Image::create(1024, 1024, ImageFormat::RGBA8());
-        vertices.clear();
-        faces.clear();
+        writeSphere(m_planetName + "mountain", 11.5f, m_recursionLevel, mountVertices, mountFaces);
 
-        writeSphere(m_planetName + "mountain", 11.5f, m_recursionLevel, vertices, faces);
+        noise.generateMountainImage(mountNoiseImage, m_mountianNoise1, 1.0f);
+        noise.generateMountainImage(mountNoiseImage, m_mountianNoise2, 0.5f);
+        noise.generateMountainImage(mountNoiseImage, m_mountianNoise1, 0.25f);
 
-        noise.generateMountainImage(noiseImage, m_mountianNoise1, 1.0f);
-        noise.generateMountainImage(noiseImage, m_mountianNoise2, 0.5f);
-        noise.generateMountainImage(noiseImage, m_mountianNoise1, 0.25f);
-
-        noise.colorMountainImage(noiseImage, colorImage);
-        noiseImage->save(m_planetName + "mountain.png");
+        noise.colorMountainImage(mountNoiseImage, colorImage);
+        mountNoiseImage->save(m_planetName + "mountain.png");
         colorImage->save(m_planetName + "mountainColor.png");
-        applyNoiseMountain(vertices, noiseImage, testImage, m_waterMount, m_mountianDiversity, m_mountainHeight);
+        applyNoiseMountain(mountVertices, mountNoiseImage, testImage, m_waterMount, m_mountianDiversity, m_mountainHeight);
 
-        Mesh mesh3(vertices, faces);
+        Mesh mesh3(mountVertices, mountFaces);
         if (m_collapsingEnabled) {
             mesh3.collapseEdges(m_mountainEdgesToCollapse);
         }
         mesh3.bevelEdges2(m_mountainBevel);
         m_mountainObjFile = m_planetName + "mountain";
 
-        if (m_useMTexture) {
+        noise.landMapImage(landNoiseImage, mountNoiseImage, landMapImage, range, m_oceanLevel, m_mountianDiversity, m_mountainHeight);
+        landMapImage->save("landMapImageTest.png");
+
+        findTreePositions(landMapImage, vertices, m_treePositions, m_treeNormals);
+
+        if (m_useMTexture){
             shared_ptr<Image> image = Image::fromFile(m_mountainTextureFile);
             width = image->width();
             height = image->height();
@@ -297,6 +295,45 @@ void Planet::addCloudToPlanet(Any& cloudEntity, const String& name, const String
         ");");
 }
 
+void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals){
+    vertices = m_treePositions;
+    normals = m_treeNormals;
+}
+
+void Planet::findTreePositions(const shared_ptr<Image> landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals) {
+    int numTrees = m_numberOfTrees;
+    Set<Vector3> treePoints = Set<Vector3>();
+    Array<Vector3> possiblePositions;
+
+    for(int i(0); i < vertices.length(); ++i) {
+        Vector3 vertex = vertices[i];
+        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
+
+        float nx = landMap->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
+        float ny = landMap->height() * (0.5f - asinf(d.y) * 1 / pif());
+
+        int ix = (int)abs((int)nx % landMap->width());
+        int iy = (int)abs((int)ny % landMap->height());
+
+        Color3 color;
+        landMap->get(Point2int32(ix, iy), color);
+        if(color.average() == 0.0f) {
+            possiblePositions.append(vertex);
+        }
+    }
+
+    while(numTrees > 0) {
+        Vector3 vertex = possiblePositions[Random::threadCommon().integer(0, possiblePositions.length())];
+
+        if(!treePoints.contains(vertex)){
+            treePoints.insert(vertex);
+            positions.append(vertex);
+            normals.append(vertex.unit());
+            --numTrees;
+        }
+    }
+}
+
 void Planet::writeSphere(String filename, float radius, int depths, Array<Vector3>& vertices, Array<Vector3int32>& faces) {
 
     makeIcohedron(radius, vertices, faces);
@@ -362,7 +399,10 @@ void Planet::applyNoiseWater(Array<Vector3>& vertices, shared_ptr<Image> image) 
     }
 }
 
-void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float oceanLevel) {
+void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float oceanLevel, Point2int32& range) {
+    int minX = 0x7FFFFFFF;
+    int maxX = -1;
+
     for (int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
 
@@ -373,6 +413,9 @@ void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, s
 
         int ix = (int)abs((int)nx % noise->width());
         int iy = (int)abs((int)ny % noise->height());
+
+        if(ix != 0 && ix < minX) { minX = ix; }
+        if(ix > maxX) { maxX = ix; }
 
         Color3 color = Color3();
 
@@ -397,6 +440,8 @@ void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, s
 
         vertices[i] += vertex.unit() * bump;
     }
+
+    range = Point2int32(minX, maxX);
 }
 
 void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, bool waterMount, float power, float multiplier) {

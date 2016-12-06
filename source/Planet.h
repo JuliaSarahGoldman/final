@@ -21,6 +21,7 @@ protected:
 
     //variables to use for the mesh
     int m_recursionLevel;
+    int m_numberOfTrees;
     float m_frequency;
     float m_landBevel;
     float m_mountainBevel;
@@ -58,6 +59,9 @@ protected:
     String m_landObjFile;
     String m_mountainObjFile;
 
+    Array<Point3> m_treePositions;
+    Array<Vector3> m_treeNormals;
+
 
     // Options for Planet as a whole
     float m_scale;
@@ -77,13 +81,14 @@ public:
     bool generatePlanet();
     void writeSphere(String filename, float radius, int depths, Array<Vector3>& vertices, Array<Vector3int32>& faces);
     void applyNoiseWater(Array<Vector3>& vertices, shared_ptr<Image> noise);
-    void applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float oceanLevel);
+    void applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float oceanLevel, Point2int32& range);
     void applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, bool waterMount, float power, float multiplier);
     void createWaterAnyFile(Any& waterModel, Any& waterEntity);
     void createLandAnyFile(Any& landModel, Any& landEntity, const String& waterEntity);
     void createMountainAnyFile(Any& mountainModel, Any& mountainEntity, const String& waterEntity);
     void addCloudToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float scale);
-
+    void findTreePositions(const shared_ptr<Image> landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
+    void getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals);
     Point3 getPosition();
     float getScale();
     String getName();

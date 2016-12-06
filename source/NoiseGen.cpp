@@ -44,19 +44,24 @@ void NoiseGen::colorMountainImage(shared_ptr<Image> noise, shared_ptr<Image> col
     }
 }
 
-void NoiseGen::colorLandImage(shared_ptr<Image> noise, shared_ptr<Image> colorMap, float oceanLevel) {
-    for(int x(0); x < noise->width(); ++x){
-        for(int y(0); y < noise->height(); ++y) {
+void NoiseGen::landMapImage(shared_ptr<Image> land, shared_ptr<Image> mountain, shared_ptr<Image> landMap, Point2int32 range, float oceanLevel, float power, float multiplier){
+    for(int x(range.x); x < range.y; ++x){
+        for(int y(0); y < land->height(); ++y) {
             Color1unorm8 color;
-            noise->get(Point2int32(x, y), color);
-            /*if((float) color.value > (oceanLevel - 0.1f)) {
-                colorMap->set(x, y, Color3(204, 204, 0));
-            } else {*/
-                float red = G3D::Random::threadCommon().uniform(0.0f, 0.5f);
-                float green = G3D::Random::threadCommon().uniform(0.5f, 1.0f);
-                float blue = G3D::Random::threadCommon().uniform(0.0f, 0.5f);
-                colorMap->set(x, y, Color3(red, green, blue));
-           // }
+            Point2int32 position(x, y);
+            float landHeight;
+            float mountHeight;
+
+            land->get(position, color);
+            if((float) color.value >= oceanLevel + 0.1f) {
+                landHeight = 4.0f * (1.0f - (float) color.value);
+                mountain->get(position, color);
+                mountHeight = 1.0f - (float) color.value;
+                mountHeight = 1.0f + pow(mountHeight, power) * multiplier;
+                if(landHeight > mountHeight) {
+                    landMap->set(x, y, Color3(0.0));
+                }
+            }
         }
     }
 }

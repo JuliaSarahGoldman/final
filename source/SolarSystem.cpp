@@ -71,6 +71,28 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
         entities["cloud" + (String) std::to_string(i)] = cloudEntityDescription;
     }
 
+    //preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
+    Any treeModel(Any::TABLE, "ArticulatedModel::Specification");
+    treeModel["scale"] = 0.5f * planet.getScale();
+    treeModel["filename"] = "model/lowpolytree.obj";
+    //treeModel["preprocess"] = Any::parse(preprocess);
+    models["tree"] = treeModel;
+
+    Array<Vector3> treePositions;
+    Array<Vector3> treeNormals;
+    planet.getTreePositions(treePositions, treeNormals);
+
+    for(int i(0); i < treePositions.length(); ++i) {
+        Any treeEntity(Any::TABLE, "VisibleEntity");
+        Vector3 position = treePositions[i]; 
+        Vector3 normal = treeNormals[i];
+        treeEntity["model"] = "tree";
+        float distance = sqrtf((normal.z * normal.z) + (normal.x * normal.x));
+        treeEntity["frame"] = CFrame::fromXYZYPRRadians(position.x, position.y, position.z);
+        treeEntity["track"] = Any::parse("transform(entity(" + levelName + "), Point3" + (position + normal*0.5f).toString() +")");
+        entities["tree" + (String) std::to_string(i)] = treeEntity;
+    }
+
     makeSceneTable(m_scene, models, entities, name);
 }
 
