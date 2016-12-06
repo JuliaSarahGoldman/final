@@ -29,9 +29,9 @@
         cloud0 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-14 ), 
+                Matrix4::rollDegrees(38 ), 
                 transform(
-                    orbit(51, 11 ), 
+                    orbit(55, 2 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planet") ) ) ); 
@@ -41,9 +41,9 @@
         cloud1 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(38 ), 
+                Matrix4::rollDegrees(-3 ), 
                 transform(
-                    orbit(65, 7 ), 
+                    orbit(48, 7 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planet") ) ) ); 
@@ -53,9 +53,9 @@
         cloud2 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(8 ), 
+                Matrix4::rollDegrees(-72 ), 
                 transform(
-                    orbit(55, 11 ), 
+                    orbit(57, 5 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planet") ) ) ); 
@@ -65,9 +65,9 @@
         cloud3 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-16 ), 
+                Matrix4::rollDegrees(69 ), 
                 transform(
-                    orbit(52, 3 ), 
+                    orbit(67, 3 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planet") ) ) ); 
@@ -77,9 +77,9 @@
         cloud4 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-27 ), 
+                Matrix4::rollDegrees(-77 ), 
                 transform(
-                    orbit(51, 2 ), 
+                    orbit(57, 2 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planet") ) ) ); 
@@ -89,9 +89,9 @@
         cloud5 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-75 ), 
+                Matrix4::rollDegrees(48 ), 
                 transform(
-                    orbit(56, 3 ), 
+                    orbit(49, 2 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planet") ) ) ); 
@@ -101,9 +101,9 @@
         cloud6 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-19 ), 
+                Matrix4::rollDegrees(30 ), 
                 transform(
-                    orbit(51, 3 ), 
+                    orbit(67, 5 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planet") ) ) ); 
@@ -113,7 +113,7 @@
         cloud7 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(39 ), 
+                Matrix4::rollDegrees(-89 ), 
                 transform(
                     orbit(53, 11 ), 
                     combine(
@@ -125,9 +125,9 @@
         cloud8 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-6 ), 
+                Matrix4::rollDegrees(-78 ), 
                 transform(
-                    orbit(68, 5 ), 
+                    orbit(67, 7 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planet") ) ) ); 
@@ -137,9 +137,9 @@
         cloud9 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-6 ), 
+                Matrix4::rollDegrees(39 ), 
                 transform(
-                    orbit(61, 11 ), 
+                    orbit(42, 5 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planet") ) ) ); 

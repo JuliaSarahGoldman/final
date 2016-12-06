@@ -83,6 +83,9 @@ Decimation algorithms are used, among other things, to simplify meshes by reduci
 
 The decimation algorithm we chose is edge collapsing, which consists of taking the $n$ least important edges away from the mesh, which takes away its adjacent faces. For our purposes we chose the least important edge to be the edge whose anlge between its adjacent face normals is closest to 180 degrees, weighted by the edge length.
 
+An edge collapsed sphere: 
+![4000 edges collapsed with angle weight, but no random start point](2016-12-02_002_starter_r2639_g3d_r981__4000_-_edges_collapsed.jpg width=300px)![Same sphere as previous picture](2016-12-02_003_starter_r2639_g3d_r981__4000_edges_collapsed.jpg width=300px)![4000 edges collapsed with no angle weight, but with random start point](2016-12-03_000_starter_r2642_g3d_r981__4000_edges_collapsed.jpg width=300px)
+
 Bevelling
 -----------------------------------------------------------
 In order to create a smooth transition between triangles, we used a bevelling function. This functions shrinks each triangle face by a specified amount, causing each face to become disconnected from one another. It then fills in the missing spaces with rectangles, reconnecting the triangles together. 
