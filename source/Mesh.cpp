@@ -493,13 +493,44 @@ void Mesh::bevelEdges2(float bump) {
     m_indexArray = newIndices;
 }
 
-void Mesh::toObj(String filename) {
+void Mesh::toObj(String filename, int width, int height) {
     TextOutput file(filename + ".obj");
     //file.printf("g name\n");
         //loop to make vertices
     //debugPrintf(STR(%d\n), sizeof(m_vertexArray));
+
+    //Compute normals if we haven't faked them
+    if (!m_hasFakeNormals){
+        Array<MeshAlg::Face> faceArray;
+        Array<MeshAlg::Edge> edgeArray;
+
+        Array<MeshAlg::Vertex> vertexArray;
+        computeAdjacency(faceArray, edgeArray, vertexArray);
+
+        Array<Vector3> faceNormalArray;
+        computeNormals(faceArray, edgeArray, vertexArray, m_vertexNormals, faceNormalArray);
+    }
+
     for (int i = 0; i < m_vertexPositions.size(); ++i) {
         file.printf(STR(v %f %f %f\n), m_vertexPositions[i].x, m_vertexPositions[i].y, m_vertexPositions[i].z);
+    }
+
+    for (int i = 0; i < m_vertexPositions.size(); ++i) {
+        const Vector3& vertex(m_vertexPositions[i]);
+
+        const Vector3& d((vertex - Vector3(0, 0, 0)).unit());
+
+        const float nx(width * (0.5f + atanf(d.z / d.x) / (2.0f*pif())));
+        const float ny(height * (0.5f - asinf(d.y) * 1 / pif()));
+
+        const int ix((int)abs((int)nx % width));
+        const int iy((int)abs((int)ny % height));
+        Vector2 tex((ix*1.0) / width, (iy*1.0) / height);
+        file.printf(STR(vt %f %f\n), tex.x, tex.y);
+     }
+
+    for (int i = 0; i < m_vertexNormals.size(); ++i) {
+        file.printf(STR(vn %f %f %f\n), m_vertexNormals[i].x, m_vertexNormals[i].y, m_vertexNormals[i].z);
     }
 
     //Loop for faces
@@ -510,7 +541,7 @@ void Mesh::toObj(String filename) {
     }*/
     //using m_indexArray
     for (int i = 0; i < m_indexArray.size(); i += 3) {
-        file.printf("f %d %d %d\n", m_indexArray[i] + 1, m_indexArray[i + 1] + 1, m_indexArray[i + 2] + 1);
+        file.printf("f %d/%d/%d %d/%d/%d %d/%d/%d\n", m_indexArray[i] + 1, m_indexArray[i] + 1, m_indexArray[i] + 1, m_indexArray[i + 1] + 1, m_indexArray[i + 1] + 1, m_indexArray[i + 1] + 1, m_indexArray[i + 2] + 1, m_indexArray[i + 2] + 1, m_indexArray[i + 2] + 1);
     }
     file.printf("\n");
     file.commit();
@@ -572,8 +603,6 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width
 
         const int ix((int)abs((int)nx % width));
         const int iy((int)abs((int)ny % height));
-        //v.texCoord0 = Vector2(nx, ny);
-        //v.texCoord0 = Vector2(ix, iy);
         v.texCoord0 = Vector2((ix*1.0) / width, (iy*1.0) / height);
 
 

@@ -111,7 +111,18 @@ bool Planet::generatePlanet() {
         //mesh.bevelEdges2(0.1f);
         m_waterObjFile = m_planetName + "water";
 
-        mesh.toObj(m_waterObjFile);
+        int width, height;
+        if (m_useWTexture){
+            shared_ptr<Image> image = Image::fromFile(m_waterTextureFile);
+            width = image->width();
+            height = image->height();
+        }
+        else{
+            width = 1;
+            height = 1;
+        }
+
+        mesh.toObj(m_waterObjFile, width, height);
 
 
         noiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
@@ -134,7 +145,18 @@ bool Planet::generatePlanet() {
         Mesh mesh2(vertices, faces);
         mesh2.bevelEdges2(m_landBevel);
         m_landObjFile = m_planetName + "land";
-        mesh2.toObj(m_landObjFile);
+
+        if (m_useLTexture){
+            shared_ptr<Image> image = Image::fromFile(m_landTextureFile);
+            width = image->width();
+            height = image->height();
+        }
+        else{
+            width = 1;
+            height = 1;
+        }
+
+        mesh2.toObj(m_landObjFile, width, height);
 
 
         noiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
@@ -156,7 +178,18 @@ bool Planet::generatePlanet() {
         Mesh mesh3(vertices, faces);
         mesh3.bevelEdges2(m_mountainBevel);
         m_mountainObjFile = m_planetName + "mountain";
-        mesh3.toObj(m_mountainObjFile);
+
+        if (m_useMTexture){
+            shared_ptr<Image> image = Image::fromFile(m_mountainTextureFile);
+            width = image->width();
+            height = image->height();
+        }
+        else{
+            width = 1;
+            height = 1;
+        }
+
+        mesh3.toObj(m_mountainObjFile, width, height);
 
     }
     catch (...) {
@@ -166,10 +199,16 @@ bool Planet::generatePlanet() {
 }
 
 void Planet::createWaterAnyFile(Any& waterModel, Any& waterEntity) {
+
     String anyStr = (m_useWTexture && !m_waterTextureFile.empty()) ? (String) "UniversalMaterial::Specification { glossy = Color4" + m_waterGloss.toString() + "; "
         "lambertian = Texture::Specification{ filename = \"" +
-        m_waterTextureFile + "\"; encoding = Texture::Encoding { readMultiplyFirst = " + m_waterColor.toString() + "}; }; }" :
+        m_waterTextureFile + "\"; encoding = Texture::Encoding { readMultiplyFirst = Color3" + m_waterColor.toString() + "}; }; }" :
         "UniversalMaterial::Specification { lambertian = Color3" + m_waterColor.toString() + "; glossy = Color4" + m_waterGloss.toString() + "; }";
+
+    /*String anyStr = (m_useWTexture && !m_waterTextureFile.empty()) ? (String) "UniversalMaterial::Specification { glossy = Color4" + m_waterGloss.toString() + "; "
+        "lambertian = Texture::Specification{ filename = \"" +
+        m_waterTextureFile + "\"; encoding = Texture::Encoding { readMultiplyFirst = " + m_waterColor.toString() + "}; }; }" :
+        "UniversalMaterial::Specification { lambertian = Color3" + m_waterColor.toString() + "; glossy = Color4" + m_waterGloss.toString() + "; }";*/
 
     String preprocess = "{ setMaterial(all()," + anyStr + ");" +
         "transformGeometry(all(), Matrix4::scale(" +

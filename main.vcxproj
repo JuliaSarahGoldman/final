@@ -111,6 +111,8 @@
     <None Include="data-files\Scene\LittleHeightfield.Scene.Any" />
     <None Include="data-files\Scene\Pentagon.Scene.Any" />
     <None Include="data-files\Scene\BadPlanet.Scene.Any" />
+    <None Include="data-files\SolarSystem.Scene.Any" />
+    <None Include="data-files\Texture.Scene.Any" />
     <None Include="doc-files\report.md.html" />
     <None Include="Doxyfile" />
     <None Include="journal\journal.md.html" />

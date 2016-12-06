@@ -1,5 +1,47 @@
 { 
     entities = { 
+        Aplanet = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, 3.37343e-39, 0 ); 
+            model = "Aplanet"; 
+            track = combine(
+                orbit(0, 10 ), 
+                Point3(0, 3.37343e-39, 0 ) ); 
+            
+        }; 
+        
+        Aplanetland = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, 3.37343e-39, 0 ); 
+            model = "Aplanetland"; 
+            track = entity("Aplanet"); 
+        }; 
+        
+        Aplanetmountain = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, 3.37343e-39, 0 ); 
+            model = "Aplanetmountain"; 
+            track = entity("Aplanet"); 
+        }; 
+        
+        Test = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(3.34963, -5.75458, 0 ); 
+            model = "Test"; 
+            track = combine(
+                orbit(0, 10 ), 
+                Point3(3.34963, -5.75458, 0 ) ); 
+            
+        }; 
+        
+        Testland = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(3.34963, -5.75458, 0 ); 
+            model = "Testland"; 
+            track = entity("Test"); 
+        }; 
+        
+        Testmountain = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(3.34963, -5.75458, 0 ); 
+            model = "Testmountain"; 
+            track = entity("Test"); 
+        }; 
+        
         camera = Camera { 
             filmSettings = FilmSettings { 
                 antialiasingEnabled = true; 
@@ -29,142 +71,121 @@
         cloud0 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-2 ), 
+                Matrix4::rollDegrees(-83 ), 
                 transform(
-                    orbit(19, 2 ), 
+                    orbit(10, 5 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("Aplanet") ) ) ); 
             
         }; 
         
         cloud1 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-22 ), 
+                Matrix4::rollDegrees(-39 ), 
                 transform(
-                    orbit(12, 11 ), 
+                    orbit(16, 5 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("Aplanet") ) ) ); 
             
         }; 
         
         cloud2 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(42 ), 
+                Matrix4::rollDegrees(-88 ), 
                 transform(
-                    orbit(15, 11 ), 
+                    orbit(19, 7 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("Aplanet") ) ) ); 
             
         }; 
         
         cloud3 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(80 ), 
+                Matrix4::rollDegrees(-4 ), 
                 transform(
-                    orbit(10, 5 ), 
+                    orbit(17, 7 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("Aplanet") ) ) ); 
             
         }; 
         
         cloud4 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-34 ), 
+                Matrix4::rollDegrees(-33 ), 
                 transform(
-                    orbit(15, 2 ), 
+                    orbit(16, 3 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("Aplanet") ) ) ); 
             
         }; 
         
         cloud5 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(36 ), 
+                Matrix4::rollDegrees(-52 ), 
                 transform(
-                    orbit(10, 5 ), 
+                    orbit(17, 7 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("Aplanet") ) ) ); 
             
         }; 
         
         cloud6 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(72 ), 
+                Matrix4::rollDegrees(-48 ), 
                 transform(
-                    orbit(14, 3 ), 
+                    orbit(16, 11 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("Aplanet") ) ) ); 
             
         }; 
         
         cloud7 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-80 ), 
+                Matrix4::rollDegrees(-30 ), 
                 transform(
-                    orbit(16, 5 ), 
+                    orbit(10, 7 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("Aplanet") ) ) ); 
             
         }; 
         
         cloud8 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-60 ), 
+                Matrix4::rollDegrees(-75 ), 
                 transform(
-                    orbit(20, 3 ), 
+                    orbit(19, 7 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("Aplanet") ) ) ); 
             
         }; 
         
         cloud9 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(28 ), 
+                Matrix4::rollDegrees(27 ), 
                 transform(
-                    orbit(17, 7 ), 
+                    orbit(10, 3 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("Aplanet") ) ) ); 
             
-        }; 
-        
-        planet = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 4.64222e-39, 0 ); 
-            model = "planet"; 
-            track = combine(
-                orbit(0, 10 ), 
-                Point3(0, 4.64222e-39, 0 ) ); 
-            
-        }; 
-        
-        planetland = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 4.64222e-39, 0 ); 
-            model = "planetland"; 
-            track = entity("planet"); 
-        }; 
-        
-        planetmountain = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 4.64222e-39, 0 ); 
-            model = "planetmountain"; 
-            track = entity("planet"); 
         }; 
         
         skybox = Skybox { 
@@ -223,6 +244,107 @@
     }; 
     
     models = { 
+        Aplanet = ArticulatedModel::Specification { 
+            filename = "Aplanetwater.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(0.0972222, 0.0972222, 0.0972222, 0.875 ); 
+                        lambertian = Color3(1.75162e-43, 1, 1 ); 
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.55254, 0.55254, 0.55254 ) ) }; 
+            
+        }; 
+        
+        Aplanetland = ArticulatedModel::Specification { 
+            filename = "Aplanetland.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(0.111111, 0.111111, 0.111111, 0.638889 ); 
+                        lambertian = Texture::Specification { 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color3(0, 1, 0.111111 ); 
+                            }; 
+                            
+                            filename = "blue.jpg"; 
+                        }; 
+                        
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.55254, 0.55254, 0.55254 ) ) }; 
+            
+        }; 
+        
+        Aplanetmountain = ArticulatedModel::Specification { 
+            filename = "Aplanetmountain.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(0.402778, 0.402778, 0.402778, 0.458333 ); 
+                        lambertian = Texture::Specification { 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color3(1, 1, 1 ); 
+                            }; 
+                            
+                            filename = "flame.jpg"; 
+                        }; 
+                        
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.55254, 0.55254, 0.55254 ) ) }; 
+            
+        }; 
+        
+        Test = ArticulatedModel::Specification { 
+            filename = "Testwater.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(0.0972222, 0.0972222, 0.0972222, 1 ); 
+                        lambertian = Texture::Specification { 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color3(6.86636e-44, 0, 1 ); 
+                            }; 
+                            
+                            filename = "space.png"; 
+                        }; 
+                        
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.132072, 0.132072, 0.132072 ) ) }; 
+            
+        }; 
+        
+        Testland = ArticulatedModel::Specification { 
+            filename = "Testland.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(0.263889, 0.263889, 0.263889, 0.236111 ); 
+                        lambertian = Texture::Specification { 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color3(0.0416667, 1, 0.111111 ); 
+                            }; 
+                            
+                            filename = "space.png"; 
+                        }; 
+                        
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.132072, 0.132072, 0.132072 ) ) }; 
+            
+        }; 
+        
+        Testmountain = ArticulatedModel::Specification { 
+            filename = "Testmountain.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(2.21105e-39, 2.21105e-39, 2.21105e-39, 0 ); 
+                        lambertian = Texture::Specification { 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color3(1, 5.76214e-42, 0 ); 
+                            }; 
+                            
+                            filename = "space.png"; 
+                        }; 
+                        
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.132072, 0.132072, 0.132072 ) ) }; 
+            
+        }; 
+        
         cloud1 = ArticulatedModel::Specification { 
             filename = "model/cloud/cloud.zip/altostratus00.obj"; 
             preprocess = { 
@@ -234,40 +356,7 @@
                         
                     } ) }; 
             
-            scale = 0.1; 
-        }; 
-        
-        planet = ArticulatedModel::Specification { 
-            filename = "planetwater.obj"; 
-            preprocess = { 
-                setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(3.62342e-05, 3.62342e-05, 3.62342e-05, 4.59121e-41 ); 
-                        lambertian = Color3(4.55422e-43, 0, 1 ); 
-                    } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
-            
-        }; 
-        
-        planetland = ArticulatedModel::Specification { 
-            filename = "planetland.obj"; 
-            preprocess = { 
-                setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(3.30704e-39, 3.30704e-39, 3.30704e-39, 0 ); 
-                        lambertian = Color3(4.59121e-41, 1, 0 ); 
-                    } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
-            
-        }; 
-        
-        planetmountain = ArticulatedModel::Specification { 
-            filename = "planetmountain.obj"; 
-            preprocess = { 
-                setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(3.31361e-39, 3.31361e-39, 3.31361e-39, 0 ); 
-                        lambertian = Color3(0.510345, 0.510345, 0.510345 ); 
-                    } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
-            
+            scale = 0.055254; 
         }; 
         
     }; 

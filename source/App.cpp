@@ -93,7 +93,7 @@ void App::makePentagon() {
     Planet planet;
     planet.writeSphere("pentagon", 12.0f, 5, vertices, faces);
     m_myMesh = Mesh::create(vertices, faces);
-    m_myMesh->toObj("pentagon");
+    m_myMesh->toObj("pentagon", 1, 1);
 
     loadScene("Pentagon");
     GuiPane* pentPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
@@ -123,7 +123,7 @@ void App::makePentagon() {
         planet.writeSphere("pentagon", 12.0f, 5, vertices, faces);
         m_myMesh = Mesh::create(vertices, faces);
 
-        m_myMesh->toObj("pentagon");
+        m_myMesh->toObj("pentagon", 1, 1);
         G3D::ArticulatedModel::clearCache();
         loadScene("Pentagon");
 
@@ -134,7 +134,7 @@ void App::makePentagon() {
 
 void App::makeBunny() {
     m_myMesh = Mesh::create("bunny.ifs");
-    m_myMesh->toObj("bunny");
+    m_myMesh->toObj("bunny", 1, 1);
 
     loadScene("Bunny");
     GuiPane* bunnyPane = debugPane->addPane("Collapse Edges", GuiTheme::ORNATE_PANE_STYLE);
@@ -147,7 +147,7 @@ void App::makeBunny() {
 
     bunnyPane->addButton("Collapse!", [this]() {
         m_myMesh->collapseEdges(m_edgesToCollapse);
-        m_myMesh->toObj("bunny");
+        m_myMesh->toObj("bunny", 1, 1);
         G3D::ArticulatedModel::clearCache();
         loadScene("Bunny");
 
@@ -155,7 +155,7 @@ void App::makeBunny() {
 
     bunnyPane->addButton("Reset", [this]() {
         m_myMesh = Mesh::create("bunny.ifs");
-        m_myMesh->toObj("bunny");
+        m_myMesh->toObj("bunny", 1, 1);
         G3D::ArticulatedModel::clearCache();
         loadScene("Little Heightfield");
 
@@ -187,7 +187,7 @@ void App::makeLittleHeightfield() {
     }
 
     m_myMesh = Mesh::create(vertices, indices);
-    m_myMesh->toObj("littleHf");
+    m_myMesh->toObj("littleHf", 1, 1);
 
     loadScene("Little Heightfield");
     GuiPane* hfPane = debugPane->addPane("Collapse Edges", GuiTheme::ORNATE_PANE_STYLE);
@@ -200,7 +200,7 @@ void App::makeLittleHeightfield() {
 
     hfPane->addButton("Collapse!", [this]() {
         m_myMesh->collapseEdges(m_edgesToCollapse);
-        m_myMesh->toObj("littleHf");
+        m_myMesh->toObj("littleHf", 1, 1);
         G3D::ArticulatedModel::clearCache();
         loadScene("Little Heightfield");
 
@@ -228,7 +228,7 @@ void App::makeLittleHeightfield() {
             }
         }
         m_myMesh = Mesh::create(vertices, indices);
-        m_myMesh->toObj("littleHf");
+        m_myMesh->toObj("littleHf", 1, 1);
         G3D::ArticulatedModel::clearCache();
         loadScene("Little Heightfield");
 
@@ -332,9 +332,11 @@ void App::makePlanetGUI() {
     landColorPane->endRow();
     landColorPane->addCheckBox("Get texture from file", &m_useLTexture);
 
-    landColorPane->addButton("", [this]() {
+    /*landColorPane->addButton("", [this]() {
         FileDialog::getFilename(m_landFile, "", false);
-    });
+    });*/
+
+    landColorPane->addTextBox("", &m_landFile);
 
     GuiPane* waterColorPane = colorPane->addPane("Water Options");
     waterColorPane->beginRow();
@@ -358,9 +360,11 @@ void App::makePlanetGUI() {
     waterColorPane->endRow();
     waterColorPane->addCheckBox("Get texture from file", &m_useWTexture);
 
-    waterColorPane->addButton("", [this]() {
+    /*waterColorPane->addButton("", [this]() {
         FileDialog::getFilename(m_waterFile, "", false);
-    });
+    });*/
+
+    waterColorPane->addTextBox("", &m_waterFile);
 
     GuiPane* mountainColorPane = colorPane->addPane("Mountain Options");
 
@@ -384,9 +388,11 @@ void App::makePlanetGUI() {
     mountainColorPane->endRow();
     mountainColorPane->addCheckBox("Get texture from file", &m_useMTexture);
 
-    mountainColorPane->addButton("", [this]() {
+    /*mountainColorPane->addButton("", [this]() {
         FileDialog::getFilename(m_mountainFile, "", false);
-    });
+    });*/
+
+    mountainColorPane->addTextBox("", &m_mountainFile);
 
     /*
     GuiPane* edgeCollapsePane = planetTab->addTab(":Edge Collapse");

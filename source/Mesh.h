@@ -51,7 +51,7 @@ public:
     void bevelEdges(float bump);
     void bevelEdges2(float bump);
 
-    void toObj(String filename);
+    void toObj(String filename, int width, int height);
 
     shared_ptr<Model> toArticulatedModel(String name, Color3& color) const;
     shared_ptr<Model> toArticulatedModel(String name, String anyStr, int width, int height) const;
