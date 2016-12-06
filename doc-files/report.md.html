@@ -113,18 +113,18 @@ APP::makePlanetGUI()
                         Mesh::computeAdjacency()
                         Mesh::computeFaceNormals
                         Mesh::isCollapsable()
-                            Mesh::isManifoldPreserved()
-                            Mesh::normalsFlipped()
-                                Mesh::computeCurNormal()
-                                Mesh::computeNewNormal()
-                                Mesh::isSignOpposite()
-                        Mesh::isMoreCollapsable()
-                             Mesh::cosAnge()
-                             Mesh::squaredEdgeLength()
-                        Mesh::collapseOneEdge()
-                            Mesh::remapIndices()
-                            Mesh::removeDegenerateFaces()
-                                Mesh::isDegenerate()
+                            isManifoldPreserved()
+                            normalsFlipped()
+                                computeCurNormal()
+                                computeNewNormal()
+                                isSignOpposite()
+                        isMoreCollapsable()
+                            cosAnge()
+                            squaredEdgeLength()
+                        collapseOneEdge()
+                            remapIndices()
+                            removeDegenerateFaces()
+                                isDegenerate()
                     Mesh::bevelEdges()
                         Mesh::computeAdjacency()
                         Mesh::computeNormals()
@@ -158,15 +158,17 @@ Mesh::collapseEdges() -> Mesh::computeAdjacency() -> Mesh::computeFaceNormals ->
 Class Descriptions
 -----------------------------------------------------------------------------------------------------------------------------
 
-|[Planet](class_planet.html): | |
+|[Angled Vertex](class_angled_vertex.html): | |
 |------------|---|
-|[applyNoiseLand](class_planet.html#acef025087d323d0d14c68ed8e808f784) | Generates and maps noise for land |
-|[applyNoiseMountain](class_planet.html#a61f483ef01185744916f3d5c880a6737) | Generates and maps noise for mountains |
-|[applyNoiseWater](class_planet.html#aae1f673f08375154a869ca9df9547718) | Generates and maps noise for ocean |
-|[writeSphere](class_planet.html#a4e6161f7106c7800e162213210cc23bb) | Constructs a sphere of a given recursion depth |
-|[getMiddle](class_planet.html#a9264b1a5ed9484f6de3a802b674ccd3e) | Finds the middle between two points |
-|[makeIcohedron](class_planet.html#a73f0047f85c0d7138283e9006cc5b729) | Makes an icohedron |
-|[subdivideIcoHedron](class_planet.html#a8da7fb007fbfb344c150382ab774629a) | Divides the faces of the icohedron |
+|[operator<](class_angled_vertex.html#af8dea9a741ccba035b79f5015adc7572) | Used for sorting vertices by angle |
+|[operator>](class_angled_vertex.html#ae6d68c335a0bf593ac5b9d9e85c1407a) | Used for sorting vertices by angle |
+
+|[App](class_app.html): | |
+|------------|---|
+|[addPlanetToScene](class_app.html#aa16db878375c7fa7a16108e7b9edb898) | Adds an articulated model of a mesh to the current scene |
+|[makePlanetGUI](class_app.html#a9bc72b237ac25e5c1e793c9104221320) | Provides the ability to generate a planet on command |
+
+
 
 |[Mesh](class_mesh.html): | |
 |------------|---|
@@ -178,28 +180,51 @@ Class Descriptions
 |[toArticulatedModel](class_mesh.html#aa25e2fa35851d7660871190eaeab737b) | Returns an articulated model of the mesh |
 |[toObj](class_mesh.html#aa6aa873a3f810e2c0bfdb9e08aaf3908) | Writes an object file of the mesh |
 |[create](class_mesh.html#acf65d30a393e0e492fa08878472b4847) | Returns a shared pointer to a mesh |
-|[edgeLength](class_mesh.html#ac5a3107caa5fd891de64985be4e653aa) | Returns the length of a given edge |
-|[greaterAngle](class_mesh.html#a71bb93a4e76f8c6bc9f2ef7c1d70c80d) | Returns true if the angle between the normal of the adjacent faces of elem1 is greater than that of the adjacent faces of elem2  |
-|[isCollapsable](class_mesh.html#a927969b67bb759490deab1acd701354f) | Called by collapseEdges(). Checks if an edge can be safely collapsed. True if not a boundary edge, if collapsing it doesn't create a manifold and doesn't flip adjacent face normals. |
+|[isCollapsable](class_mesh.html#a927969b67bb759490deab1acd701354f) | Called by collapseEdges(). Checks if an edge can be safely collapsed. True if not a boundary edge, if collapsing it preserves the manifold and doesn't flip adjacent face normals. |
 
-|[Angled Vertex](class_angled_vertex.html): | |
+|[NoiseGen](class_noise_gen.html): | |
 |------------|---|
-|[operator<](class_angled_vertex.html#af8dea9a741ccba035b79f5015adc7572) | Used for sorting vertices by angle |
-|[operator>](class_angled_vertex.html#ae6d68c335a0bf593ac5b9d9e85c1407a) | Used for sorting vertices by angle |
+|[generateMountainImage](<Doxygen Link Goes Here>) | Generates noise bump map for mountains |
+|[generateLandImage](<Doxygen Link Goes Here>) | Generates noise bump map for land |
+|[generateSeaImage](<Doxygen Link Goes Here>) | Generates noise bump map for ocean |
+|[colorMountainImage](<Doxygen Link Goes Here>) | <INSERT DESCRIPTION HERE> |
+|[landMapImage](<Doxygen Link Goes Here>) | <INSERT DESCRIPTION HERE> |
 
-|[App](class_app.html): | |
+|[Planet](class_planet.html): | |
 |------------|---|
-|[addPlanetToScene](class_app.html#aa16db878375c7fa7a16108e7b9edb898) | Adds an articulated model of a mesh to the current scene |
-|[makePlanetGUI](class_app.html#a9bc72b237ac25e5c1e793c9104221320) | Provides the ability to generate a planet on command |
+|[applyNoiseLand](class_planet.html#acef025087d323d0d14c68ed8e808f784) | Generates and maps noise for land |
+|[applyNoiseMountain](class_planet.html#a61f483ef01185744916f3d5c880a6737) | Generates and maps noise for mountains |
+|[applyNoiseWater](class_planet.html#aae1f673f08375154a869ca9df9547718) | Generates and maps noise for ocean |
+|[writeSphere](class_planet.html#a4e6161f7106c7800e162213210cc23bb) | Constructs a sphere of a given recursion depth |
+|[getMiddle](class_planet.html#a9264b1a5ed9484f6de3a802b674ccd3e) | Finds the middle between two points |
+|[makeIcohedron](class_planet.html#a73f0047f85c0d7138283e9006cc5b729) | Makes an icohedron |
+|[subdivideIcoHedron](class_planet.html#a8da7fb007fbfb344c150382ab774629a) | Divides the faces of the icohedron |
+
+|[SolarSystem](class_solar_system.html): | |
+|------------|---|
+|[initializeEntityTable](<DOXYGEN LINK GOES HERE>) | Sets up and writes the entity portion of the scene |
+|[initializeModelsTable](<DOXYGEN LINK GOES HERE>) | Sets up and writes the models portion of the scene |
+|[initializeSceneTable](<DOXYGEN LINK GOES HERE>) | Sets up and writes the scene's lightning environment |
+|[makeSceneTable](<DOXYGEN LINK GOES HERE>) | Adds entities and models initialized by their own methods to the scene |
+|[printSolarSystemToScene](<DOXYGEN LINK GOES HERE>) | Outputs the Solar system to a scene file |
+|[addPlanet](<DOXYGEN LINK GOES HERE>) | Adds planet to scene |
+|[containsPlanet](<DOXYGEN LINK GOES HERE>) | Returns true if input planet is in the solar system |
+|[removePlanet](<DOXYGEN LINK GOES HERE>) | Removes planet from scene |
+|[onInit](<DOXYGEN LINK GOES HERE>) | Initializes member variables and invokes intialize methods |
+
 
 Justification
 ------------------------------------------------------------------------------------------------------------------------------
 
 Our planet class is used for creating spherical heightfield using noise, which are then modified and outputted from inside our mesh class. Our planet heightfield is built by applying noise to a sphere. We build our own sphere from an icohedron so we can make it as low or high poly as we desire.
 
-Planet is responsible for building the actual layout of the planet and uses our Mesh class to create its 3D mesh.
+[Planet](class_planet.html) is responsible for building the actual layout of the planet and uses our Mesh class to create its 3D mesh.
 
-Mesh is responsible for building and editting the planet's mesh.
+[NoiseGen](class_noise_gen.html) generates noise bump maps for the mountain, land and ocean planet heightfields through separate methods.
+
+[Mesh](class_mesh.html) defines methods to compute adjacency and normal information of the input Mesh, and methods to edit the Mesh. It is used by Planet, which passes in the vertex array and the tri array of faces of the original heightfields into Mesh. Planet then invokes the methods defined in Mesh to collapse mesh edges, to bevel the mesh, and to output it to [G3D::ArticulatedModel](http://g3d.cs.williams.edu/g3d/G3D10/build/manual/class_g3_d_1_1_articulated_model.html) or to OBJ files to be used in our scenes. Collapsing edges simplifies the mesh and makes the faces look less uniform which makes the low polyness more interesting. Bevelling smoothes the edges between faces and gives more of a polygon effect to the mesh. This design choice abstracts mesh editting from mesh creation and allowed us to to work on introducing low polyness separately from generating nice planets.
+    
+[SolarSystem](class_solar_system.html) abstracts generating the Scene.Any file that includes our planet meshes. It defines separate methods to set up the lighting environment, write entities, write models, add and remove planet meshes from the scene. Defining this class was fundamental in cleaning up our code, since before SolarSystem we generated our whole Scene.Any in App. This abstraction allowed us to more easily and intuitively add features and polish our results. 
 
 Results
 =====================================================================================
