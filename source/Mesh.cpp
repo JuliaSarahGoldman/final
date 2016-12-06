@@ -41,12 +41,6 @@ void Mesh::computeNormals(const Array<MeshAlg::Face>& faceArray, const Array<Mes
     MeshAlg::computeNormals(m_vertexPositions, faceArray, vertexArray, vertexNormalArray, faceNormalArray);
 };
 
-void Mesh::computeFaceNormals(Array<Vector3>& faceNormals, bool normalize) {
-    Array<MeshAlg::Face> faceArray;
-    computeAdjacency(faceArray);
-    MeshAlg::computeFaceNormals(m_vertexPositions, faceArray, faceNormals, normalize);
-};
-
 inline void Mesh::computeFaceNormals(const Array<MeshAlg::Face>& faceArray, Array<Vector3>& faceNormals, bool normalize) const {
     MeshAlg::computeFaceNormals(m_vertexPositions, faceArray, faceNormals, normalize);
 };
@@ -55,14 +49,6 @@ inline static int edgeLengthSquared(const MeshAlg::Edge& edge, const Array<Vecto
     const Vector3& v(vertexArray[edge.vertexIndex[1]] - vertexArray[edge.vertexIndex[0]]);
     return v.dot(v);
 };
-
-int Mesh::edgeLength(const MeshAlg::Edge& edge) {
-    return length(m_vertexPositions[edge.vertexIndex[0]] - m_vertexPositions[edge.vertexIndex[1]]);
-};
-
-int Mesh::edgeLength(int i0, int i1) {
-    return length(m_vertexPositions[i1] - m_vertexPositions[i0]);
-}
 
 static bool isManifoldPreserved(const MeshAlg::Edge& edge, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) {
     // Check how many end points of the adjacent edges to edge coincide. 

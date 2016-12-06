@@ -101,6 +101,10 @@ Flowchart
 GAPP::makePlanetGUI() -> Generate Button -> Planet::writeSphere() -> Planet::makeIcohedron() -> Planet::subDivideIcohedron() -> GAPP::makePlanetGUI() 
 -> Planet::generateNoise() -> GAPP::makePlanetGUI() -> GAPP::addPlanetToScene()
 
+// For edge collapsing
+Edge collapsing calls many static functions defined in Mesh.cpp that are not Member functions of the Mesh class. All of that is outlined in the journal. These are the functions bellow that don't have the Mesh:: prefix. If we only want member functions in the flowchart then we ought to delete them.
+Mesh::collapseEdges() -> Mesh::computeAdjacency() -> Mesh::computeFaceNormals -> Mesh::isCollapsable() (calls isManifoldPreserved(), normalsFlipped() (calls computeCurNormal(), computeNewNormal(), and isSignOpposite()) -> isMoreCollapsable() (calls cosAnge() and squaredEdgeLength()) -> collapseOneEdge() (Calls remapIndices(), removeDegenerateFaces() (calls isDegenerate())
+
 Class Descriptions
 -----------------------------------------------------------------------------------------------------------------------------
 
@@ -117,8 +121,8 @@ Class Descriptions
 |[Mesh](class_mesh.html): | |
 |------------|---|
 |[bevelEdges](class_mesh.html#adc7558052d2c7fb4ee0697805ef7cd72) | Creates new vertex and index arrays in which the original triangles are separated and shrunk andvthe gaps between them are filled in with more triangles |
-|[collapseEdges](class_mesh.html#a015dfb6334430099b0061bbdc24a7289) | As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf Calls isCollapsable(). Collapses the numEdges most unimportant edges. |
-|[computeAgency](class_mesh.html#a8b7b39f416aee6d204de79cb65226d05) | Fills buffers with information about the mesh's topology |
+|[collapseEdges](class_mesh.html#a015dfb6334430099b0061bbdc24a7289) | As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf Calls computeAdjacency(), computeFaceNormals(), and isCollapsable() for each i in numEdges collapsing as many edges as possible from 0 to numEdges. |
+|[computeAdjacency](class_mesh.html#a8b7b39f416aee6d204de79cb65226d05) | Fills buffers with information about the mesh's topology |
 |[computeFaceNormals](class_mesh.html#ad2d3073f94942602441016a2ae5c7191) | Calculates normals for each face |
 |[computeNormals](class_mesh.html#a80fe9c1e1a35dc5aa5cd088dbe0d08d6) | vertexNormalArray and faceNormalArray filled with appropriate normal values |
 |[toArticulatedModel](class_mesh.html#aa25e2fa35851d7660871190eaeab737b) | Returns an articulated model of the mesh |

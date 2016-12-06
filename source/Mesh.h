@@ -20,15 +20,16 @@ protected:
     Array<Vector3> m_vertexNormals;
     bool m_hasFakeNormals = false;
 
-    int edgeLength(const MeshAlg::Edge& edge);
-    int Mesh::edgeLength(int i0, int i1);
-
     /** Called by collapseEdges()
-        true if not a boundary edge, if collapsing it doesn't create a manifold and doesn't flip face normals*/
+        true if not a boundary edge, if collapsing it preserves the manifold and doesn't flip face normals*/
    bool isCollapsable(const MeshAlg::Edge& edge, const Array<MeshAlg::Face>& faces, const Array<MeshAlg::Edge>& edges, const Array<MeshAlg::Vertex>& vertices) const;
 
 
 public:
+    /** faceArray - output.
+        edgeArray - output.
+        vertexArray - output
+        Calls [MeshAlg::computeAdjacency()]()*/
     void computeAdjacency(Array<MeshAlg::Face>& faceArray,
         Array<MeshAlg::Edge>& edgeArray = Array<MeshAlg::Edge>(),
         Array<MeshAlg::Vertex>& vertexArray = Array<MeshAlg::Vertex>());
@@ -37,13 +38,19 @@ public:
     post: vertexNormalArray and faceNormalArray filled with appropriate normal values */
     void computeNormals(const Array<MeshAlg::Face>& faceArray, const Array<MeshAlg::Edge>& edgeArray, const Array<MeshAlg::Vertex>& vertexArray,
         Array<Vector3>& vertexNormalArray, Array<Vector3>& faceNormalArray);
-
-    void computeFaceNormals(Array<Vector3>& faceNormals, bool normalize = true);
+   
+    /** Faster when normalize is false. 
+        faceArray - input.
+        faceNormals - output.
+        Calls [MeshAlg::computeFaceNormals()]()*/
     void computeFaceNormals(const Array<MeshAlg::Face>& faceArray, Array<Vector3>& faceNormals, bool normalize = true) const;
 
     /** As outlined by Stanford Graphics http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf
-        Calls isCollapsable()
-        Collapses the numEdges most unimportant edges*/
+        Collapse edges based on angle between the adjacent face normals weighted by edge length squared and some extra angle weight. The greater the angle the easier for the edge to be collapsed. 
+        For each int i in numEdges:
+        Calls computeAdjacency()
+        Calls computeFaceNormals()
+        Calls isCollapsable()*/
     void collapseEdges(int numEdges, float angleWeight = 0.0f);
 
     //bump is how much we expand the panet's radius by

@@ -394,8 +394,8 @@ void App::makePlanetGUI() {
 
     mountainColorPane->addTextBox("", &m_mountainFile);
 
-    /*
-    GuiPane* edgeCollapsePane = planetTab->addTab(":Edge Collapse");
+    
+    GuiPane* edgeCollapsePane = planetTab->addTab("Edge Collapse");
 
     edgeCollapsePane->addCheckBox("Enable Edge Collapsing", &m_collapsingEnabled);
 
@@ -407,7 +407,7 @@ void App::makePlanetGUI() {
 
     edgeCollapsePane->addNumberBox("# edges - mountain", &m_mountainEdgesToCollapse, "",
         GuiTheme::LOG_SLIDER, 0, 20000)->setUnitsSize(1);
-        */
+        
 
     GuiPane* savePane = planetTab->addTab("Save/Load");
     savePane->addTextBox("Save to:", &m_planetSave);
