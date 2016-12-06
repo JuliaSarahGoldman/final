@@ -24,33 +24,29 @@ Specification
 	2. Use a noise function to generate these heightfields based on the planet's radius
 	3. Use an edge-collapse algorithm to reduce the number of triangles
 	4. Bevel the edges of the heightfields' triangles for smoother transitions
-	5. Color each position on the heightfields based on constants from a file.  #Ask Ryan about this
+	5. Get all parameters based on constants from a file.
 	5. Add low-poly objects on the planet:
-		1. Small Cars
-		2. Fir Trees
-		3. Birds
+		1. Fir Trees
+		2. Birds
+        3. Clouds
 	6. Make the planet rotate on its axis
-	7. Make the cars and birds move along predetermined paths 
+	7. Make the clouds and birds move along predetermined paths 
 	8. Use a gradient background for better aesthetic.
+    9. Map textures onto the planet.
 
 2. Provide the capability to change the planet's following paramenters:
 	1. Water heightfield's minimum and maximum height
-	2. Love-level terrain heightfield's maximum height
+	2. Low-level terrain heightfield's maximum height
 	3. Mountain heightfield's maximum height
-	4. The planet's theme:
-		1. Water Planet
-		2. Ice Planet
-		3. Mountaineous Planet
-		4. Desert Planet
-		5. City Planet
+    4. Noise Functions seeds
+    5. Lambertian and Glossy Color
+    6. Number of Edges to Collapse
 		
 3. Save the following images to prove correctness:
-    1. Change the color of each triangle as follows:
-		1. World-space surface normals of the triangle visualized as colors by $\vec{c} = (\n + 1) / 2$ 
-		2. World-space hit positions of the triangle visualized as colors by $\vec{c} = P$
-	2. Show a low-poly terrain mesh using a simple noise algorithm to bump the vertices.
-    3. Show a planet with only one terrain
-	4. Show one example of a planet with various terrains
+	1. Show individual low-poly terrain mesh using a simple noise algorithm to bump the vertices.
+    3. Show example of beveling.
+    4. Show example of edge collapsing
+    5. Show individual heightfields and full planet at varying recursion depths
 
 4. Quality Results:
 	1. A scene of a planet with some models and an interesting background
@@ -71,7 +67,6 @@ The planets are represented through a combination of layered, spherical heightfi
 Noise
 -----------------------------------------------------------
 Perling noise is used to generate the heights at varying locations of our three heightfields. Each field has its own unique noise functions, which rely on each other, in order to make sure the three do not interfere with one another.
-
 
 Meshes
 ----------------------------------------------------------
@@ -101,6 +96,58 @@ The following is a description of our design.
 
 Flowchart
 -------------------------------------------------------------------------------------
+
+APP::makePlanetGUI()
+       Get Constants Button
+                App::unpackagePlanetSpecs()
+       Save Constants Button
+                App::packagePlanetSpecs
+       Generate Button
+                SolarSystem::containsPlanet()
+                App::packagePlanetSpecs()
+                Planet::generatePlanet()
+                    Planet::writeSphere()
+                        Planet::makeIcohedron()
+                        Planet::subdivideIcohedron()
+                    Mesh::collapseEdges()
+                        Mesh::computeAdjacency()
+                        Mesh::computeFaceNormals
+                        Mesh::isCollapsable()
+                            Mesh::isManifoldPreserved()
+                            Mesh::normalsFlipped()
+                                Mesh::computeCurNormal()
+                                Mesh::computeNewNormal()
+                                Mesh::isSignOpposite()
+                        Mesh::isMoreCollapsable()
+                             Mesh::cosAnge()
+                             Mesh::squaredEdgeLength()
+                        Mesh::collapseOneEdge()
+                            Mesh::remapIndices()
+                            Mesh::removeDegenerateFaces()
+                                Mesh::isDegenerate()
+                    Mesh::bevelEdges()
+                        Mesh::computeAdjacency()
+                        Mesh::computeNormals()
+                    Mesh::toObj()
+                        Mesh::computeAdjacency()
+                        Mesh::computeNormals()
+                    NoiseGen::generateLandImage()
+                    NoiseGen::generateWaterImage()
+                    NoiseGen::generateMountainImage()
+                    NoiseGen::landMapImage()
+                    Planet::findTreePositions()
+                SolarSystem::addPlanet()
+                    Planet::getPlanetOrbit()
+                    SolarSystem::addPlanetToScene()
+                        Planet::createWaterAnyFile()
+                        Planet::createLandAnyFile()
+                        Planet::createMountainAnyFile()
+                        Planet::addCloudToPlanet()
+                        Planet::getTreePositions()
+                        SolarSystem::MakeSceneTable()
+                SolarSystem::printSolarSystemToScene()
+                
+
 GAPP::makePlanetGUI() -> Generate Button -> Planet::writeSphere() -> Planet::makeIcohedron() -> Planet::subDivideIcohedron() -> GAPP::makePlanetGUI() 
 -> Planet::generateNoise() -> GAPP::makePlanetGUI() -> GAPP::addPlanetToScene()
 
@@ -208,6 +255,7 @@ Change Log
 5. Created a noise class to create images with noise. Jose 11/16/16
 6. Added GUI to APP. Julia 11/17/16
 7. Moved noise class functions to planet class. Not using NoiseGen anymore. John 11/18/16
+8. Added solar system class to control Scene file. Jose 12/4
 
 Acknowledgements and Bibliography
 ============================================
