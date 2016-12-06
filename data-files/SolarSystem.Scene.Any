@@ -29,142 +29,142 @@
         cloud0 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(38 ), 
+                Matrix4::rollDegrees(76 ), 
                 transform(
-                    orbit(55, 2 ), 
+                    orbit(17.9298, 5 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("lava") ) ) ); 
             
         }; 
         
         cloud1 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-3 ), 
+                Matrix4::rollDegrees(-7 ), 
                 transform(
-                    orbit(48, 7 ), 
+                    orbit(24.556, 5 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("lava") ) ) ); 
             
         }; 
         
         cloud2 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-72 ), 
+                Matrix4::rollDegrees(-12 ), 
                 transform(
-                    orbit(57, 5 ), 
+                    orbit(23.3867, 2 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("lava") ) ) ); 
             
         }; 
         
         cloud3 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(69 ), 
+                Matrix4::rollDegrees(64 ), 
                 transform(
-                    orbit(67, 3 ), 
+                    orbit(27.2845, 11 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("lava") ) ) ); 
             
         }; 
         
         cloud4 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-77 ), 
+                Matrix4::rollDegrees(-14 ), 
                 transform(
-                    orbit(57, 2 ), 
+                    orbit(23.3867, 2 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("lava") ) ) ); 
             
         }; 
         
         cloud5 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(48 ), 
+                Matrix4::rollDegrees(-4 ), 
                 transform(
-                    orbit(49, 2 ), 
+                    orbit(26.1151, 5 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("lava") ) ) ); 
             
         }; 
         
         cloud6 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(30 ), 
+                Matrix4::rollDegrees(-79 ), 
                 transform(
-                    orbit(67, 5 ), 
+                    orbit(21.048, 11 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("lava") ) ) ); 
             
         }; 
         
         cloud7 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-89 ), 
+                Matrix4::rollDegrees(61 ), 
                 transform(
-                    orbit(53, 11 ), 
+                    orbit(27.2845, 2 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("lava") ) ) ); 
             
         }; 
         
         cloud8 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(-78 ), 
+                Matrix4::rollDegrees(40 ), 
                 transform(
-                    orbit(67, 7 ), 
+                    orbit(24.9458, 5 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("lava") ) ) ); 
             
         }; 
         
         cloud9 = VisibleEntity { 
             model = "cloud1"; 
             track = transform(
-                Matrix4::rollDegrees(39 ), 
+                Matrix4::rollDegrees(-56 ), 
                 transform(
-                    orbit(42, 5 ), 
+                    orbit(17.54, 3 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("planet") ) ) ); 
+                        entity("lava") ) ) ); 
             
         }; 
         
-        planet = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, -100, 4.59121e-41 ); 
-            model = "planet"; 
+        lava = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, -1.82525e-21, 4.59135e-41 ); 
+            model = "lava"; 
             track = combine(
                 orbit(0, 10 ), 
-                Point3(0, -100, 4.59121e-41 ) ); 
+                Point3(0, -1.82525e-21, 4.59135e-41 ) ); 
             
         }; 
         
-        planetland = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, -100, 4.59121e-41 ); 
-            model = "planetland"; 
-            track = entity("planet"); 
+        lavaland = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, -1.82525e-21, 4.59135e-41 ); 
+            model = "lavaland"; 
+            track = entity("lava"); 
         }; 
         
-        planetmountain = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, -100, 4.59121e-41 ); 
-            model = "planetmountain"; 
-            track = entity("planet"); 
+        lavamountain = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, -1.82525e-21, 4.59135e-41 ); 
+            model = "lavamountain"; 
+            track = entity("lava"); 
         }; 
         
         skybox = Skybox { 
@@ -184,6 +184,15 @@
                 Point3(0, 0, 0 ) ); 
             
             type = "SPOT"; 
+        }; 
+        
+        tree0 = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(-22.0854, -6.72379, -8.80321 ); 
+            model = "tree"; 
+            track = transform(
+                entity("lavamountain"), 
+                Point3(-22.5323, -6.85985, -8.98136 ) ); 
+            
         }; 
         
     }; 
@@ -234,40 +243,52 @@
                         
                     } ) }; 
             
-            scale = 0.1; 
+            scale = 0.0389778; 
         }; 
         
-        planet = ArticulatedModel::Specification { 
-            filename = "planetwater.obj"; 
+        lava = ArticulatedModel::Specification { 
+            filename = "lavawater.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.236111, 0.236111, 0.236111, 0.347222 ); 
-                        lambertian = Color3(0, 0, 0.833333 ); 
+                        glossy = Color4(0.111111, 0.111111, 0.111111, 0.125 ); 
+                        lambertian = Texture::Specification { 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color3(1, 1, 1 ); 
+                            }; 
+                            
+                            filename = "flame.jpg"; 
+                        }; 
+                        
                     } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.389778, 0.389778, 0.389778 ) ) }; 
             
         }; 
         
-        planetland = ArticulatedModel::Specification { 
-            filename = "planetland.obj"; 
+        lavaland = ArticulatedModel::Specification { 
+            filename = "lavaland.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.152778, 0.152778, 0.152778, 0.138889 ); 
-                        lambertian = Color3(0.208333, 0.791667, 0 ); 
+                        glossy = Color4(0, 0, 0, 0 ); 
+                        lambertian = Color3(1, 7.34261e-33, 3.67981e-41 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.389778, 0.389778, 0.389778 ) ) }; 
             
         }; 
         
-        planetmountain = ArticulatedModel::Specification { 
-            filename = "planetmountain.obj"; 
+        lavamountain = ArticulatedModel::Specification { 
+            filename = ".obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.236111, 0.236111, 0.236111, 0.319444 ); 
-                        lambertian = Color3(0.413793, 0.165517, 0 ); 
+                        glossy = Color4(0, 0, 0, 4.59135e-41 ); 
+                        lambertian = Color3(1.4013e-45, 0, 1 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.389778, 0.389778, 0.389778 ) ) }; 
             
+        }; 
+        
+        tree = ArticulatedModel::Specification { 
+            filename = "model/lowpolytree.obj"; 
+            scale = 0.194889; 
         }; 
         
     }; 
