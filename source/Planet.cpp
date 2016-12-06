@@ -279,7 +279,7 @@ void Planet::addCloudToPlanet(Any& cloudEntity, const String& name, const String
         "Matrix4::rollDegrees(" + (String)std::to_string(Random::threadCommon().integer(-89, 89)) + "), " +
         "transform("
         "orbit(" +
-        (String)std::to_string(Random::threadCommon().integer(10, 20)) + ", " + (String)std::to_string(t[Random::threadCommon().integer(0, 4)]) +
+        (String)std::to_string(Random::threadCommon().integer(40, 70)*getScale()) + ", " + (String)std::to_string(t[Random::threadCommon().integer(0, 4)]) +
         "), " +
         "combine(" +
         "Matrix4::pitchDegrees(90), entity(" + planetName + ")" +
