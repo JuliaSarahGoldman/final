@@ -185,6 +185,7 @@ bool Planet::generatePlanet() {
         landMapImage->save("landMapImageTest.png");
 
         findTreePositions(landMapImage, vertices, m_treePositions, m_treeNormals);
+        landMapImage->save("landMapImageTest2.png");
 
         if (m_useMTexture){
             shared_ptr<Image> image = Image::fromFile(m_mountainTextureFile);
@@ -300,12 +301,12 @@ void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals)
     normals = m_treeNormals;
 }
 
-void Planet::findTreePositions(const shared_ptr<Image> landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals) {
+void Planet::findTreePositions(shared_ptr<Image> landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals) {
     int numTrees = m_numberOfTrees;
     Set<Vector3> treePoints = Set<Vector3>();
     Array<Vector3> possiblePositions;
 
-    for(int i(0); i < vertices.length(); ++i) {
+    for(int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
         Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
 
@@ -317,10 +318,14 @@ void Planet::findTreePositions(const shared_ptr<Image> landMap, const Array<Vect
 
         Color3 color;
         landMap->get(Point2int32(ix, iy), color);
-        if(color.average() == 0.0f) {
+        //debugPrintf("%f %f\n", color.average(), color.r);
+        if(color.average() != 1.0f) {
+            //landMap->set(ix, iy, Color3(1.0f,0.0f,0.0f));
             possiblePositions.append(vertex);
         }
     }
+
+    debugPrintf("%d %d\n", vertices.size(), possiblePositions.size());
 
     while(numTrees > 0) {
         Vector3 vertex = possiblePositions[Random::threadCommon().integer(0, possiblePositions.length())];
@@ -381,9 +386,6 @@ void Planet::applyNoiseWater(Array<Vector3>& vertices, shared_ptr<Image> image) 
         image->get(Point2int32(ix, iy), color);
 
         float bump = 1.0f - color.average();
-        /*if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
-        else if (bump < 0.3f) bump = 0.1f;
-        else bump = 1.0f;*/
 
         if (bump < 0.4f) {
             bump = -0.2f;
@@ -422,18 +424,11 @@ void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, s
         noise->get(Point2int32(ix, iy), color);
 
         float bump = 1.0f - color.average();
-        /*if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
-        else if (bump < 0.3f) bump = 0.1f;
-        else bump = 1.0f;*/
 
         if (bump < oceanLevel) {
             bump = 0.0f;
             test->set(Point2int32(ix, iy), Color1(1.0f));
-            /*} else if(bump < 0.7f) {
-                bump *= 2.857f;
-                test->set(Point2int32(ix, iy), Color1(0.0f));*/
-        }
-        else {
+        } else {
             bump *= 4.0f;
             test->set(Point2int32(ix, iy), Color1(0.0f));
         }
@@ -461,20 +456,12 @@ void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> nois
         noise->get(Point2int32(ix, iy), color);
 
         float bump = 1.0f - color.average();
-        /*if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
-        else if (bump < 0.3f) bump = 0.1f;
-        else bump = 1.0f;*/
 
-        /*e =    1 * noise(1 * nx, 1 * ny);
-                +  0.5 * noise(2 * nx, 2 * ny);
-                 + 0.25 * noise(4 * nx, 4 * ny);
-                elevation[y][x] = Math.pow(e, 3.00);*/
         test->get(Point2int32(ix, iy), color);
 
         if (!waterMount && (bump > 0.75f || color.average() != 0.0f)) {
             bump = 0.0f;
         }
-        //else bump *= 1.25f;
 
         vertices[i] += vertex.unit() * pow(bump, power) * multiplier;
     }

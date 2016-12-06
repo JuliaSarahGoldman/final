@@ -124,7 +124,10 @@
 
         gradient = VisibleEntity {
             model = "boardModel";
-            frame = CFrame::fromXYZYPRDegrees(0, 0, -20, 0, 0, 0);
+            frame = CFrame::fromXYZYPRDegrees(0, 0, -50, 0, 0, 0);
+            castsShadows = false;
+            //receiveShadows = false;
+            canChange = false;
         };
         
         sun = Light { 
@@ -225,7 +228,7 @@
         }; 
         
         rand = ArticulatedModel::Specification { 
-            filename = "rand.obj"; 
+            filename = "planetwater.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
                         glossy = Color4(7.78067e-22, 7.78067e-22, 7.78067e-22, 5.57296e-42 ); 
@@ -236,7 +239,7 @@
         }; 
         
         randland = ArticulatedModel::Specification { 
-            filename = "randland.obj"; 
+            filename = "planetland.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
                         glossy = Color4(7.78067e-22, 7.78067e-22, 7.78067e-22, 5.57296e-42 ); 
@@ -247,7 +250,7 @@
         }; 
         
         randmountain = ArticulatedModel::Specification { 
-            filename = "randmountain.obj"; 
+            filename = "planetmountain.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
                         glossy = Color4(7.78067e-22, 7.78067e-22, 7.78067e-22, 5.57296e-42 ); 
@@ -259,26 +262,18 @@
 
          boardModel = ArticulatedModel::Specification {
             filename = "ifs/square.ifs";
-            scale = 2;
+            scale = 200;
             preprocess = {
                 setMaterial(all(), 
                     UniversalMaterial::Specification {
-                        /*lambertian = Texture::Specification{ 
+                        emissive = Texture::Specification{ 
                             filename = "gradient.jpg"; 
                             encoding = Texture::Encoding { 
-                                readMultiplyFirst = Color4(Color3(1.0f), 1.0f);  
+                                readMultiplyFirst = Color4(Color3(0.5f), 1.0f);  
                             };
                         };
-                        emissive = Color4(Color3(1.0f), 0.0f);*/
-                        transmissive = Texture::Specification{ 
-                            filename = "gradient.jpg"; 
-                            encoding = Texture::Encoding { 
-                                readMultiplyFirst = Color4(Color3(1.0f), 1.0f);  
-                            };
-                        };
-                        lambertian = Color4(Color3(1.0f), 0.0f);
+                        lambertian = Color4(Color3(0.0f), 1.0f);
                     });
-                transformGeometry(all(), Matrix4::scale(40,40,0));
             };
         };
     }; 

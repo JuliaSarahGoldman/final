@@ -71,6 +71,7 @@ void App::onInit() {
     showRenderingStats = false;
 
     makeGUI();
+    m_gbufferSpecification.encoding[GBuffer::Field::EMISSIVE].format = ImageFormat::RGB16F();
 
     // For higher-quality screenshots:
     // developerWindow->videoRecordDialog->setScreenShotFormat("PNG");

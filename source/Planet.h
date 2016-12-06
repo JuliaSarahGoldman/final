@@ -87,7 +87,7 @@ public:
     void createLandAnyFile(Any& landModel, Any& landEntity, const String& waterEntity);
     void createMountainAnyFile(Any& mountainModel, Any& mountainEntity, const String& waterEntity);
     void addCloudToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float scale);
-    void findTreePositions(const shared_ptr<Image> landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
+    void findTreePositions(shared_ptr<Image> landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
     void getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals);
     Point3 getPosition();
     float getScale();
