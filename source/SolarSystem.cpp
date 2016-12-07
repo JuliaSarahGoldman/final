@@ -83,14 +83,6 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
     //treeModel["preprocess"] = Any::parse(preprocess);
     models["tree"] = treeModel;
 
-    /*preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ emissive = Texture::Specification{ filename = \"gradient.png\"; encoding = Texture::Encoding { readMultiplyFirst = Color4(Color3(0.5f), 1.0f);  }; }; ";
-    Any boardModel(Any::TABLE, "ArticulatedModel::Specification");
-    treeModel["filename"] = "ifs/square.ifs";
-    treeModel["scale"] = 200;
-    treeModel["preprocess"] = Any::parse(preprocess);
-    treeModel["lambertian"] = Color4(Color3(0.0f), 1.0f);
-    models["boardModel"] = boardModel;*/
-
     Array<Vector3> treePositions;
     Array<Vector3> treeNormals;
     planet.getTreePositions(treePositions, treeNormals);
@@ -155,7 +147,8 @@ void SolarSystem::initializeEntityTable(Any& entities) {
     entities["sun"] = light;
 
     Any camera(Any::TABLE, "Camera");
-    camera["frame"] = CFrame::fromXYZYPRDegrees(0.90151, 1.8599, 125.627, -0.39264, -1.1459, 0);
+    camera["frame"] = CFrame::fromXYZYPRDegrees(0.90151, 1.8599, 63.627, -0.39264, -1.1459, 0);
+    //camera["frame"] = CFrame::fromXYZYPRDegrees(0.90151, 1.8599, 125.627, -0.39264, -1.1459, 0);
     camera["projection"] = Any::parse("Projection { farPlaneZ = -inf; fovDegrees = 50; fovDirection = \"VERTICAL\"; nearPlaneZ = -0.1; }");
 
     String filmSettings = (String) "FilmSettings{" +
@@ -169,11 +162,12 @@ void SolarSystem::initializeEntityTable(Any& entities) {
     skybox["texture"] = "cubemap/hipshot_m9_sky/16_*.png";
     entities["skybox"] = skybox;
 
-    /*Any gradient(Any::TABLE, "boardModel");
+    Any gradient(Any::TABLE, "VisibleEntity");
+    gradient["model"] = "boardModel";
     gradient["frame"] = CFrame::fromXYZYPRDegrees(0, 0, -50, 0, 0, 0);
     gradient["castsShadows"] = false;
     gradient["canChange"] = false;
-    entities["gradient"] = gradient;*/
+    entities["gradient"] = gradient;
 }
 
 void SolarSystem::initializeModelsTable(Any& models) {
@@ -204,6 +198,13 @@ void SolarSystem::initializeModelsTable(Any& models) {
     cloud2["shape"] = cloudShape2;
     cloud3["shape"] = cloudShape3;
     */
+
+    String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ emissive = Texture::Specification{ filename = \"background.png\"; encoding = Texture::Encoding { readMultiplyFirst = Color4(Color3(0.5f), 1.0f);  }; }; lambertian = Color4(Color3(0.0f), 1.0f); }); }";
+    Any boardModel(Any::TABLE, "ArticulatedModel::Specification");
+    boardModel["filename"] = "ifs/square.ifs";
+    boardModel["scale"] = 200;
+    boardModel["preprocess"] = Any::parse(preprocess);
+    models["boardModel"] = boardModel;
 }
 
 bool SolarSystem::containsPlanet(const String& name){
