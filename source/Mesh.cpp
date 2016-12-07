@@ -1,5 +1,6 @@
 /** \file Mesh.cpp */
 #include "Mesh.h"
+#include "Planet.h"
 
 Mesh::Mesh(const Array<Vector3>& vertexPositions, const Array<Vector3int32>& triArray) {
     MeshBuilder builder;
@@ -503,16 +504,10 @@ void Mesh::toObj(String filename, int width, int height) {
 
     for (int i = 0; i < m_vertexPositions.size(); ++i) {
         const Vector3& vertex(m_vertexPositions[i]);
-
-        const Vector3& d((vertex - Vector3(0, 0, 0)).unit());
-
-        const float nx(width * (0.5f + atanf(d.z / d.x) / (2.0f*pif())));
-        const float ny(height * (0.5f - asinf(d.y) * 1 / pif()));
-
-        const int ix((int)abs((int)nx % width));
-        const int iy((int)abs((int)ny % height));
-        Vector2 tex((ix*1.0) / width, (iy*1.0) / height);
-        file.printf(STR(vt %f %f\n), tex.x, tex.y);
+        
+        Point2int32 map;
+        Planet::getMapping(vertex, width, height, map);
+        file.printf(STR(vt %f %f\n), (map.x*1.0)/width, (map.y*1.0)/height);
      }
 
     for (int i = 0; i < m_vertexNormals.size(); ++i) {
@@ -582,14 +577,10 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width
 
         const Vector3& vertex(m_vertexPositions[i]);
 
-        const Vector3& d((vertex - Vector3(0, 0, 0)).unit());
 
-        const float nx(width * (0.5f + atanf(d.z / d.x) / (2.0f*pif())));
-        const float ny(height * (0.5f - asinf(d.y) * 1 / pif()));
-
-        const int ix((int)abs((int)nx % width));
-        const int iy((int)abs((int)ny % height));
-        v.texCoord0 = Vector2((ix*1.0) / width, (iy*1.0) / height);
+        Point2int32 map;
+        Planet::getMapping(vertex, width, height, map);
+        v.texCoord0 = Vector2((map.x*1.0) / width, (map.y*1.0) / height);
 
 
     }
