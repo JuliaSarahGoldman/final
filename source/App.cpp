@@ -273,7 +273,7 @@ void App::makePlanetGUI() {
     planPane->addNumberBox("Orbit Distance", &m_orbitDistance, "",
         GuiTheme::LOG_SLIDER, 10.0f, 100.0f)->setUnitsSize(0.01f);
 
-    planPane->addCheckBox("Orbit Planet:", &m_hasClouds);
+    planPane->addCheckBox("Has Clouds:", &m_hasClouds);
 
     GuiPane* plan2Pane = planetTab->addTab("Noise Options");
 
