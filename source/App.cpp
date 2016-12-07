@@ -1,5 +1,6 @@
 /** \file App.cpp */
 #include "App.h"
+#include "PathTracer.h"
 #include "NoiseGen.h"
 #include "Planet.h"
 #include "Mesh.h"
@@ -441,6 +442,54 @@ void App::makePlanetGUI() {
             Any planetSpecs(Any::TABLE, "Planet");
             packagePlanetSpecs(planetSpecs);
             planetSpecs.save(m_planetSave);
+        }
+    });
+
+    GuiPane* pathTracePane = planetTab->addTab("Path Trace");
+ 
+    pathTracePane->setNewChildSize(240);
+    GuiText temp("1x1");
+    Array<GuiText> resolutionMenu(temp);
+    temp = "320x200";
+    resolutionMenu.append(temp);
+    temp = "640x400";
+    resolutionMenu.append(temp);
+    temp = "1280x720";
+    resolutionMenu.append(temp);
+    GuiDropDownList* list(pathTracePane->addDropDownList("Resolution", resolutionMenu));
+
+    pathTracePane->addNumberBox("Scatter Events", &m_maxScatter, "", GuiTheme::LOG_SLIDER, 1, 2048) -> setUnitsSize(200);
+    pathTracePane->addNumberBox("Paths", &m_pathsPPx, " /pixels", GuiTheme::LOG_SLIDER, 1, 2048) -> setUnitsSize(200);
+ 
+    pathTracePane->addButton("Render", [this, list, pathTracePane](){
+        drawMessage("Path Tracer is loading");
+        shared_ptr<G3D::Image> image;
+        try{
+            const int width = int(window()->width()  * 0.5f);
+            const int height = int(window()->height() * 0.5f);
+
+            if(!list->selectedIndex()) image = Image::create(1, 1, ImageFormat::RGB32F());
+            else if (list->selectedIndex() == 1) image = Image::create(320,200, ImageFormat::RGB32F());
+            else if (list->selectedIndex() == 2) image = Image::create(640,420, ImageFormat::RGB32F());
+            else image = Image::create(1280,720, ImageFormat::RGB32F());
+            PathTracer tracer = PathTracer(scene(), m_maxScatter, m_pathsPPx);
+            Stopwatch watch("watch");
+            watch.tick();
+            tracer.pathTrace(scene(), activeCamera(), image);
+            watch.tock();
+            const shared_ptr<Texture>& src = Texture::fromImage("Source", image);
+            if (m_result) {
+                m_result->resize(width, height);
+            }
+
+            m_film->exposeAndRender(renderDevice, activeCamera()->filmSettings(), src, settings().hdrFramebuffer.colorGuardBandThickness.x, settings().hdrFramebuffer.depthGuardBandThickness.x, m_result);
+            debugPrintf(String(std::to_string(watch.smoothElapsedTime()) + " seconds").c_str());
+            show(m_result, String(std::to_string(watch.smoothElapsedTime()) + " seconds + Numcores = " + std::to_string(G3D::System::numCores())));
+            show(image, "image");
+            ArticulatedModel::clearCache();
+            
+        }catch(...){
+            msgBox("Unable to load the image.");
         }
     });
 

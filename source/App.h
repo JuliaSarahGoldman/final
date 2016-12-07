@@ -16,6 +16,11 @@ protected:
     SolarSystem m_solarSystem;
     shared_ptr<Mesh> m_myMesh;
 
+    //Path Trace variables
+    int m_maxScatter;
+    int m_pathsPPx;
+    shared_ptr<Texture> m_result;
+
     //variable sof edge collapsing   
     int m_edgesToCollapse;
     int m_landEdgesToCollapse;
