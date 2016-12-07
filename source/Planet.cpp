@@ -141,8 +141,7 @@ bool Planet::generatePlanet() {
 
         writeSphere(m_planetName + "land", 12.0f, m_recursionLevel, vertices, faces);
 
-        Point2int32 range;
-        applyNoiseLand(vertices, landNoiseImage, testImage, m_oceanLevel, range);
+        applyNoiseLand(vertices, landNoiseImage, testImage, m_oceanLevel);
         testImage->save(m_planetName + "landTest.png");
 
         Mesh mesh2(vertices, faces);
@@ -188,7 +187,7 @@ bool Planet::generatePlanet() {
         mesh3.bevelEdges2(m_mountainBevel);
         m_mountainObjFile = m_planetName + "mountain";
 
-        noise.landMapImage(landNoiseImage, mountNoiseImage, landMapImage, range, m_oceanLevel, m_mountianDiversity, m_mountainHeight);
+        noise.landMapImage(landNoiseImage, mountNoiseImage, landMapImage, m_oceanLevel, m_mountianDiversity, m_mountainHeight);
         landMapImage->save("landMapImageTest.png");
 
         findTreePositions(landMapImage, vertices, m_treePositions, m_treeNormals);
@@ -330,25 +329,33 @@ void Planet::addTreesToPlanet(const String& modelName, Array<Point2>& positions,
     }
 }*/
 
+void Planet::getMapping(const Vector3& vertex, int width, int height, Point2int32& map) {
+    Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
+
+    float nx = width * (0.5f + atan2(d.z, d.x) / (2.0f*pif()));
+    float ny = height * (0.5f - asinf(d.y) * 1 / pif());
+
+    map.x = ((int)nx) % width;
+    map.y = ((int)ny) % height;
+}
+
 void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals){
     vertices = m_treePositions;
     normals = m_treeNormals;
 }
 
-void Planet::findTreePositions(shared_ptr<Image> landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals) {
+void Planet::findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals) {
     int numTrees = m_numberOfTrees;
-    Set<Vector3> treePoints = Set<Vector3>();
+    Set<Vector3> treePoints;
     Array<Vector3> possiblePositions;
 
     for(int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
-        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
-
-        float nx = landMap->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
-        float ny = landMap->height() * (0.5f - asinf(d.y) * 1 / pif());
-
-        int ix = (int)abs((int)nx % landMap->width());
-        int iy = (int)abs((int)ny % landMap->height());
+        
+        Point2int32 map;
+        getMapping(vertex, landMap->width(), landMap->height(), map);
+        int ix = map.x;
+        int iy = map.y;
 
         Color3 color;
         landMap->get(Point2int32(ix, iy), color);
@@ -407,15 +414,12 @@ void Planet::applyNoiseWater(Array<Vector3>& vertices, shared_ptr<Image> image) 
     for (int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
 
-        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
+        Point2int32 map;
+        getMapping(vertex, image->width(), image->height(), map);
+        int ix = map.x;
+        int iy = map.y;
 
-        float nx = image->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
-        float ny = image->height() * (0.5f - asinf(d.y) * 1 / pif());
-
-        int ix = (int)abs((int)nx % image->width());
-        int iy = (int)abs((int)ny % image->height());
-
-        Color3 color = Color3();
+        Color3 color;
 
         image->get(Point2int32(ix, iy), color);
 
@@ -435,25 +439,16 @@ void Planet::applyNoiseWater(Array<Vector3>& vertices, shared_ptr<Image> image) 
     }
 }
 
-void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float oceanLevel, Point2int32& range) {
-    int minX = 0x7FFFFFFF;
-    int maxX = -1;
-
+void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float oceanLevel) {
     for (int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
 
-        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
+        Point2int32 map;
+        getMapping(vertex, noise->width(), noise->height(), map);
+        int ix = map.x;
+        int iy = map.y;
 
-        float nx = noise->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
-        float ny = noise->height() * (0.5f - asinf(d.y) * 1 / pif());
-
-        int ix = (int)abs((int)nx % noise->width());
-        int iy = (int)abs((int)ny % noise->height());
-
-        if(ix != 0 && ix < minX) { minX = ix; }
-        if(ix > maxX) { maxX = ix; }
-
-        Color3 color = Color3();
+        Color3 color;
 
         noise->get(Point2int32(ix, iy), color);
 
@@ -469,23 +464,18 @@ void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, s
 
         vertices[i] += vertex.unit() * bump;
     }
-
-    range = Point2int32(minX, maxX);
 }
 
 void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, bool waterMount, float power, float multiplier) {
     for (int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
 
-        Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
+        Point2int32 map;
+        getMapping(vertex, noise->width(), noise->height(), map);
+        int ix = map.x;
+        int iy = map.y;
 
-        float nx = noise->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
-        float ny = noise->height() * (0.5f - asinf(d.y) * 1 / pif());
-
-        int ix = (int)abs((int)nx % noise->width());
-        int iy = (int)abs((int)ny % noise->height());
-
-        Color3 color = Color3();
+        Color3 color;
 
         noise->get(Point2int32(ix, iy), color);
 

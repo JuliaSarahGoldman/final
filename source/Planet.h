@@ -79,17 +79,19 @@ protected:
     bool readSpec(const Any& planetSpec);
 
 public:
+    static void getMapping(const Vector3& vertex, int width, int height, Point2int32& map);
+
     //Writes a sphere to a given off file
     bool generatePlanet();
     void writeSphere(String filename, float radius, int depths, Array<Vector3>& vertices, Array<Vector3int32>& faces);
     void applyNoiseWater(Array<Vector3>& vertices, shared_ptr<Image> noise);
-    void applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float oceanLevel, Point2int32& range);
+    void applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, float oceanLevel);
     void applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> noise, shared_ptr<Image> test, bool waterMount, float power, float multiplier);
     void createWaterAnyFile(Any& waterModel, Any& waterEntity);
     void createLandAnyFile(Any& landModel, Any& landEntity, const String& waterEntity);
     void createMountainAnyFile(Any& mountainModel, Any& mountainEntity, const String& waterEntity);
     void addCloudToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float scale);
-    void findTreePositions(shared_ptr<Image> landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
+    void findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
     void getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals);
     Point3 getPosition();
     float getScale();

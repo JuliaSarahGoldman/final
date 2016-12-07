@@ -291,12 +291,12 @@
 
          boardModel = ArticulatedModel::Specification {
             filename = "ifs/square.ifs";
-            scale = 200;
+            scale = 170;
             preprocess = {
                 setMaterial(all(), 
                     UniversalMaterial::Specification {
                         emissive = Texture::Specification{ 
-                            filename = "gradient.png"; 
+                            filename = "background.png"; 
                             encoding = Texture::Encoding { 
                                 readMultiplyFirst = Color4(Color3(0.5f), 1.0f);  
                             };

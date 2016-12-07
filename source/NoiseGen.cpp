@@ -44,7 +44,7 @@ void NoiseGen::colorMountainImage(shared_ptr<Image> noise, shared_ptr<Image> col
     }
 }
 
-void NoiseGen::landMapImage(shared_ptr<Image> land, shared_ptr<Image> mountain, shared_ptr<Image> landMap, Point2int32 range, float oceanLevel, float power, float multiplier){
+void NoiseGen::landMapImage(shared_ptr<Image> land, shared_ptr<Image> mountain, shared_ptr<Image> landMap, float oceanLevel, float power, float multiplier){
     for(int x(0); x < land->width(); ++x){
         for(int y(0); y < land->height(); ++y) {
             Color1unorm8 color;
