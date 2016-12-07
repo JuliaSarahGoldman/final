@@ -58,17 +58,22 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
     models[levelName] = mountainModelDescription;
 
     String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
-    Any cloudModel(Any::TABLE, "ArticulatedModel::Specification");
-    cloudModel["scale"] = 0.1 * planet.getScale();
-    cloudModel["filename"] = "model/cloud/cloud.zip/altostratus00.obj";
-    cloudModel["preprocess"] = Any::parse(preprocess);
+    Any cloudModel(Any::TABLE, "ParticleSystemModel::Emitter::Specification");
+    cloudModel["angularVelocityMean"] = 0.5;
+    cloudModel["angularVelocityVariance"] = 0.3;
+    cloudModel["initialDensity"] = 80;
+    cloudModel["material"] = "material/smoke/smoke.png";
+    cloudModel["noisePower"] = 0;
+    cloudModel["radiusMean"] = 1.1;
+    cloudModel["radiusVariance"] = 0.2;
+    cloudModel["shape"] = Any::parse("ArticulatedModel::Specification{filename = \"model/cloud/cloud.zip/cumulus00.obj\"; scale = " + (String) std::to_string(0.05f * planet.getScale()) + ";}; }");
 
-    models["cloud1"] = cloudModel;
+    models[name + "cloud1"] = cloudModel;
 
     for (int i(0); i < 10; ++i) {
-        Any cloudEntityDescription(Any::TABLE, "VisibleEntity");
-        planet.addCloudToPlanet(cloudEntityDescription, "cloud1", name, planet.getPosition(), planet.getScale());
-        entities["cloud" + (String) std::to_string(i)] = cloudEntityDescription;
+        Any cloudEntityDescription(Any::TABLE, "ParticleSystem");
+        planet.addCloudToPlanet(cloudEntityDescription, name + "cloud1", levelName, planet.getPosition(), planet.getScale());
+        entities[name + "cloud" + (String) std::to_string(i)] = cloudEntityDescription;
     }
 
     //preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
@@ -138,14 +143,15 @@ void SolarSystem::initializeEntityTable(Any& entities) {
     //Create the light source
     Any light(Any::TABLE, "Light");
     light["attenuation"] = Vector3(0, 0, 1);
-    light["bulbPower"] = Power3(1e+006);
+    light["bulbPower"] = Color3(1e+06, 1e+06, 0 );
     light["castsShadows"] = true;
     light["shadowMapBias"] = 0.05f;
-    light["track"] = Any::parse("lookAt(Point3(-15, 200, 40), Point3(0, 0, 0));");
+    light["track"] = Any::parse("lookAt(Point3(0, 20, -350), Point3(0, 0, 0));");
     light["shadowMapSize"] = Vector2int16(2048, 2048);
     light["spotHalfAngleDegrees"] = 8;
     light["spotSquare"] = true;
     light["type"] = "SPOT";
+    light["varianceShadowSettings"] = Any::parse("VSMSettings {enabled = true; filterRadius = 11; blurMultiplier = 5.0f; downsampleFactor = 1; }");
     entities["sun"] = light;
 
     Any camera(Any::TABLE, "Camera");
@@ -216,3 +222,9 @@ bool SolarSystem::printSolarSystemToScene(const String& save){
         return false;
     }
 }
+
+//String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
+//    Any cloudModel(Any::TABLE, "ArticulatedModel::Specification");
+//    cloudModel["scale"] = 0.1 * planet.getScale();
+//    cloudModel["filename"] = "model/cloud/cloud.zip/altostratus00.obj";
+//    cloudModel["preprocess"] = Any::parse(preprocess);

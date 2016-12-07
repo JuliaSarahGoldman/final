@@ -1,26 +1,5 @@
 { 
     entities = { 
-        Test = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(3.34963, -5.75458, 0 ); 
-            model = "Test"; 
-            track = combine(
-                orbit(0, 10 ), 
-                Point3(3.34963, -5.75458, 0 ) ); 
-            
-        }; 
-        
-        Testland = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(3.34963, -5.75458, 0 ); 
-            model = "Testland"; 
-            track = entity("Test"); 
-        }; 
-        
-        Testmountain = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(3.34963, -5.75458, 0 ); 
-            model = "Testmountain"; 
-            track = entity("Test"); 
-        }; 
-        
         camera = Camera { 
             filmSettings = FilmSettings { 
                 antialiasingEnabled = true; 
@@ -47,124 +26,159 @@
             
         }; 
         
-        cloud0 = VisibleEntity { 
-            model = "cloud1"; 
-            track = transform(
-                Matrix4::rollDegrees(36 ), 
-                transform(
-                    orbit(7.66018, 7 ), 
-                    combine(
-                        Matrix4::pitchDegrees(90 ), 
-                        entity("Test") ) ) ); 
+        planet = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, -100, 4.59093e-41 ); 
+            model = "planet"; 
+            track = combine(
+                orbit(0, 10 ), 
+                Point3(0, -100, 4.59093e-41 ) ); 
             
         }; 
         
-        cloud1 = VisibleEntity { 
-            model = "cloud1"; 
-            track = transform(
-                Matrix4::rollDegrees(84 ), 
-                transform(
-                    orbit(8.18846, 2 ), 
-                    combine(
-                        Matrix4::pitchDegrees(90 ), 
-                        entity("Test") ) ) ); 
+        planetcloud0 = ParticleSystem { 
+            canChange = true; 
+            model = "planetcloud1"; 
+            particlesAreInWorldSpace = false; 
+            track = transform(entity("planetmountain"), transform(Matrix4::rollDegrees(-46), transform(orbit(0.1,1), entity("planetmountain")))); 
             
         }; 
         
-        cloud2 = VisibleEntity { 
-            model = "cloud1"; 
+        planetcloud1 = ParticleSystem { 
+            canChange = true; 
+            model = "planetcloud1"; 
+            particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-68 ), 
+                Matrix4::rollDegrees(-46 ), 
                 transform(
-                    orbit(5.28288, 11 ), 
+                    orbit(2.92624, 7 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("Test") ) ) ); 
+                        entity("planetmountain") ) ) ); 
             
         }; 
         
-        cloud3 = VisibleEntity { 
-            model = "cloud1"; 
+        planetcloud2 = ParticleSystem { 
+            canChange = true; 
+            model = "planetcloud1"; 
+            particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-23 ), 
+                Matrix4::rollDegrees(-26 ), 
                 transform(
-                    orbit(5.54702, 5 ), 
+                    orbit(2.72348, 3 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("Test") ) ) ); 
+                        entity("planetmountain") ) ) ); 
             
         }; 
         
-        cloud4 = VisibleEntity { 
-            model = "cloud1"; 
+        planetcloud3 = ParticleSystem { 
+            canChange = true; 
+            model = "planetcloud1"; 
+            particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(79 ), 
+                Matrix4::rollDegrees(30 ), 
                 transform(
-                    orbit(5.81117, 2 ), 
+                    orbit(2.6221, 3 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("Test") ) ) ); 
+                        entity("planetmountain") ) ) ); 
             
         }; 
         
-        cloud5 = VisibleEntity { 
-            model = "cloud1"; 
+        planetcloud4 = ParticleSystem { 
+            canChange = true; 
+            model = "planetcloud1"; 
+            particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-68 ), 
+                Matrix4::rollDegrees(-27 ), 
                 transform(
-                    orbit(6.86774, 3 ), 
+                    orbit(2.77417, 2 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("Test") ) ) ); 
+                        entity("planetmountain") ) ) ); 
             
         }; 
         
-        cloud6 = VisibleEntity { 
-            model = "cloud1"; 
+        planetcloud5 = ParticleSystem { 
+            canChange = true; 
+            model = "planetcloud1"; 
+            particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-81 ), 
+                Matrix4::rollDegrees(55 ), 
                 transform(
-                    orbit(6.33946, 5 ), 
+                    orbit(2.87555, 5 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("Test") ) ) ); 
+                        entity("planetmountain") ) ) ); 
             
         }; 
         
-        cloud7 = VisibleEntity { 
-            model = "cloud1"; 
+        planetcloud6 = ParticleSystem { 
+            canChange = true; 
+            model = "planetcloud1"; 
+            particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-88 ), 
+                Matrix4::rollDegrees(52 ), 
                 transform(
-                    orbit(6.6036, 7 ), 
+                    orbit(2.87555, 7 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("Test") ) ) ); 
+                        entity("planetmountain") ) ) ); 
             
         }; 
         
-        cloud8 = VisibleEntity { 
-            model = "cloud1"; 
+        planetcloud7 = ParticleSystem { 
+            canChange = true; 
+            model = "planetcloud1"; 
+            particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-74 ), 
+                Matrix4::rollDegrees(-27 ), 
                 transform(
-                    orbit(8.05639, 5 ), 
+                    orbit(2.6221, 11 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("Test") ) ) ); 
+                        entity("planetmountain") ) ) ); 
             
         }; 
         
-        cloud9 = VisibleEntity { 
-            model = "cloud1"; 
+        planetcloud8 = ParticleSystem { 
+            canChange = true; 
+            model = "planetcloud1"; 
+            particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-53 ), 
+                Matrix4::rollDegrees(-41 ), 
                 transform(
-                    orbit(6.99982, 3 ), 
+                    orbit(2.87555, 3 ), 
                     combine(
                         Matrix4::pitchDegrees(90 ), 
-                        entity("Test") ) ) ); 
+                        entity("planetmountain") ) ) ); 
             
+        }; 
+        
+        planetcloud9 = ParticleSystem { 
+            canChange = true; 
+            model = "planetcloud1"; 
+            particlesAreInWorldSpace = false; 
+            track = transform(
+                Matrix4::rollDegrees(54 ), 
+                transform(
+                    orbit(2.72348, 5 ), 
+                    combine(
+                        Matrix4::pitchDegrees(90 ), 
+                        entity("planetmountain") ) ) ); 
+            
+        }; 
+        
+        planetland = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, -100, 4.59093e-41 ); 
+            model = "planetland"; 
+            track = entity("planet"); 
+        }; 
+        
+        planetmountain = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, -100, 4.59093e-41 ); 
+            model = "planetmountain"; 
+            track = entity("planet"); 
         }; 
         
         skybox = Skybox { 
@@ -173,916 +187,23 @@
         
         sun = Light { 
             attenuation = Vector3(0, 0, 1 ); 
-            bulbPower = Color3(1e+06, 1e+06, 1e+06 ); 
+            bulbPower = Color3(1e+06, 1e+06, 0 ); 
             castsShadows = true; 
             shadowMapBias = 0.05; 
             shadowMapSize = Vector2int16(2048, 2048 ); 
             spotHalfAngleDegrees = 8; 
             spotSquare = true; 
             track = lookAt(
-                Point3(-15, 200, 40 ), 
+                Point3(0, 20, -350 ), 
                 Point3(0, 0, 0 ) ); 
             
             type = "SPOT"; 
-        }; 
-        
-        tree0 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(12.3876, 10.4016, 19.6824 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(12.6307, 10.6058, 20.0687 ) ); 
-            
-        }; 
-        
-        tree1 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-14.3984, -2.31336, 19.8673 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-14.6905, -2.36029, 20.2704 ) ); 
-            
-        }; 
-        
-        tree10 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-10.8243, -7.68953, -20.632 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-11.0449, -7.84624, -21.0525 ) ); 
-            
-        }; 
-        
-        tree11 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-4.09934, -1.52027, 22.4027 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-4.18914, -1.55357, 22.8934 ) ); 
-            
-        }; 
-        
-        tree12 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-9.19193, 22.9278, 7.46742 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-9.37003, 23.372, 7.6121 ) ); 
-            
-        }; 
-        
-        tree13 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-16.2062, 0.515152, -19.467 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-16.526, 0.525319, -19.8512 ) ); 
-            
-        }; 
-        
-        tree14 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-16.0252, -8.32001, -17.7048 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-16.342, -8.48452, -18.0548 ) ); 
-            
-        }; 
-        
-        tree15 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-0.824655, 24.5024, 3.06992 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-0.841344, 24.9982, 3.13205 ) ); 
-            
-        }; 
-        
-        tree16 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-5.80184, 20.3079, 12.3313 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-5.92045, 20.723, 12.5834 ) ); 
-            
-        }; 
-        
-        tree17 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-3.31963, 24.3991, 3.77533 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-3.38626, 24.8888, 3.8511 ) ); 
-            
-        }; 
-        
-        tree18 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-19.1784, 12.3171, 1.21529 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-19.5985, 12.5869, 1.24191 ) ); 
-            
-        }; 
-        
-        tree19 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(7.46178, -19.0173, 13.9808 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(7.61249, -19.4014, 14.2631 ) ); 
-            
-        }; 
-        
-        tree2 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-1.83911, -16.1825, 15.9919 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-1.87939, -16.537, 16.3423 ) ); 
-            
-        }; 
-        
-        tree20 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-15.6358, -10.7307, -15.7155 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-15.9532, -10.9485, -16.0345 ) ); 
-            
-        }; 
-        
-        tree21 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(4.15313, 24.1763, 5.16613 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(4.23596, 24.6585, 5.26917 ) ); 
-            
-        }; 
-        
-        tree22 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-16.7371, 16.6598, -6.9389 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-17.0771, 16.9982, -7.07985 ) ); 
-            
-        }; 
-        
-        tree23 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-8.26923, 20.4662, 12.6254 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-8.43183, 20.8686, 12.8737 ) ); 
-            
-        }; 
-        
-        tree24 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-16.1222, -18.0999, 8.19276 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-16.4372, -18.4536, 8.35287 ) ); 
-            
-        }; 
-        
-        tree25 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(15.753, 6.90021, 18.1742 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(16.0678, 7.0381, 18.5374 ) ); 
-            
-        }; 
-        
-        tree26 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(15.327, 17.9094, -10.5396 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(15.6237, 18.2562, -10.7437 ) ); 
-            
-        }; 
-        
-        tree27 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-22.5225, -3.54418, -10.7933 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-22.9689, -3.61443, -11.0072 ) ); 
-            
-        }; 
-        
-        tree28 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-20.9181, -3.48788, -13.804 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-21.3314, -3.5568, -14.0768 ) ); 
-            
-        }; 
-        
-        tree29 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(22.4612, -1.4105, 3.80842 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(22.9532, -1.4414, 3.89185 ) ); 
-            
-        }; 
-        
-        tree3 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(4.09483, 22.7254, -9.43088 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(4.17691, 23.181, -9.61993 ) ); 
-            
-        }; 
-        
-        tree30 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(11.4147, -21.8606, -6.00655 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(11.6395, -22.2912, -6.12487 ) ); 
-            
-        }; 
-        
-        tree31 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(7.39194, -23.4247, -3.54267 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(7.54086, -23.8967, -3.61405 ) ); 
-            
-        }; 
-        
-        tree32 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(19.7025, 11.2773, -10.4468 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(20.0967, 11.503, -10.6558 ) ); 
-            
-        }; 
-        
-        tree33 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-23.2563, -7.64662, -6.70301 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-23.7144, -7.79725, -6.83505 ) ); 
-            
-        }; 
-        
-        tree34 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(15.1461, -7.20232, -15.4828 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(15.4779, -7.36009, -15.822 ) ); 
-            
-        }; 
-        
-        tree35 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(14.2895, 18.4474, -7.97817 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(14.5792, 18.8214, -8.13993 ) ); 
-            
-        }; 
-        
-        tree36 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-8.12949, -11.7586, -20.421 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-8.29256, -11.9945, -20.8306 ) ); 
-            
-        }; 
-        
-        tree37 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(5.96942, -11.3441, -21.7255 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(6.08775, -11.569, -22.1561 ) ); 
-            
-        }; 
-        
-        tree38 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-12.3279, 21.614, -1.49381 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-12.5751, 22.0475, -1.52377 ) ); 
-            
-        }; 
-        
-        tree39 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(15.7459, -16.5181, -0.464537 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(16.0908, -16.8799, -0.474713 ) ); 
-            
-        }; 
-        
-        tree4 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(15.8023, 10.6133, 12.5953 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(16.1485, 10.8458, 12.8712 ) ); 
-            
-        }; 
-        
-        tree40 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-18.3124, 9.25417, -13.3385 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-18.6866, 9.44324, -13.611 ) ); 
-            
-        }; 
-        
-        tree41 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(11.037, -19.2676, -11.8365 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(11.2563, -19.6504, -12.0717 ) ); 
-            
-        }; 
-        
-        tree42 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-21.405, 4.8853, 11.1953 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-21.8393, 4.98442, 11.4224 ) ); 
-            
-        }; 
-        
-        tree43 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(10.1305, 0, -22.9818 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(10.3322, 0, -23.4393 ) ); 
-            
-        }; 
-        
-        tree44 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-1.63995, -24.496, 0 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-1.67335, -24.9949, 0 ) ); 
-            
-        }; 
-        
-        tree45 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(13.7673, 19.4995, 6.79272 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(14.0446, 19.8923, 6.92957 ) ); 
-            
-        }; 
-        
-        tree46 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-5.15375, 0, -24.4689 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-5.2568, 0, -24.9582 ) ); 
-            
-        }; 
-        
-        tree47 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(24.3871, -5.34431, 1.66707 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(24.8744, -5.4511, 1.70038 ) ); 
-            
-        }; 
-        
-        tree48 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-17.4009, 1.39119, 14.7062 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-17.782, 1.42166, 15.0283 ) ); 
-            
-        }; 
-        
-        tree49 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(14.1344, -10.7488, -14.3415 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(14.444, -10.9843, -14.6556 ) ); 
-            
-        }; 
-        
-        tree5 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(22.7203, -2.05047, -0.761922 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(23.218, -2.09538, -0.778613 ) ); 
-            
-        }; 
-        
-        tree50 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(8.82296, 14.2758, 18.1549 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(9.00139, 14.5646, 18.5221 ) ); 
-            
-        }; 
-        
-        tree51 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-2.3042, -15.6663, 16.4394 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-2.35467, -16.0095, 16.7995 ) ); 
-            
-        }; 
-        
-        tree52 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(22.9664, -2.54906, 9.09589 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(23.4288, -2.60039, 9.27903 ) ); 
-            
-        }; 
-        
-        tree53 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(19.8268, -13.9844, 6.17997 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(20.2228, -14.2636, 6.30338 ) ); 
-            
-        }; 
-        
-        tree54 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-16.381, -17.8856, -5.82435 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-16.7093, -18.2441, -5.9411 ) ); 
-            
-        }; 
-        
-        tree55 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(21.7702, 9.95696, -6.48428 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(22.2091, 10.1577, -6.61501 ) ); 
-            
-        }; 
-        
-        tree56 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-1.65043, 24.6525, 0 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-1.68383, 25.1514, 0 ) ); 
-            
-        }; 
-        
-        tree57 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(23.9461, -1.01409, -6.61853 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(24.4276, -1.03448, -6.75162 ) ); 
-            
-        }; 
-        
-        tree58 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-15.8559, 5.98133, 17.9586 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-16.177, 6.10245, 18.3222 ) ); 
-            
-        }; 
-        
-        tree59 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(22.0784, 2.33266, 5.3008 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(22.5621, 2.38376, 5.41692 ) ); 
-            
-        }; 
-        
-        tree6 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-10.2824, 1.63861, -22.5622 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-10.4893, 1.67158, -23.0162 ) ); 
-            
-        }; 
-        
-        tree60 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-21.1674, -3.94121, -13.0822 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-21.5875, -4.01942, -13.3418 ) ); 
-            
-        }; 
-        
-        tree61 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(5.41483, 18.9532, 11.5088 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(5.53344, 19.3684, 11.7609 ) ); 
-            
-        }; 
-        
-        tree62 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-3.63009, 1.66887, -24.7004 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-3.70263, 1.70222, -25.194 ) ); 
-            
-        }; 
-        
-        tree63 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(18.8664, 5.53852, -16.0264 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(19.2382, 5.64769, -16.3423 ) ); 
-            
-        }; 
-        
-        tree64 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(20.8693, 8.95849, -10.3136 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(21.2877, 9.13807, -10.5204 ) ); 
-            
-        }; 
-        
-        tree65 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-10.0181, -11.4559, -19.9403 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-10.2178, -11.6842, -20.3378 ) ); 
-            
-        }; 
-        
-        tree66 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-1.03984, -11.6881, -22.2767 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-1.06049, -11.9202, -22.7191 ) ); 
-            
-        }; 
-        
-        tree67 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(5.28146, 21.0008, 7.21599 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(5.39716, 21.4608, 7.37405 ) ); 
-            
-        }; 
-        
-        tree68 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-10.8866, 20.3651, 8.42797 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-11.1081, 20.7793, 8.59939 ) ); 
-            
-        }; 
-        
-        tree69 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(17.9025, 7.11851, -15.6937 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(18.2628, 7.26175, -16.0095 ) ); 
-            
-        }; 
-        
-        tree7 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(19.0245, -6.90814, 15.4464 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(19.3981, -7.04381, 15.7498 ) ); 
-            
-        }; 
-        
-        tree70 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-22.0352, -12.3418, -3.34251 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-22.4677, -12.584, -3.40811 ) ); 
-            
-        }; 
-        
-        tree71 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(15.1305, 16.1931, -11.4115 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(15.434, 16.5179, -11.6404 ) ); 
-            
-        }; 
-        
-        tree72 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(22.7025, -2.36491, 0 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(23.1998, -2.41672, 0 ) ); 
-            
-        }; 
-        
-        tree73 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(2.60506, 17.7119, -18.586 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(2.65554, 18.0551, -18.9461 ) ); 
-            
-        }; 
-        
-        tree74 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-1.64719, 24.4858, 2.72563 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-1.68054, 24.9816, 2.78082 ) ); 
-            
-        }; 
-        
-        tree75 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(1.59177, 4.29785, 25.3477 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(1.62266, 4.38128, 25.8397 ) ); 
-            
-        }; 
-        
-        tree76 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-11.628, -6.16196, -20.9856 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-11.8627, -6.28634, -21.4092 ) ); 
-            
-        }; 
-        
-        tree77 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-11.9765, -17.6841, -13.6274 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-12.2129, -18.0331, -13.8963 ) ); 
-            
-        }; 
-        
-        tree78 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(17.2441, 15.3181, 8.94545 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(17.5926, 15.6277, 9.12624 ) ); 
-            
-        }; 
-        
-        tree79 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-3.29696, -24.4709, 0 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-3.36373, -24.9664, 0 ) ); 
-            
-        }; 
-        
-        tree8 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-5.83095, 6.62602, 23.48 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-5.94718, 6.75809, 23.9481 ) ); 
-            
-        }; 
-        
-        tree80 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(17.4304, -0.464539, 14.7297 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(17.8122, -0.474715, 15.0523 ) ); 
-            
-        }; 
-        
-        tree81 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-21.7045, 7.62441, -12.3366 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-22.1202, 7.77045, -12.5729 ) ); 
-            
-        }; 
-        
-        tree82 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(9.36076, 3.74745, -20.4775 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(9.56581, 3.82954, -20.9261 ) ); 
-            
-        }; 
-        
-        tree83 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-20.2962, -2.97577, 14.2728 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-20.7023, -3.03531, 14.5584 ) ); 
-            
-        }; 
-        
-        tree84 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(23.1347, 1.54214, 9.15294 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(23.5988, 1.57307, 9.33654 ) ); 
-            
-        }; 
-        
-        tree85 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(23.638, 7.49682, 5.03218 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(24.1051, 7.64496, 5.13162 ) ); 
-            
-        }; 
-        
-        tree86 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(22.5667, 10.5935, 0.821512 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(23.0191, 10.8059, 0.83798 ) ); 
-            
-        }; 
-        
-        tree87 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-11.1502, 21.1245, -7.76003 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-11.3722, 21.5451, -7.91452 ) ); 
-            
-        }; 
-        
-        tree88 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(12.5746, -20.3461, -5.74227 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(12.8302, -20.7597, -5.85899 ) ); 
-            
-        }; 
-        
-        tree89 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 22.3353, 4.70437 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(0, 22.8246, 4.80742 ) ); 
-            
-        }; 
-        
-        tree9 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-18.4149, 16.2588, -6.13333 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-18.7786, 16.5799, -6.25444 ) ); 
-            
-        }; 
-        
-        tree90 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-21.084, 3.38651, -12.018 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-21.5142, 3.45561, -12.2632 ) ); 
-            
-        }; 
-        
-        tree91 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-22.0475, 8.79285, -7.29944 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-22.4914, 8.96989, -7.44641 ) ); 
-            
-        }; 
-        
-        tree92 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-19.3087, 14.8499, 2.80305 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-19.7025, 15.1527, 2.86021 ) ); 
-            
-        }; 
-        
-        tree93 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0.51359, 7.46777, -23.6946 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(0.523924, 7.61804, -24.1714 ) ); 
-            
-        }; 
-        
-        tree94 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-21.2688, 7.05156, 13.1448 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-21.6781, 7.18728, 13.3978 ) ); 
-            
-        }; 
-        
-        tree95 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(7.81194, -1.62865, -23.3339 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(7.97033, -1.66167, -23.807 ) ); 
-            
-        }; 
-        
-        tree96 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-13.8266, -6.11028, -19.6032 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-14.1059, -6.23369, -19.9992 ) ); 
-            
-        }; 
-        
-        tree97 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(1.01717, -11.4332, -21.791 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(1.03782, -11.6653, -22.2334 ) ); 
-            
-        }; 
-        
-        tree98 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(-1.97855, -11.3647, 21.6719 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(-2.01884, -11.5962, 22.1133 ) ); 
-            
-        }; 
-        
-        tree99 = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(4.06277, -21.4899, 11.7297 ); 
-            model = "tree"; 
-            track = transform(
-                entity("Testmountain"), 
-                Point3(4.14462, -21.9229, 11.966 ) ); 
+            varianceShadowSettings = VSMSettings { 
+                blurMultiplier = 5; 
+                downsampleFactor = 1; 
+                enabled = true; 
+                filterRadius = 11; 
+            }; 
             
         }; 
         
@@ -1123,77 +244,52 @@
     }; 
     
     models = { 
-        Test = ArticulatedModel::Specification { 
-            filename = "Testwater.obj"; 
+        planet = ArticulatedModel::Specification { 
+            filename = "planetwater.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.0972222, 0.0972222, 0.0972222, 0.597222 ); 
-                        lambertian = Texture::Specification { 
-                            encoding = Texture::Encoding { 
-                                readMultiplyFirst = Color3(1, 0.111111, 0.0277778 ); 
-                            }; 
-                            
-                            filename = "grad.jpg"; 
-                        }; 
-                        
+                        glossy = Color4(0.236111, 0.236111, 0.236111, 0.347222 ); 
+                        lambertian = Color3(0, 0, 0.833333 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(0.132072, 0.132072, 0.132072 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.050691, 0.050691, 0.050691 ) ) }; 
             
         }; 
         
-        Testland = ArticulatedModel::Specification { 
-            filename = "Testland.obj"; 
+        planetcloud1 = ParticleSystemModel::Emitter::Specification { 
+            angularVelocityMean = 0.5; 
+            angularVelocityVariance = 0.3; 
+            initialDensity = 80; 
+            material = "material/smoke/smoke.png"; 
+            noisePower = 0; 
+            radiusMean = 1.1; 
+            radiusVariance = 0.2; 
+            shape = ArticulatedModel::Specification { 
+                filename = "model/cloud/cloud.zip/cumulus00.obj"; 
+                scale = 0.002535; 
+            }; 
+            
+        }; 
+        
+        planetland = ArticulatedModel::Specification { 
+            filename = "planetland.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.375, 0.375, 0.375, 0.236111 ); 
-                        lambertian = Texture::Specification { 
-                            encoding = Texture::Encoding { 
-                                readMultiplyFirst = Color3(1, 0.222222, 0.236111 ); 
-                            }; 
-                            
-                            filename = "grad.jpg"; 
-                        }; 
-                        
+                        glossy = Color4(0.152778, 0.152778, 0.152778, 0.138889 ); 
+                        lambertian = Color3(0.208333, 0.791667, 0 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(0.132072, 0.132072, 0.132072 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.050691, 0.050691, 0.050691 ) ) }; 
             
         }; 
         
-        Testmountain = ArticulatedModel::Specification { 
-            filename = "Testmountain.obj"; 
+        planetmountain = ArticulatedModel::Specification { 
+            filename = "planetmountain.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.194444, 0.194444, 0.194444, 0.0694444 ); 
-                        lambertian = Texture::Specification { 
-                            encoding = Texture::Encoding { 
-                                readMultiplyFirst = Color3(0.42069, 0.137931, 0.110345 ); 
-                            }; 
-                            
-                            filename = "flame.jpg"; 
-                        }; 
-                        
+                        glossy = Color4(0.236111, 0.236111, 0.236111, 0.319444 ); 
+                        lambertian = Color3(0.413793, 0.165517, 0 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(0.132072, 0.132072, 0.132072 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.050691, 0.050691, 0.050691 ) ) }; 
             
-        }; 
-        
-        cloud1 = ArticulatedModel::Specification { 
-            filename = "model/cloud/cloud.zip/altostratus00.obj"; 
-            preprocess = { 
-                setMaterial(all(), UniversalMaterial::Specification { 
-                        emissive = Color3(0.1 ); 
-                        lambertian = Color4(
-                            Color3(0.8 ), 
-                            1 ); 
-                        
-                    } ) }; 
-            
-            scale = 0.0132072; 
-        }; 
-        
-        tree = ArticulatedModel::Specification { 
-            filename = "model/lowpolytree.obj"; 
-            scale = 0.066036; 
         }; 
         
     }; 

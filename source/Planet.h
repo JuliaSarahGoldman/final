@@ -71,6 +71,7 @@ protected:
     String m_objectToOrbit;
     float m_orbitDistance;
 
+
     //Creates an initial icohedron with the given radius to be tessellated to create a sphere
     void makeIcohedron(float radius, Array<Vector3>& vertices, Array<Vector3int32>& faces);
     void subdivideIcoHedron(float radius, Array<Vector3>& vertices, Array<Vector3int32>& faces);

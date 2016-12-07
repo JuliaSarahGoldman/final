@@ -179,7 +179,8 @@ bool Planet::generatePlanet() {
         mountNoiseImage->save(m_planetName + "mountain.png");
         colorImage->save(m_planetName + "mountainColor.png");
         applyNoiseMountain(mountVertices, mountNoiseImage, testImage, m_waterMount, m_mountianDiversity, m_mountainHeight);
-
+        
+        testImage->save(m_planetName + "mountainTest.png");
         Mesh mesh3(mountVertices, mountFaces);
         if (m_collapsingEnabled) {
             mesh3.collapseEdges(m_mountainEdgesToCollapse);
@@ -286,7 +287,27 @@ void Planet::createLandAnyFile(Any& landModel, Any& landEntity, const String& wa
 
 void Planet::addCloudToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float scale) {
 
+    cloudEntity["canChange"] = true;
+    cloudEntity["particlesAreInWorldSpace"] = false;
+
     int t[5] = { 2, 3, 5, 7, 11 };
+
+    cloudEntity["model"] = name ;//+ (String)std::to_string(Random::threadCommon().integer(1, 3));
+    cloudEntity["track"] = Any::parse((String)
+        "transform(" +
+        "Matrix4::rollDegrees(" + (String)std::to_string(Random::threadCommon().integer(-60, 60)) + "), " +
+        "transform("
+        "orbit(" +
+            (String)std::to_string(Random::threadCommon().integer(30, 40) * scale + 1) + ", " + (String)std::to_string(t[Random::threadCommon().integer(0, 4)]) +
+        "), " +
+        "combine(" +
+        "Matrix4::pitchDegrees(90), entity(" + planetName + ")" +
+        ")"
+        "), " +
+        ");");
+        
+
+    /*int t[5] = { 2, 3, 5, 7, 11 };
     cloudEntity["model"] = name;
     cloudEntity["track"] = Any::parse((String)
         "transform(" +
@@ -299,8 +320,14 @@ void Planet::addCloudToPlanet(Any& cloudEntity, const String& name, const String
         "Matrix4::pitchDegrees(90), entity(" + planetName + ")" +
         ")"
         "), " +
-        ");");
+        ");");*/
 }
+/*
+void Planet::addTreesToPlanet(const String& modelName, Array<Point2>& positions, Array<Vector3> normals, int numberOfTrees){
+    for(int i(0); i < numberOfTrees; ++i){
+        
+    }
+}*/
 
 void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals){
     vertices = m_treePositions;

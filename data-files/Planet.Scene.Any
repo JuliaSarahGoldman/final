@@ -28,23 +28,25 @@
         }; 
         
         cloud0 = ParticleSystem { 
-            canChange = false; 
+            canChange = true; 
             model = "cloud1"; 
-            particlesAreInWorldSpace = true; 
-            track = transform(
-                Matrix4::rollDegrees(90 ), 
+            particlesAreInWorldSpace = false; 
+            
+            track =  transform(Matrix4::rollDegrees(50), transform(orbit(17,2), combine(
+                        Matrix4::pitchDegrees(90 ), 
+                        entity("randmountain") )));/*transform(
+                Matrix4::rollDegrees(50 ), 
                 transform(
-                    orbit(17, 3 ), 
+                    orbit(17, 12 ), 
                     combine(
                         Matrix4::pitchDegrees(48 ), 
-                        entity("randmountain") ) ) ); 
-            
+                        entity("randmountain") ) ) ); */
         }; 
-        
+        /*
         cloud1 = ParticleSystem { 
-            canChange = false; 
+            canChange = true; 
             model = "cloud3"; 
-            particlesAreInWorldSpace = true; 
+            particlesAreInWorldSpace = false; 
             track = transform(
                 Matrix4::rollDegrees(90 ), 
                 transform(
@@ -53,8 +55,8 @@
                         Matrix4::pitchDegrees(-16 ), 
                         entity("randmountain") ) ) ); 
             
-        }; 
-        
+        }; */
+        /*
         cloud2 = ParticleSystem { 
             canChange = false; 
             model = "cloud2"; 
@@ -95,7 +97,7 @@
                         Matrix4::pitchDegrees(-9 ), 
                         entity("randmountain") ) ) ); 
             
-        }; 
+        }; */
         
         rand = VisibleEntity { 
             frame = CFrame::fromXYZYPRDegrees(0, 0, 0 ); 
@@ -132,17 +134,42 @@
         
         sun = Light { 
             attenuation = Vector3(0, 0, 1 ); 
-            bulbPower = Color3(1e+06, 1e+06, 1e+06 ); 
+            bulbPower = Color3(1e+06, 1e+06, 0 ); 
             castsShadows = true; 
             shadowMapBias = 0.05; 
             shadowMapSize = Vector2int16(2048, 2048 ); 
             spotHalfAngleDegrees = 8; 
             spotSquare = true; 
             track = lookAt(
-                Point3(-15, 200, 40 ), 
+                Point3(0, 10, -350 ), 
                 Point3(0, 0, 0 ) ); 
             
             type = "SPOT"; 
+            varianceShadowSettings = VSMSettings {
+                enabled = true;
+                filterRadius = 11;
+                blurMultiplier = 5.0f;
+                downsampleFactor = 1;
+            };
+        }; 
+
+        fillLight = Light { 
+            attenuation = Vector3(0, 0, 1 ); 
+            bulbPower = Color3(0, 1e+05, 1e+05 ); 
+            castsShadows = false; 
+            spotHalfAngleDegrees = 8; 
+            spotSquare = true; 
+            track = lookAt(
+                Point3(0, -200, 200 ), 
+                Point3(0, 0, 0 ) ); 
+            
+            type = "SPOT"; 
+            varianceShadowSettings = VSMSettings {
+                enabled = true;
+                filterRadius = 11;
+                blurMultiplier = 5.0f;
+                downsampleFactor = 1;
+            };
         }; 
         
     }; 
@@ -183,17 +210,19 @@
     
     models = { 
         cloud1 = ParticleSystemModel::Emitter::Specification { 
-            angularVelocityMean = 0.5; 
-            angularVelocityVariance = 0.25; 
-            initialDensity = 8; 
+            angularVelocityMean = 0; 
+            angularVelocityVariance = 0; 
+            initialDensity = 80; 
             material = "material/smoke/smoke.png"; 
             noisePower = 0; 
-            radiusMean = 3; 
-            radiusVariance = 0.5; 
+            radiusMean = 1.1; 
+            radiusVariance = 0.0; 
             shape = ArticulatedModel::Specification { 
                 filename = "model/cloud/cloud.zip/cumulus02.obj"; 
                 scale = 0.05; 
             }; 
+            //shape = Sphere(2);
+            location = VOLUME;
             
         }; 
         
