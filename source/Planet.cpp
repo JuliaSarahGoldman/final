@@ -290,18 +290,19 @@ void Planet::addCloudToPlanet(Any& cloudEntity, const String& name, const String
     cloudEntity["canChange"] = true;
     cloudEntity["particlesAreInWorldSpace"] = false;
 
-    int t[5] = { 2, 3, 5, 7, 11 };
+    int t[5] = { 2, 3, 5 };
+    int c[6] = {45, 60, 75};
 
     cloudEntity["model"] = name ;//+ (String)std::to_string(Random::threadCommon().integer(1, 3));
     cloudEntity["track"] = Any::parse((String)
         "transform(" +
-        "Matrix4::rollDegrees(" + (String)std::to_string(Random::threadCommon().integer(-60, 60)) + "), " +
+        "Matrix4::rollDegrees(" +  (String)std::to_string(c[Random::threadCommon().integer(0, 2)])   + "), " +
         "transform("
         "orbit(" +
-            (String)std::to_string(Random::threadCommon().integer(30, 40) * scale + 1) + ", " + (String)std::to_string(t[Random::threadCommon().integer(0, 4)]) +
+            (String)std::to_string(Random::threadCommon().integer(30, 40) * scale + 1) + ", " + (String)std::to_string(t[Random::threadCommon().integer(0, 2)]) +
         "), " +
-        "combine(" +
-        "Matrix4::pitchDegrees(90), entity(" + planetName + ")" +
+        "transform(" +
+            "Matrix4::pitchDegrees(90), entity(" + planetName + ")" +
         ")"
         "), " +
         ");");

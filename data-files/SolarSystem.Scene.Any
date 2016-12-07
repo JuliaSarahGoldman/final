@@ -16,7 +16,7 @@
                 vignetteTopStrength = 0.5; 
             }; 
             
-            frame = CFrame::fromXYZYPRDegrees(50, 50, 50 ); 
+            frame = CFrame::fromXYZYPRDegrees(0.90151, 1.8599, 125.627, -0.39264, -1.1459 ); 
             projection = Projection { 
                 farPlaneZ = -inf; 
                 fovDegrees = 50; 
@@ -27,11 +27,11 @@
         }; 
         
         planet = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, -100, 4.59093e-41 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 6.93241e-12, 0 ); 
             model = "planet"; 
             track = combine(
                 orbit(0, 10 ), 
-                Point3(0, -100, 4.59093e-41 ) ); 
+                Point3(0, 6.93241e-12, 0 ) ); 
             
         }; 
         
@@ -39,7 +39,13 @@
             canChange = true; 
             model = "planetcloud1"; 
             particlesAreInWorldSpace = false; 
-            track = transform(entity("planetmountain"), transform(Matrix4::rollDegrees(-46), transform(orbit(0.1,1), entity("planetmountain")))); 
+            track = transform(
+                Matrix4::rollDegrees(60 ), 
+                transform(
+                    orbit(40, 2 ), 
+                    transform(
+                        Matrix4::pitchDegrees(90 ), 
+                        entity("planetmountain") ) ) ); 
             
         }; 
         
@@ -48,10 +54,10 @@
             model = "planetcloud1"; 
             particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-46 ), 
+                Matrix4::rollDegrees(75 ), 
                 transform(
-                    orbit(2.92624, 7 ), 
-                    combine(
+                    orbit(38, 2 ), 
+                    transform(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planetmountain") ) ) ); 
             
@@ -62,10 +68,10 @@
             model = "planetcloud1"; 
             particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-26 ), 
+                Matrix4::rollDegrees(60 ), 
                 transform(
-                    orbit(2.72348, 3 ), 
-                    combine(
+                    orbit(32, 5 ), 
+                    transform(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planetmountain") ) ) ); 
             
@@ -76,10 +82,10 @@
             model = "planetcloud1"; 
             particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(30 ), 
+                Matrix4::rollDegrees(75 ), 
                 transform(
-                    orbit(2.6221, 3 ), 
-                    combine(
+                    orbit(41, 5 ), 
+                    transform(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planetmountain") ) ) ); 
             
@@ -90,10 +96,10 @@
             model = "planetcloud1"; 
             particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-27 ), 
+                Matrix4::rollDegrees(60 ), 
                 transform(
-                    orbit(2.77417, 2 ), 
-                    combine(
+                    orbit(40, 3 ), 
+                    transform(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planetmountain") ) ) ); 
             
@@ -104,10 +110,10 @@
             model = "planetcloud1"; 
             particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(55 ), 
+                Matrix4::rollDegrees(75 ), 
                 transform(
-                    orbit(2.87555, 5 ), 
-                    combine(
+                    orbit(38, 2 ), 
+                    transform(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planetmountain") ) ) ); 
             
@@ -118,10 +124,10 @@
             model = "planetcloud1"; 
             particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(52 ), 
+                Matrix4::rollDegrees(60 ), 
                 transform(
-                    orbit(2.87555, 7 ), 
-                    combine(
+                    orbit(31, 2 ), 
+                    transform(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planetmountain") ) ) ); 
             
@@ -132,10 +138,10 @@
             model = "planetcloud1"; 
             particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-27 ), 
+                Matrix4::rollDegrees(60 ), 
                 transform(
-                    orbit(2.6221, 11 ), 
-                    combine(
+                    orbit(39, 2 ), 
+                    transform(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planetmountain") ) ) ); 
             
@@ -146,10 +152,10 @@
             model = "planetcloud1"; 
             particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(-41 ), 
+                Matrix4::rollDegrees(75 ), 
                 transform(
-                    orbit(2.87555, 3 ), 
-                    combine(
+                    orbit(38, 5 ), 
+                    transform(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planetmountain") ) ) ); 
             
@@ -160,23 +166,23 @@
             model = "planetcloud1"; 
             particlesAreInWorldSpace = false; 
             track = transform(
-                Matrix4::rollDegrees(54 ), 
+                Matrix4::rollDegrees(45 ), 
                 transform(
-                    orbit(2.72348, 5 ), 
-                    combine(
+                    orbit(33, 5 ), 
+                    transform(
                         Matrix4::pitchDegrees(90 ), 
                         entity("planetmountain") ) ) ); 
             
         }; 
         
         planetland = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, -100, 4.59093e-41 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 6.93241e-12, 0 ); 
             model = "planetland"; 
             track = entity("planet"); 
         }; 
         
         planetmountain = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, -100, 4.59093e-41 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 6.93241e-12, 0 ); 
             model = "planetmountain"; 
             track = entity("planet"); 
         }; 
@@ -204,6 +210,15 @@
                 enabled = true; 
                 filterRadius = 11; 
             }; 
+            
+        }; 
+        
+        tree0 = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(13.6585, 18.7998, 8.44143 ); 
+            model = "tree"; 
+            track = transform(
+                entity("planetmountain"), 
+                Point3(13.9348, 19.18, 8.61215 ) ); 
             
         }; 
         
@@ -251,21 +266,22 @@
                         glossy = Color4(0.236111, 0.236111, 0.236111, 0.347222 ); 
                         lambertian = Color3(0, 0, 0.833333 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(0.050691, 0.050691, 0.050691 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
             
         }; 
         
         planetcloud1 = ParticleSystemModel::Emitter::Specification { 
-            angularVelocityMean = 0.5; 
-            angularVelocityVariance = 0.3; 
+            angularVelocityMean = 0; 
+            angularVelocityVariance = 0; 
             initialDensity = 80; 
+            location = "VOLUME"; 
             material = "material/smoke/smoke.png"; 
             noisePower = 0; 
             radiusMean = 1.1; 
-            radiusVariance = 0.2; 
+            radiusVariance = 0; 
             shape = ArticulatedModel::Specification { 
                 filename = "model/cloud/cloud.zip/cumulus00.obj"; 
-                scale = 0.002535; 
+                scale = 0.05; 
             }; 
             
         }; 
@@ -277,7 +293,7 @@
                         glossy = Color4(0.152778, 0.152778, 0.152778, 0.138889 ); 
                         lambertian = Color3(0.208333, 0.791667, 0 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(0.050691, 0.050691, 0.050691 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
             
         }; 
         
@@ -288,8 +304,13 @@
                         glossy = Color4(0.236111, 0.236111, 0.236111, 0.319444 ); 
                         lambertian = Color3(0.413793, 0.165517, 0 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(0.050691, 0.050691, 0.050691 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
             
+        }; 
+        
+        tree = ArticulatedModel::Specification { 
+            filename = "model/lowpolytree.obj"; 
+            scale = 0.5; 
         }; 
         
     }; 

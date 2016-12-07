@@ -59,15 +59,15 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
 
     String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
     Any cloudModel(Any::TABLE, "ParticleSystemModel::Emitter::Specification");
-    cloudModel["angularVelocityMean"] = 0.5;
-    cloudModel["angularVelocityVariance"] = 0.3;
+    cloudModel["angularVelocityMean"] = 0;
+    cloudModel["angularVelocityVariance"] = 0;
     cloudModel["initialDensity"] = 80;
     cloudModel["material"] = "material/smoke/smoke.png";
     cloudModel["noisePower"] = 0;
     cloudModel["radiusMean"] = 1.1;
-    cloudModel["radiusVariance"] = 0.2;
+    cloudModel["radiusVariance"] = 0;
     cloudModel["shape"] = Any::parse("ArticulatedModel::Specification{filename = \"model/cloud/cloud.zip/cumulus00.obj\"; scale = " + (String) std::to_string(0.05f * planet.getScale()) + ";}; }");
-
+    cloudModel["location"] = ParticleSystemModel::Emitter::SpawnLocation::SpawnLocation("VOLUME");
     models[name + "cloud1"] = cloudModel;
 
     for (int i(0); i < 10; ++i) {
