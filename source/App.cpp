@@ -253,7 +253,7 @@ void App::makePlanetGUI() {
         GuiTheme::LINEAR_SLIDER, 1, 8)->setUnitsSize(1);
 
     planPane->addNumberBox("# of Trees", &m_numberOfTrees, "",
-        GuiTheme::LINEAR_SLIDER, 0, 1000)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0, 10000)->setUnitsSize(1);
 
     planPane->addNumberBox("scale", &m_scale, "",
         GuiTheme::LINEAR_SLIDER, 0.01f, 1.0f)->setUnitsSize(0.01f);

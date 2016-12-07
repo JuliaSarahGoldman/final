@@ -189,10 +189,8 @@ bool Planet::generatePlanet() {
         m_mountainObjFile = m_planetName + "mountain";
 
         noise.landMapImage(landNoiseImage, mountNoiseImage, landMapImage, m_oceanLevel, m_mountianDiversity, m_mountainHeight);
-        landMapImage->save("landMapImageTest.png");
 
         findTreePositions(landMapImage, vertices, m_treePositions, m_treeNormals);
-        landMapImage->save("landMapImageTest2.png");
 
         if (m_useMTexture){
             shared_ptr<Image> image = Image::fromFile(m_mountainTextureFile);
@@ -341,14 +339,10 @@ void Planet::findTreePositions(const shared_ptr<Image>& landMap, const Array<Vec
 
         Color3 color;
         landMap->get(Point2int32(ix, iy), color);
-        //debugPrintf("%f %f\n", color.average(), color.r);
-        if(color.average() != 1.0f) {
-            //landMap->set(ix, iy, Color3(1.0f,0.0f,0.0f));
+        if(color.average() > 0.5f) {
             possiblePositions.append(vertex);
         }
     }
-
-    debugPrintf("%d %d\n", vertices.size(), possiblePositions.size());
 
     while(numTrees > 0) {
         Vector3 vertex = possiblePositions[Random::threadCommon().integer(0, possiblePositions.length())];

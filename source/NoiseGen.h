@@ -20,5 +20,5 @@ public:
 
     void colorMountainImage(shared_ptr<Image> noise, shared_ptr<Image> colorMap);
 
-    void landMapImage(shared_ptr<Image> land, shared_ptr<Image> mountain, shared_ptr<Image> landMap, float oceanLevel, float power, float multiplier);
+    void landMapImage(const shared_ptr<Image>& land, const shared_ptr<Image>& mountain, shared_ptr<Image>& landMap, float oceanLevel, float power, float multiplier);
 };
