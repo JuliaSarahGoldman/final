@@ -121,7 +121,7 @@ bool Planet::generatePlanet() {
         if (m_collapsingEnabled) {
             mesh.collapseEdges(m_oceanEdgesToCollapse);
         }
-        mesh.bevelEdges2(m_oceanBevel);
+       mesh.bevelEdges2(m_oceanBevel);
         m_waterObjFile = m_planetName + "water";
 
         int width, height;
