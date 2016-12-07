@@ -18,11 +18,20 @@ Planet {
     mountainCollapsing = 2048; 
     mountainDiversity = 2.0493; 
     mountainHeight = 70.4028; 
+    mountainNoise1 = 7.62248e-39; 
+    mountainNoise2 = 7.62247e-39; 
+    mountainNoise3 = 6.33677e-39; 
     mountainTexture = "ThisPlanetmountainColor.png"; 
+    oceanBevel = 0.0001; 
     oceanCollapsing = 0; 
     oceanLevel = 0.424842; 
     oceanNoise = 1.46657; 
+    orbitDistance = 10; 
+    orbitPlanet = ""; 
+    planetName = ""; 
     recursions = 5; 
+    scale = 1; 
+    trees = 1000; 
     useLandTexture = false; 
     useMountainTexture = false; 
     useWaterTexture = false; 
@@ -33,4 +42,7 @@ Planet {
     wRed = 0; 
     waterMount = false; 
     waterTexture = ""; 
+    xPos = 0; 
+    yPos = 3.28989e-39; 
+    zPos = 0; 
 } 

@@ -61,19 +61,22 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
     Any cloudModel(Any::TABLE, "ParticleSystemModel::Emitter::Specification");
     cloudModel["angularVelocityMean"] = 0;
     cloudModel["angularVelocityVariance"] = 0;
-    cloudModel["initialDensity"] = 80;
+    cloudModel["initialDensity"] = 40;
     cloudModel["material"] = "material/smoke/smoke.png";
     cloudModel["noisePower"] = 0;
     cloudModel["radiusMean"] = 1.1;
     cloudModel["radiusVariance"] = 0;
     cloudModel["shape"] = Any::parse("ArticulatedModel::Specification{filename = \"model/cloud/cloud.zip/cumulus00.obj\"; scale = " + (String) std::to_string(0.05f * planet.getScale()) + ";}; }");
-    cloudModel["location"] = ParticleSystemModel::Emitter::SpawnLocation::SpawnLocation("VOLUME");
+    cloudModel["location"] = "VOLUME";
     models[name + "cloud1"] = cloudModel;
 
-    for (int i(0); i < 10; ++i) {
+    for (int i(0); i < 5; ++i) {
         Any cloudEntityDescription(Any::TABLE, "ParticleSystem");
-        planet.addCloudToPlanet(cloudEntityDescription, name + "cloud1", levelName, planet.getPosition(), planet.getScale());
-        entities[name + "cloud" + (String) std::to_string(i)] = cloudEntityDescription;
+        String track;
+        planet.addCloudToPlanet(cloudEntityDescription, track, name + "cloud1", levelName, planet.getPosition(), planet.getScale());
+        //for(int i(0); i < 1; ++i) {
+            entities[name + "cloud" + (String) std::to_string(i)] = cloudEntityDescription;
+        //}
     }
 
     //preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
@@ -92,11 +95,10 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
         Vector3 position = treePositions[i]; 
         Vector3 normal = treeNormals[i];
         treeEntity["model"] = "tree";
-        float distance = sqrtf((normal.z * normal.z) + (normal.x * normal.x));
 
-        treeEntity["frame"] = CFrame::fromXYZYPRRadians(position.x, position.y, position.z);
+        treeEntity["frame"] = CoordinateFrame::fromYAxis(normal, position);
 
-        treeEntity["track"] = Any::parse("transform(entity(" + levelName + "), Point3" + (position + normal*0.5f).toString() +")");
+        treeEntity["track"] = Any::parse("transform(entity(" + levelName + "), " + CoordinateFrame::fromYAxis(normal, (position + normal * 0.75f)*planet.getScale()).toXYZYPRDegreesString() +")");
         entities["tree" + (String) std::to_string(i)] = treeEntity;
     }
 

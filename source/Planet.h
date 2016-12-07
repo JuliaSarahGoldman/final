@@ -18,6 +18,7 @@ protected:
     int m_oceanEdgesToCollapse;
     int m_angleLengthWeight;
     bool m_collapsingEnabled;
+    bool m_hasClouds;
 
     //variables to use for the mesh
     int m_recursionLevel;
@@ -90,7 +91,7 @@ public:
     void createWaterAnyFile(Any& waterModel, Any& waterEntity);
     void createLandAnyFile(Any& landModel, Any& landEntity, const String& waterEntity);
     void createMountainAnyFile(Any& mountainModel, Any& mountainEntity, const String& waterEntity);
-    void addCloudToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float scale);
+    void addCloudToPlanet(Any& cloudEntity, String& track, const String& name, const String& planetName, const Point3& position, const float scale);
     void findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
     void getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals);
     Point3 getPosition();

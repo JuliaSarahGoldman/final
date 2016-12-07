@@ -252,7 +252,7 @@ void App::makePlanetGUI() {
         GuiTheme::LINEAR_SLIDER, 1, 8)->setUnitsSize(1);
 
     planPane->addNumberBox("# of Trees", &m_numberOfTrees, "",
-        GuiTheme::LINEAR_SLIDER, 1, 100)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0, 1000)->setUnitsSize(1);
 
     planPane->addNumberBox("scale", &m_scale, "",
         GuiTheme::LINEAR_SLIDER, 0.01f, 1.0f)->setUnitsSize(0.01f);
@@ -272,6 +272,8 @@ void App::makePlanetGUI() {
 
     planPane->addNumberBox("Orbit Distance", &m_orbitDistance, "",
         GuiTheme::LOG_SLIDER, 10.0f, 100.0f)->setUnitsSize(0.01f);
+
+    planPane->addCheckBox("Orbit Planet:", &m_hasClouds);
 
     GuiPane* plan2Pane = planetTab->addTab("Noise Options");
 
@@ -492,6 +494,7 @@ void App::unpackagePlanetSpecs(Any& any) {
         x.getIfPresent("oceanBevel", m_oceanBevel);
         x.getIfPresent("landNoise", m_landNoise);
         x.getIfPresent("oceanNoise", m_oceanNoise);
+        x.getIfPresent("hasClouds", m_hasClouds);
 
         x.getIfPresent("xPos", m_xPos);
         x.getIfPresent("yPos", m_yPos);
@@ -556,6 +559,7 @@ void App::packagePlanetSpecs(Any& x) {
         x["oceanCollapsing"] = m_oceanEdgesToCollapse;
         x["landCollapsing"] = m_landEdgesToCollapse;
         x["mountainCollapsing"] = m_mountainEdgesToCollapse;
+        x["hasClouds"] = m_hasClouds;
 
         x["xPos"] = m_xPos;
         x["yPos"] = m_yPos;

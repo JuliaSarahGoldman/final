@@ -49,6 +49,7 @@ bool Planet::readSpec(const Any& planetSpec) {
         x.getIfPresent("mountainTexture", m_mountainTextureFile);
         x.getIfPresent("landTexture", m_landTextureFile);
         x.getIfPresent("waterTexture", m_waterTextureFile);
+        x.getIfPresent("hasClouds", m_hasClouds);
 
         float xPos, yPos, zPos;
         x.getIfPresent("xPos", xPos);
@@ -284,50 +285,31 @@ void Planet::createLandAnyFile(Any& landModel, Any& landEntity, const String& wa
 
 }
 
-void Planet::addCloudToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float scale) {
+void Planet::addCloudToPlanet(Any& cloudEntity, String& track, const String& name, const String& planetName, const Point3& position, const float scale) {
 
     cloudEntity["canChange"] = true;
     cloudEntity["particlesAreInWorldSpace"] = false;
 
     int t[5] = { 2, 3, 5 };
-    int c[6] = {45, 60, 75};
+    int c[6] = {30, 45, 60, 75};
 
     cloudEntity["model"] = name ;//+ (String)std::to_string(Random::threadCommon().integer(1, 3));
-    cloudEntity["track"] = Any::parse((String)
+    track = (String)
         "transform(" +
-        "Matrix4::rollDegrees(" +  (String)std::to_string(c[Random::threadCommon().integer(0, 2)])   + "), " +
+        "Matrix4::rollDegrees(" +  (String)std::to_string(c[Random::threadCommon().integer(0, 3)])   + "), " +
         "transform("
         "orbit(" +
             (String)std::to_string(Random::threadCommon().integer(30, 40) * scale + 1) + ", " + (String)std::to_string(t[Random::threadCommon().integer(0, 2)]) +
         "), " +
         "transform(" +
-            "Matrix4::pitchDegrees(90), entity(" + planetName + ")" +
+            "Matrix4::pitchDegrees(90)," + 
+            "entity(" + planetName + ")" +
         ")"
         "), " +
-        ");");
-        
+        ");";
+    cloudEntity["track"] = Any::parse(track);
 
-    /*int t[5] = { 2, 3, 5, 7, 11 };
-    cloudEntity["model"] = name;
-    cloudEntity["track"] = Any::parse((String)
-        "transform(" +
-        "Matrix4::rollDegrees(" + (String)std::to_string(Random::threadCommon().integer(-89, 89)) + "), " +
-        "transform("
-        "orbit(" +
-        (String)std::to_string(Random::threadCommon().integer(40, 70)*getScale()) + ", " + (String)std::to_string(t[Random::threadCommon().integer(0, 4)]) +
-        "), " +
-        "combine(" +
-        "Matrix4::pitchDegrees(90), entity(" + planetName + ")" +
-        ")"
-        "), " +
-        ");");*/
 }
-/*
-void Planet::addTreesToPlanet(const String& modelName, Array<Point2>& positions, Array<Vector3> normals, int numberOfTrees){
-    for(int i(0); i < numberOfTrees; ++i){
-        
-    }
-}*/
 
 void Planet::getMapping(const Vector3& vertex, int width, int height, Point2int32& map) {
     Vector3 d = (vertex - Vector3(0, 0, 0)).unit();

@@ -23,6 +23,7 @@ protected:
     int m_oceanEdgesToCollapse;
     int m_angleLengthWeight;
     bool m_collapsingEnabled;
+    bool m_hasClouds;
 
     int m_recursionLevel;
     int m_numberOfTrees;
