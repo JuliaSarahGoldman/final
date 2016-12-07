@@ -72,6 +72,18 @@
     <None Include="data-files\Scene\BadPlanet.Scene.Any" />
     <None Include="data-files\SolarSystem.Scene.Any" />
     <None Include="data-files\Texture.Scene.Any" />
+    <None Include="data-files\EdgeCollapsed1.Scene.Any">
+      <Filter>Scene Files</Filter>
+    </None>
+    <None Include="data-files\EdgeCollapsed2.Scene.Any">
+      <Filter>Scene Files</Filter>
+    </None>
+    <None Include="data-files\EdgeCollapsed3.Scene.Any">
+      <Filter>Scene Files</Filter>
+    </None>
+    <None Include="data-files\EdgeCollapsed4.Scene.Any">
+      <Filter>Scene Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

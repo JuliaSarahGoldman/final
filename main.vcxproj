@@ -107,6 +107,10 @@
     <ResourceCompile Include="resources.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data-files\EdgeCollapsed1.Scene.Any" />
+    <None Include="data-files\EdgeCollapsed2.Scene.Any" />
+    <None Include="data-files\EdgeCollapsed3.Scene.Any" />
+    <None Include="data-files\EdgeCollapsed4.Scene.Any" />
     <None Include="data-files\Planet.Scene.Any" />
     <None Include="data-files\Scene\Bunny.Scene.Any" />
     <None Include="data-files\Scene\ground.Scene.Any" />

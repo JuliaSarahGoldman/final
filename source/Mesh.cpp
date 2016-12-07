@@ -46,7 +46,7 @@ inline void Mesh::computeFaceNormals(const Array<MeshAlg::Face>& faceArray, Arra
     MeshAlg::computeFaceNormals(m_vertexPositions, faceArray, faceNormals, normalize);
 };
 
-inline static int edgeLengthSquared(const MeshAlg::Edge& edge, const Array<Vector3>& vertexArray) {
+inline static float edgeLengthSquared(const MeshAlg::Edge& edge, const Array<Vector3>& vertexArray) {
     const Vector3& v(vertexArray[edge.vertexIndex[1]] - vertexArray[edge.vertexIndex[0]]);
     return v.dot(v);
 };
