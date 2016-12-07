@@ -63,7 +63,8 @@ protected:
 
     Array<Point3> m_treePositions;
     Array<Vector3> m_treeNormals;
-
+    Array<Point3> m_cloudPositions;
+    Array<Vector3> m_cloudNormals;
 
     // Options for Planet as a whole
     float m_scale;
@@ -97,11 +98,16 @@ public:
     void addCloudEntityToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed);
     void findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
     void getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals);
+
+
     Point3 getPosition();
     float getScale();
     String getName();
     bool hasClouds();
     bool useParticleClouds();
+    
+    void findCloudPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions);
+    void getCloudPosition(Array<Point3>& cloudPositions);
 
     void getPlanetOrbit(String& objectToOrbit, float& orbitDistance);
 

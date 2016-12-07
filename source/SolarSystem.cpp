@@ -59,32 +59,29 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
 
 
     if (planet.hasClouds()) {
-        Any cloudModel = (planet.useParticleClouds()) ? Any(Any::TABLE, "ParticleSystemModel::Emitter::Specification"): Any(Any::TABLE, "ArticulatedModel::Specification");
+        Any cloudModel = (planet.useParticleClouds()) ? Any(Any::TABLE, "ParticleSystemModel::Emitter::Specification") : Any(Any::TABLE, "ArticulatedModel::Specification");
         String cloudModelName = name + "cloud1";
 
         planet.createCloudModelAnyFile(cloudModel, cloudModelName, name);
 
         models[cloudModelName] = cloudModel;
 
-        float x, y, z;
-        
-        int orbitSpeeds[5] = { 2, 3, 5 };
-        int orbitAngles[6] = { 15, 30, 45, 60 };
+        Array<Point3> cloudPositions;
+        Array<Vector3> cloudNormals;
+        planet.getTreePositions(cloudPositions, cloudNormals);
+        //Array<float> orbitAngles({ 15, 30, 45 });
 
-        for (int i(0); i < 20; ++i) {
-            Random::threadCommon().sphere(x, y, z);
-            Vector3 placement(x, y, z);
-            Vector3 point(placement * 10 * planet.getScale());
-            float orbitAngle = orbitAngles[Random::threadCommon().integer(0, 3)];
-            float orbitSpeed = orbitSpeeds[Random::threadCommon().integer(0, 2)];
+        float orbitSpeed = 15.0f;
+        for (int j(0); j < cloudPositions.length() && j < 50; ++j) {
+            int rand = Random::threadCommon().integer(0, cloudPositions.length()-1);
+            Point3 placement = cloudPositions[rand];
+            cloudPositions.remove(rand);
 
-            for (int i(0); i < 10; ++i) {
-                Any cloudEntityDescription =  (planet.useParticleClouds()) ? Any(Any::TABLE, "ParticleSystem"): Any(Any::TABLE, "VisibleEntity");
+            float orbitAngle = 35; //orbitAngles[Random::threadCommon().integer(0, 2)];
 
-                planet.addCloudEntityToPlanet(cloudEntityDescription, cloudModelName, levelName, point, orbitAngle, orbitSpeed);
-                entities[name + "cloud" + (String)std::to_string(i)] = cloudEntityDescription;
-                
-            }
+            Any cloudEntityDescription = (planet.useParticleClouds()) ? Any(Any::TABLE, "ParticleSystem") : Any(Any::TABLE, "VisibleEntity");
+            planet.addCloudEntityToPlanet(cloudEntityDescription, cloudModelName, levelName, placement, orbitAngle, orbitSpeed);
+            entities[name + "cloud" + (String)std::to_string(j)] = cloudEntityDescription;
         }
     }
 
@@ -179,34 +176,6 @@ void SolarSystem::initializeEntityTable(Any& entities) {
 }
 
 void SolarSystem::initializeModelsTable(Any& models) {
-    /*
-    Any cloud(Any::TABLE, "ParticleSystemModel::Emitter::Specification");
-    cloud["material"] = "material/smoke/smoke.png";
-    cloud["initialDensity"] = 8;
-    cloud["radiusMean"] = 3;
-    cloud["radiusVariance"] = 0.5;
-    cloud["noisePower"] = 0;
-    cloud["angularVelocityMean"] = 0.5;
-    cloud["angularVelocityVariance"] = 0.25;
-
-    Any cloud2 = cloud;
-    Any cloud3 = cloud;
-
-    Any cloudShape(Any::TABLE, "ArticulatedModel::Specification");
-    cloudShape["scale"] = 0.05;
-
-    Any cloudShape2 = cloudShape;
-    Any cloudShape3 = cloudShape;
-
-    cloudShape["filename"] = "model/cloud/cloud.zip/cumulus02.obj";
-    cloudShape2["filename"] = "model/cloud/cloud.zip/cumulus01.obj";
-    cloudShape3["filename"] = "model/cloud/cloud.zip/cumulus00.obj";
-
-    cloud["shape"] = cloudShape;
-    cloud2["shape"] = cloudShape2;
-    cloud3["shape"] = cloudShape3;
-    */
-
     String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ emissive = Texture::Specification{ filename = \"background.png\"; encoding = Texture::Encoding { readMultiplyFirst = Color4(Color3(0.5f), 1.0f);  }; }; lambertian = Color4(Color3(0.0f), 1.0f); }); }";
     Any boardModel(Any::TABLE, "ArticulatedModel::Specification");
     boardModel["filename"] = "ifs/square.ifs";
@@ -232,9 +201,3 @@ bool SolarSystem::printSolarSystemToScene(const String& save) {
         return false;
     }
 }
-
-//String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
-//    Any cloudModel(Any::TABLE, "ArticulatedModel::Specification");
-//    cloudModel["scale"] = 0.1 * planet.getScale();
-//    cloudModel["filename"] = "model/cloud/cloud.zip/altostratus00.obj";
-//    cloudModel["preprocess"] = Any::parse(preprocess);

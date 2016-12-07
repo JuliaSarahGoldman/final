@@ -202,11 +202,25 @@ bool Planet::generatePlanet() {
 
         mesh3.toObj(m_mountainObjFile, width, height);
 
+        mountNoiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
+        colorImage = Image::create(1024, 1024, ImageFormat::RGBA8());
+        noise.generateMountainImage(mountNoiseImage, 0.25, 1.0f);
+        noise.generateMountainImage(mountNoiseImage, 0.25, 0.5f);
+        noise.generateMountainImage(mountNoiseImage, 0.25, 0.25f);
+        noise.colorMountainImage(mountNoiseImage, colorImage);
+        
+        findCloudPositions(colorImage, vertices, m_cloudPositions);
+        
+        colorImage->save(m_planetName + "cloudNoise.png");
     }
     catch (...) {
         return false;
     }
     return true;
+}
+
+void Planet::getCloudPosition(Array<Point3>& cloudPositions) {
+    cloudPositions = m_cloudPositions;
 }
 
 void Planet::createWaterAnyFile(Any& waterModel, Any& waterEntity) {
@@ -284,19 +298,13 @@ void Planet::createLandAnyFile(Any& landModel, Any& landEntity, const String& wa
 void Planet::addCloudEntityToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed) {
     String track;
     cloudEntity["model"] = name;
+
     track = (String)
         "transform(" +
-        "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
-        "transform("
-        "orbit(" +
-        (String)std::to_string(Random::threadCommon().integer(35, 40) * m_scale + 0.2f) + ", " + (String)std::to_string(orbitSpeed) +
-        "), " +
-        "transform(" +
-        "Matrix4::pitchDegrees(90)," +
-        "Point3" + position.toString() +
-        ")"
-        "), " +
-        ");";
+            "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
+            "transform(orbit(1,20)," +
+                CoordinateFrame::fromYAxis(position.unit(), (position + position.unit() * (Random::threadCommon().uniform(6,11)))*m_scale).toXYZYPRDegreesString() + "))";
+
     cloudEntity["track"] = Any::parse(track);
 
     if (m_useParticleClouds) {
@@ -318,7 +326,8 @@ void Planet::createCloudModelAnyFile(Any& cloudModel, const String& name, const 
         cloudModel["radiusVariance"] = 0;
         cloudModel["shape"] = Any::parse("ArticulatedModel::Specification{filename = \"model/cloud/cloud.zip/cumulus00.obj\"; scale = " + (String)std::to_string(max(0.001f, 0.06f * getScale())) + ";}; }");
         cloudModel["location"] = "VOLUME";
-    } else {
+    }
+    else {
         String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
         cloudModel["scale"] = 0.1f * getScale();
         cloudModel["filename"] = "model/cloud/cloud.zip/cumulus00.obj";
@@ -346,6 +355,43 @@ void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals)
     normals = m_treeNormals;
 }
 
+void Planet::findCloudPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions) {
+    int numClouds = 100;
+    Set<Vector3> cloudPoints;
+    Array<Vector3> possiblePositions;
+    int ix, iy;
+    for (int i(0); i < vertices.size(); ++i) {
+        Vector3 vertex = vertices[i];
+
+        Point2int32 map;
+        getMapping(vertex, landMap->width(), landMap->height(), map);
+        ix = map.x;
+        iy = map.y;
+
+        Color3 color;
+        landMap->get(Point2int32(ix, iy), color);
+        
+        debugPrintf("%f\n", color.average());
+        if (color.average() > 0.8f) {
+            landMap->set(map, Color3(0,0,1));
+            possiblePositions.append(vertex);
+        }
+    }
+
+    while (numClouds > 0) {
+        Vector3 vertex = possiblePositions[Random::threadCommon().integer(0, possiblePositions.length())];
+        Point2int32 map;
+        getMapping(vertex, landMap->width(), landMap->height(), map);
+        landMap->set(map, Color3(1,0,0));
+        if (!cloudPoints.contains(vertex)) {
+            cloudPoints.insert(vertex);
+            positions.append(vertex);
+            --numClouds;
+        }
+    }
+}
+
+
 void Planet::findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals) {
     int numTrees = m_numberOfTrees;
     Set<Vector3> treePoints;
@@ -361,7 +407,7 @@ void Planet::findTreePositions(const shared_ptr<Image>& landMap, const Array<Vec
 
         Color3 color;
         landMap->get(Point2int32(ix, iy), color);
-        if(color.average() > 0.5f) {
+        if (color.average() > 0.5f) {
             possiblePositions.append(vertex);
         }
     }
@@ -597,6 +643,6 @@ bool Planet::hasClouds() {
     return m_hasClouds;
 }
 
-bool Planet::useParticleClouds(){
+bool Planet::useParticleClouds() {
     return m_useParticleClouds;
 }
