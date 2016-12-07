@@ -172,7 +172,7 @@ void SolarSystem::initializeEntityTable(Any& entities) {
 
     Any gradient(Any::TABLE, "VisibleEntity");
     gradient["model"] = "boardModel";
-    gradient["frame"] = CFrame::fromXYZYPRDegrees(0, 0, -50, 0, 0, 0);
+    gradient["frame"] = CFrame::fromXYZYPRDegrees(-4, 0, -50, 0, 0, 0);
     gradient["castsShadows"] = false;
     gradient["canChange"] = false;
     entities["gradient"] = gradient;

@@ -109,7 +109,7 @@ bool Planet::generatePlanet() {
         shared_ptr<Image> landMapImage = Image::create(1024, 1024, ImageFormat::RGBA8());
 
         noise.generateSeaImage(oceanNoiseImage, m_oceanNoise);
-        oceanNoiseImage->save(m_planetName + "land.png");
+        oceanNoiseImage->save(m_planetName + "ocean.png");
 
         writeSphere(m_planetName, 12.5f, 5, vertices, faces);
         applyNoiseWater(vertices, oceanNoiseImage);
@@ -164,8 +164,6 @@ bool Planet::generatePlanet() {
 
         mesh2.toObj(m_landObjFile, width, height);
 
-        //vertices.clear();
-        //faces.clear();
         Array<Vector3> mountVertices = Array<Vector3>();
         Array<Vector3int32> mountFaces = Array<Vector3int32>();
 
@@ -602,147 +600,3 @@ bool Planet::hasClouds() {
 bool Planet::useParticleClouds(){
     return m_useParticleClouds;
 }
-
-/*cloud["canChange"] = false;
-cloud["particlesAreInWorldSpace"] = true;
-
-int t[5] = { 2, 3, 5, 7, 11 };
-
-cloud["model"] = (String) "cloud" + (String)std::to_string(Random::threadCommon().integer(1, 3));
-cloud["scale"] = scale;
-cloud["track"] = Any::parse((String)
-    "transform(" +
-    "Matrix4::rollDegrees(90), " +
-    "transform("
-    "orbit(" +
-    (String)std::to_string(Random::threadCommon().integer(10, 20)) + ", " + (String)std::to_string(t[Random::threadCommon().integer(0, 4)]) +
-    "), " +
-    "combine(" +
-    "Matrix4::pitchDegrees(" + (String)std::to_string(Random::threadCommon().integer(-89, 89)) + "), entity(" + name + ")" +
-    ")"
-    "), " +
-    ");");
-    */
-
-    /*
-        Table<Vector3, int> vertexPositions;
-        for(int i(0); i < vertices->length(); ++i) {
-            vertexPositions.set(vertices->operator[](i), i);
-        }
-
-                if(!vertexPositions.get(newVec1, posVec1)) {
-                vertices->append(newVec1);
-                vertexPositions.set(newVec1, numVertices);
-                posVec1 = numVertices;
-            }
-            if(!vertexPositions.get(newVec2, posVec2)) {
-                vertices->append(newVec2);
-                vertexPositions.set(newVec2, numVertices + 1);
-                posVec2 = numVertices + 1;
-            }
-            if(!vertexPositions.get(newVec3, posVec3)) {
-                vertices->append(newVec3);
-                vertexPositions.set(newVec3, numVertices + 2);
-                posVec3 = numVertices + 2;
-            }
-    */
-
-
-    /*int numVert = vertices->size();
-    int numFace = faces->size();
-
-    TextOutput output("model/" + filename + ".obj");
-
-    for (int i = 0; i < numVert; ++i) {
-        Vector3 vertex = vertices->operator[](i);
-        output.printf("v %f %f %f\n", vertex[0], vertex[1], vertex[2]);
-    }
-
-    for (int i = 0; i < numFace; ++i) {
-        Vector3int32 face = faces->operator[](i);
-        output.printf("f %d %d %d\n", face[0]+1, face[1]+1, face[2]+1);
-    }
-    output.commit(true);
-    G3D::ArticulatedModel::clearCache();*/
-
-
-    /*for(int i(0); i < 6; ++i){
-        subdivideIcoHedron(radius, vertices, faces);
-    }
-    //const G3D::Welder::Settings settings;
-    Array<Vector3> normals;
-    Array<Vector2> texture;
-    Array<int> indices;
-    Array<Vector3> verts;
-
-    for (int i(0); i < vertices->length(); ++i) {
-        verts.append(vertices->operator[](i));
-    }
-
-    for(int i(0); i < faces->length(); ++i){
-        Vector3int32 face = faces->operator[](i);
-        indices.append(face.x, face.y, face.z);
-    }
-
-    Welder::weld(verts, texture, normals, indices, G3D::Welder::Settings());
-
-    faces = std::make_shared<Array<Vector3int32>>();
-    for(int i(0); i < indices.size()-3; i += 3) {
-        faces->append(Vector3int32(indices[i], indices[i+1], indices[i+2]));
-    }
-
-    for(int i(0); i < verts.size(); ++i) {
-        verts[i] += normals[i] * Random::threadCommon().uniform(1.0, 1.2);
-    }
-    vertices = std::make_shared<Array<Vector3>>(verts);*/
-
-    /*
-           float d = noise.sampleFloat(nx, ny, nz, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
-           float o = noise.sampleFloat(nz, ny, nx, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
-           float p = noise.sampleFloat(ny, nx, nz, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
-           float e = noise.sampleFloat(nx, nz, ny, Random::threadCommon().integer(0,4))*Random::threadCommon().uniform(50.0f,100.0f);
-           */
-
-
-           /* float lat = (float)acosf(vertex.z / radius);
-            float lon =  (float)atanf(vertex.x / vertex.y);
-
-            int nx = (int)(radius * lon * image->width()) % (image->width());//freq * vertex.x;
-            int ny = (int)(image->height() * radius * log(tanf((lat + pif()/2.0f) / 2.0f))) % (image->height());//freq * vertex.y;
-
-
-            */
-
-
-
-            /*    float frequency = 1.0f;
-                for(int x(0); x < image->width(); x++){
-                    for(int y(0); y < image->width(); y++){
-                        image->set(x, y, Color1unorm8(unorm8::fromBits(noise.sampleUint8( frequency * (x << 12), frequency * (y << 12), 0))));
-                    }
-                }
-                */
-
-
-                /*for (int i(0); i < vertices.size(); ++i) {
-                    Vector3 vertex = vertices[i];
-
-                    Vector3 d = (vertex - Vector3(0, 0, 0)).unit();
-
-                    float nx = image->width() * (0.5f + atanf(d.z / d.x) / (2.0f*pif()));
-                    float ny = image->height() * (0.5f - asinf(d.y) * 1 / pif());
-
-                    int ix = (int)abs((int)nx % image->width());
-                    int iy = (int)abs((int)ny % image->height());
-
-                    Color3 color = Color3();
-
-                    image->get(Point2int32(ix, iy), color);
-
-                    float bump = color.average();
-                    if (bump > 0.3f && bump < 0.6f) bump = 0.5f;
-                    else if (bump < 0.3f) bump = 0.1f;
-                    else bump = 1.0f;
-
-                    vertices[i] += vertex.unit() * bump * radius;
-                }*/
