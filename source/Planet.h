@@ -19,10 +19,13 @@ protected:
     int m_angleLengthWeight;
     bool m_collapsingEnabled;
     bool m_hasClouds;
+    bool m_hasDragon;
 
     //variables to use for the mesh
     int m_recursionLevel;
     int m_numberOfTrees;
+    int m_numberOfClouds;
+    int m_numberOfBirds;
     float m_frequency;
     float m_landBevel;
     float m_mountainBevel;
@@ -107,7 +110,7 @@ public:
     bool useParticleClouds();
     
     void findCloudPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions);
-    void getCloudPosition(Array<Point3>& cloudPositions);
+    void getCloudPositions(Array<Point3>& cloudPositions);
 
     void getPlanetOrbit(String& objectToOrbit, float& orbitDistance);
 

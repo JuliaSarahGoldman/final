@@ -253,7 +253,13 @@ void App::makePlanetGUI() {
         GuiTheme::LINEAR_SLIDER, 1, 8)->setUnitsSize(1);
 
     planPane->addNumberBox("# of Trees", &m_numberOfTrees, "",
-        GuiTheme::LINEAR_SLIDER, 0, 10000)->setUnitsSize(1);
+        GuiTheme::LINEAR_SLIDER, 0, 5000)->setUnitsSize(1);
+
+    planPane->addNumberBox("# of Clouds", &m_numberOfClouds, "",
+        GuiTheme::LINEAR_SLIDER, 0, 100)->setUnitsSize(1);
+
+    planPane->addNumberBox("# of Birds", &m_numberOfBirds, "",
+        GuiTheme::LINEAR_SLIDER, 0, 100)->setUnitsSize(1);
 
     planPane->addNumberBox("scale", &m_scale, "",
         GuiTheme::LINEAR_SLIDER, 0.1f, 1.0f)->setUnitsSize(0.01f);
@@ -276,6 +282,7 @@ void App::makePlanetGUI() {
 
     planPane->addCheckBox("Has Clouds", &m_hasClouds);
     planPane->addCheckBox("Particle Clouds", &m_useParticleClouds);
+    planPane->addCheckBox("Dragon?", &m_hasDragon);
 
     GuiPane* plan2Pane = planetTab->addTab("Noise Options");
 
@@ -533,6 +540,8 @@ void App::unpackagePlanetSpecs(Any& any) {
         AnyTableReader x(any);
         x.getIfPresent("recursions", m_recursionLevel);
         x.getIfPresent("trees", m_numberOfTrees);
+        x.getIfPresent("clouds", m_numberOfClouds);
+        x.getIfPresent("birds", m_numberOfBirds);
         x.getIfPresent("landBevel", m_landBevel);
         x.getIfPresent("mountainBevel", m_mountainBevel);
         x.getIfPresent("mountainHeight", m_mountainHeight);
@@ -546,6 +555,7 @@ void App::unpackagePlanetSpecs(Any& any) {
         x.getIfPresent("oceanNoise", m_oceanNoise);
         x.getIfPresent("hasClouds", m_hasClouds);
         x.getIfPresent("useParticleClouds", m_useParticleClouds);
+        x.getIfPresent("hasDragon", m_hasDragon);
 
         x.getIfPresent("xPos", m_xPos);
         x.getIfPresent("yPos", m_yPos);
@@ -595,6 +605,8 @@ void App::packagePlanetSpecs(Any& x) {
     try {
         x["recursions"] = m_recursionLevel;
         x["trees"] = m_numberOfTrees;
+        x["clouds"] = m_numberOfClouds;
+        x["birds"] = m_numberOfBirds;
         x["landBevel"] = m_landBevel;
         x["mountainBevel"] = m_mountainBevel;
         x["mountainHeight"] = m_mountainHeight;
@@ -612,6 +624,7 @@ void App::packagePlanetSpecs(Any& x) {
         x["mountainCollapsing"] = m_mountainEdgesToCollapse;
         x["hasClouds"] = m_hasClouds;
         x["useParticleClouds"] = m_useParticleClouds;
+        x["hasDragon"] = m_hasDragon;
 
         x["xPos"] = m_xPos;
         x["yPos"] = m_yPos;

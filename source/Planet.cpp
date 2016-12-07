@@ -34,6 +34,8 @@ bool Planet::readSpec(const Any& planetSpec) {
         x.getIfPresent("orbitPlanet", m_objectToOrbit);
         x.getIfPresent("orbitDistance", m_orbitDistance);
         x.getIfPresent("trees", m_numberOfTrees);
+        x.getIfPresent("clouds", m_numberOfClouds);
+        x.getIfPresent("birds", m_numberOfBirds);
 
         x.getIfPresent("collapsingEnabled", m_collapsingEnabled);
         x.getIfPresent("oceanCollapsing", m_oceanEdgesToCollapse);
@@ -50,6 +52,7 @@ bool Planet::readSpec(const Any& planetSpec) {
         x.getIfPresent("waterTexture", m_waterTextureFile);
         x.getIfPresent("hasClouds", m_hasClouds);
         x.getIfPresent("useParticleClouds", m_useParticleClouds);
+        x.getIfPresent("hasDragon", m_hasDragon);
 
         float xPos, yPos, zPos;
         x.getIfPresent("xPos", xPos);
@@ -219,7 +222,7 @@ bool Planet::generatePlanet() {
     return true;
 }
 
-void Planet::getCloudPosition(Array<Point3>& cloudPositions) {
+void Planet::getCloudPositions(Array<Point3>& cloudPositions) {
     cloudPositions = m_cloudPositions;
 }
 
@@ -303,7 +306,7 @@ void Planet::addCloudEntityToPlanet(Any& cloudEntity, const String& name, const 
         "transform(" +
             "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
             "transform(orbit(1,20)," +
-                CoordinateFrame::fromYAxis(position.unit(), (position + position.unit() * (Random::threadCommon().uniform(6,11)))*m_scale).toXYZYPRDegreesString() + "))";
+                CoordinateFrame::fromYAxis(position.unit(), (position + position.unit() * (Random::threadCommon().uniform(10,13)))*m_scale).toXYZYPRDegreesString() + "))";
 
     cloudEntity["track"] = Any::parse(track);
 
@@ -356,7 +359,7 @@ void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals)
 }
 
 void Planet::findCloudPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions) {
-    int numClouds = 100;
+    int numClouds = m_numberOfClouds;
     Set<Vector3> cloudPoints;
     Array<Vector3> possiblePositions;
     int ix, iy;
@@ -371,9 +374,7 @@ void Planet::findCloudPositions(const shared_ptr<Image>& landMap, const Array<Ve
         Color3 color;
         landMap->get(Point2int32(ix, iy), color);
         
-        debugPrintf("%f\n", color.average());
         if (color.average() > 0.8f) {
-            landMap->set(map, Color3(0,0,1));
             possiblePositions.append(vertex);
         }
     }
@@ -382,7 +383,7 @@ void Planet::findCloudPositions(const shared_ptr<Image>& landMap, const Array<Ve
         Vector3 vertex = possiblePositions[Random::threadCommon().integer(0, possiblePositions.length())];
         Point2int32 map;
         getMapping(vertex, landMap->width(), landMap->height(), map);
-        landMap->set(map, Color3(1,0,0));
+
         if (!cloudPoints.contains(vertex)) {
             cloudPoints.insert(vertex);
             positions.append(vertex);

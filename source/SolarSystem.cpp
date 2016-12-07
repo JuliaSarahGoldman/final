@@ -67,15 +67,16 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
         models[cloudModelName] = cloudModel;
 
         Array<Point3> cloudPositions;
-        Array<Vector3> cloudNormals;
-        planet.getTreePositions(cloudPositions, cloudNormals);
+        planet.getCloudPositions(cloudPositions);
+        //Array<Vector3> cloudNormals;
+        //planet.getTreePositions(cloudPositions, cloudNormals);
         //Array<float> orbitAngles({ 15, 30, 45 });
 
         float orbitSpeed = 15.0f;
-        for (int j(0); j < cloudPositions.length() && j < 50; ++j) {
-            int rand = Random::threadCommon().integer(0, cloudPositions.length()-1);
-            Point3 placement = cloudPositions[rand];
-            cloudPositions.remove(rand);
+        for (int j(0); j < cloudPositions.length(); ++j) {
+            //int rand = Random::threadCommon().integer(0, cloudPositions.length()-1);
+            Point3 placement = cloudPositions[j];
+            //cloudPositions.remove(rand);
 
             float orbitAngle = 35; //orbitAngles[Random::threadCommon().integer(0, 2)];
 

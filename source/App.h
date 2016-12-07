@@ -30,9 +30,12 @@ protected:
     bool m_collapsingEnabled;
     bool m_hasClouds;
     bool m_useParticleClouds;
+    bool m_hasDragon;
 
     int m_recursionLevel;
     int m_numberOfTrees;
+    int m_numberOfClouds;
+    int m_numberOfBirds;
     float m_frequency;
     float m_landBevel;
     float m_mountainBevel;
