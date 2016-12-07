@@ -267,7 +267,7 @@
                 setMaterial(all(), 
                     UniversalMaterial::Specification {
                         emissive = Texture::Specification{ 
-                            filename = "gradient.jpg"; 
+                            filename = "gradient.png"; 
                             encoding = Texture::Encoding { 
                                 readMultiplyFirst = Color4(Color3(0.5f), 1.0f);  
                             };

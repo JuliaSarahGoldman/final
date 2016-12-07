@@ -31,6 +31,7 @@ protected:
     float m_mountianNoise2;
     float m_mountianNoise3;
     float m_oceanLevel;
+    float m_oceanBevel;
 
     String m_planetSource;
     String m_planetSave;

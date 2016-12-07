@@ -39,6 +39,7 @@ protected:
     String m_planetSave;
     float m_landNoise;
     float m_oceanNoise;
+    float m_oceanBevel;
     bool m_waterMount;
     bool m_useWTexture;
     bool m_useLTexture;

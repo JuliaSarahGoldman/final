@@ -25,6 +25,7 @@ bool Planet::readSpec(const Any& planetSpec) {
         x.getIfPresent("mountainNoise2", m_mountianNoise2);
         x.getIfPresent("mountainNoise3", m_mountianNoise3);
         x.getIfPresent("oceanLevel", m_oceanLevel);
+        x.getIfPresent("oceanBevel", m_oceanBevel);
         x.getIfPresent("landNoise", m_landNoise);
         x.getIfPresent("oceanNoise", m_oceanNoise);
 
@@ -99,19 +100,24 @@ bool Planet::generatePlanet() {
         NoiseGen noise;
         AnyTableReader planetReader(m_planetSpec);
 
+        shared_ptr<Image> oceanNoiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
         shared_ptr<Image> landNoiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
         shared_ptr<Image> mountNoiseImage = Image::create(1024, 1024, ImageFormat::RGBA8());
         shared_ptr<Image> colorImage = Image::create(1024, 1024, ImageFormat::RGBA8());
         shared_ptr<Image> testImage = Image::create(1024, 1024, ImageFormat::RGBA8());
         shared_ptr<Image> landMapImage = Image::create(1024, 1024, ImageFormat::RGBA8());
 
+        noise.generateSeaImage(oceanNoiseImage, m_oceanNoise);
+        oceanNoiseImage->save(m_planetName + "land.png");
+
         writeSphere(m_planetName, 12.5f, 5, vertices, faces);
+        applyNoiseWater(vertices, oceanNoiseImage);
 
         Mesh mesh(vertices, faces);
         if (m_collapsingEnabled) {
             mesh.collapseEdges(m_oceanEdgesToCollapse);
         }
-        //mesh.bevelEdges2(0.1f);
+        mesh.bevelEdges2(m_oceanBevel);
         m_waterObjFile = m_planetName + "water";
 
         int width, height;

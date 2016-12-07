@@ -283,6 +283,9 @@ void App::makePlanetGUI() {
     oceanPane->addNumberBox("Ocean Noise", &m_oceanNoise, "",
         GuiTheme::LOG_SLIDER, 0.0f, 10.0f)->setUnitsSize(1);
 
+    oceanPane->addNumberBox("Ocean Bevel", &m_oceanBevel, "",
+        GuiTheme::LOG_SLIDER, 0.0001f, 1.0f)->setUnitsSize(1);
+
     GuiPane* landPane = plan2Pane->addPane("Land Options");
 
     landPane->addNumberBox("Land Noise", &m_landNoise, "",
@@ -486,6 +489,7 @@ void App::unpackagePlanetSpecs(Any& any) {
         x.getIfPresent("mountainNoise2", m_mountianNoise2);
         x.getIfPresent("mountainNoise3", m_mountianNoise3);
         x.getIfPresent("oceanLevel", m_oceanLevel);
+        x.getIfPresent("oceanBevel", m_oceanBevel);
         x.getIfPresent("landNoise", m_landNoise);
         x.getIfPresent("oceanNoise", m_oceanNoise);
 
@@ -545,6 +549,7 @@ void App::packagePlanetSpecs(Any& x) {
         x["mountainNoise2"] = m_mountianNoise2;
         x["mountainNoise3"] = m_mountianNoise3;
         x["oceanLevel"] = m_oceanLevel;
+        x["oceanBevel"] = m_oceanBevel;
         x["landNoise"] = m_landNoise;
         x["oceanNoise"] = m_oceanNoise;
         x["collapsingEnabled"] = m_collapsingEnabled;
