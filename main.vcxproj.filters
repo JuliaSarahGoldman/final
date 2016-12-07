@@ -19,6 +19,9 @@
     <ClCompile Include="source\SolarSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\PathTracer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\App.h">
@@ -39,6 +42,9 @@
     <ClInclude Include="source\SolarSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\PathTracer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources.rc" />
@@ -48,9 +54,6 @@
     <None Include="Doxyfile" />
     <None Include="journal\journal.md.html" />
     <None Include="doc-files\report.md.html" />
-    <None Include="data-files\Scene\Planet.Scene.Any">
-      <Filter>Scene Files</Filter>
-    </None>
     <None Include="data-files\Scene\ground.Scene.Any">
       <Filter>Scene Files</Filter>
     </None>
@@ -66,6 +69,9 @@
     <None Include="data-files\Planet.Scene.Any">
       <Filter>Scene Files</Filter>
     </None>
+    <None Include="data-files\Scene\BadPlanet.Scene.Any" />
+    <None Include="data-files\SolarSystem.Scene.Any" />
+    <None Include="data-files\Texture.Scene.Any" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
