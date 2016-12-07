@@ -29,6 +29,7 @@ protected:
     int m_angleLengthWeight;
     bool m_collapsingEnabled;
     bool m_hasClouds;
+    bool m_useParticleClouds;
 
     int m_recursionLevel;
     int m_numberOfTrees;

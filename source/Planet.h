@@ -71,7 +71,7 @@ protected:
     String m_planetName;
     String m_objectToOrbit;
     float m_orbitDistance;
-
+    bool m_useParticleClouds;
 
     //Creates an initial icohedron with the given radius to be tessellated to create a sphere
     void makeIcohedron(float radius, Array<Vector3>& vertices, Array<Vector3int32>& faces);
@@ -91,12 +91,17 @@ public:
     void createWaterAnyFile(Any& waterModel, Any& waterEntity);
     void createLandAnyFile(Any& landModel, Any& landEntity, const String& waterEntity);
     void createMountainAnyFile(Any& mountainModel, Any& mountainEntity, const String& waterEntity);
-    void addCloudToPlanet(Any& cloudEntity, String& track, const String& name, const String& planetName, const Point3& position, const float scale);
+    void createCloudModelAnyFile(Any& cloudModel, const String& name, const String& planetName);
+    void createEntityModelAnyFile(Any& model, const String& name, const String& fileName);
+
+    void addCloudEntityToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed);
     void findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
     void getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals);
     Point3 getPosition();
     float getScale();
     String getName();
+    bool hasClouds();
+    bool useParticleClouds();
 
     void getPlanetOrbit(String& objectToOrbit, float& orbitDistance);
 

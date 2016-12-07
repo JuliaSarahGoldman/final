@@ -57,49 +57,55 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
     entities[levelName] = mountainEntityDescription;
     models[levelName] = mountainModelDescription;
 
-    String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
-    Any cloudModel(Any::TABLE, "ParticleSystemModel::Emitter::Specification");
-    cloudModel["angularVelocityMean"] = 0;
-    cloudModel["angularVelocityVariance"] = 0;
-    cloudModel["initialDensity"] = 40;
-    cloudModel["material"] = "material/smoke/smoke.png";
-    cloudModel["noisePower"] = 0;
-    cloudModel["radiusMean"] = 1.1;
-    cloudModel["radiusVariance"] = 0;
-    cloudModel["shape"] = Any::parse("ArticulatedModel::Specification{filename = \"model/cloud/cloud.zip/cumulus00.obj\"; scale = " + (String) std::to_string(0.05f * planet.getScale()) + ";}; }");
-    cloudModel["location"] = "VOLUME";
-    models[name + "cloud1"] = cloudModel;
 
-    for (int i(0); i < 5; ++i) {
-        Any cloudEntityDescription(Any::TABLE, "ParticleSystem");
-        String track;
-        planet.addCloudToPlanet(cloudEntityDescription, track, name + "cloud1", levelName, planet.getPosition(), planet.getScale());
-        //for(int i(0); i < 1; ++i) {
-            entities[name + "cloud" + (String) std::to_string(i)] = cloudEntityDescription;
-        //}
+    if (planet.hasClouds()) {
+        Any cloudModel = (planet.useParticleClouds()) ? Any(Any::TABLE, "ParticleSystemModel::Emitter::Specification"): Any(Any::TABLE, "ArticulatedModel::Specification");
+        String cloudModelName = name + "cloud1";
+
+        planet.createCloudModelAnyFile(cloudModel, cloudModelName, name);
+
+        models[cloudModelName] = cloudModel;
+
+        float x, y, z;
+        
+        int orbitSpeeds[5] = { 2, 3, 5 };
+        int orbitAngles[6] = { 15, 30, 45, 60 };
+
+        for (int i(0); i < 20; ++i) {
+            Random::threadCommon().sphere(x, y, z);
+            Vector3 placement(x, y, z);
+            Vector3 point(placement * 10 * planet.getScale());
+            float orbitAngle = orbitAngles[Random::threadCommon().integer(0, 3)];
+            float orbitSpeed = orbitSpeeds[Random::threadCommon().integer(0, 2)];
+
+            for (int i(0); i < 10; ++i) {
+                Any cloudEntityDescription =  (planet.useParticleClouds()) ? Any(Any::TABLE, "ParticleSystem"): Any(Any::TABLE, "VisibleEntity");
+
+                planet.addCloudEntityToPlanet(cloudEntityDescription, cloudModelName, levelName, point, orbitAngle, orbitSpeed);
+                entities[name + "cloud" + (String)std::to_string(i)] = cloudEntityDescription;
+                
+            }
+        }
     }
 
-    //preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
     Any treeModel(Any::TABLE, "ArticulatedModel::Specification");
-    treeModel["scale"] = 0.5f * planet.getScale();
-    treeModel["filename"] = "model/lowpolytree.obj";
-    //treeModel["preprocess"] = Any::parse(preprocess);
+    planet.createEntityModelAnyFile(treeModel, "tree", "model/lowpolytree.obj");
     models["tree"] = treeModel;
 
     Array<Vector3> treePositions;
     Array<Vector3> treeNormals;
     planet.getTreePositions(treePositions, treeNormals);
 
-    for(int i(0); i < treePositions.length(); ++i) {
+    for (int i(0); i < treePositions.length(); ++i) {
         Any treeEntity(Any::TABLE, "VisibleEntity");
-        Vector3 position = treePositions[i]; 
+        Vector3 position = treePositions[i];
         Vector3 normal = treeNormals[i];
         treeEntity["model"] = "tree";
 
         treeEntity["frame"] = CoordinateFrame::fromYAxis(normal, position);
 
-        treeEntity["track"] = Any::parse("transform(entity(" + levelName + "), " + CoordinateFrame::fromYAxis(normal, (position + normal * 0.75f)*planet.getScale()).toXYZYPRDegreesString() +")");
-        entities["tree" + (String) std::to_string(i)] = treeEntity;
+        treeEntity["track"] = Any::parse("transform(entity(" + levelName + "), " + CoordinateFrame::fromYAxis(normal, (position + normal * 0.75f)*planet.getScale()).toXYZYPRDegreesString() + ")");
+        entities["tree" + (String)std::to_string(i)] = treeEntity;
     }
 
     makeSceneTable(m_scene, models, entities, name);
@@ -137,15 +143,15 @@ void SolarSystem::initializeEntityTable(Any& entities) {
     //Create the light source
     Any light(Any::TABLE, "Light");
     light["attenuation"] = Vector3(0, 0, 1);
-    light["bulbPower"] = Color3(1e+06, 1e+06, 0 );
-    light["castsShadows"] = true;
-    light["shadowMapBias"] = 0.05f;
-    light["track"] = Any::parse("lookAt(Point3(0, 20, -350), Point3(0, 0, 0));");
+    light["bulbPower"] = Color3(1e+04, 1e+04, 0);
+    light["castsShadows"] = false;
+    //light["shadowMapBias"] = 0.05f;
+    light["track"] = Any::parse("lookAt(Point3(0, -50, 250), Point3(0, 0, 0));");
     light["shadowMapSize"] = Vector2int16(2048, 2048);
     light["spotHalfAngleDegrees"] = 8;
     light["spotSquare"] = true;
     light["type"] = "SPOT";
-    light["varianceShadowSettings"] = Any::parse("VSMSettings {enabled = true; filterRadius = 11; blurMultiplier = 5.0f; downsampleFactor = 1; }");
+    //light["varianceShadowSettings"] = Any::parse("VSMSettings {enabled = true; filterRadius = 11; blurMultiplier = 5.0f; downsampleFactor = 1; }");
     entities["sun"] = light;
 
     Any camera(Any::TABLE, "Camera");
@@ -209,19 +215,20 @@ void SolarSystem::initializeModelsTable(Any& models) {
     models["boardModel"] = boardModel;
 }
 
-bool SolarSystem::containsPlanet(const String& name){
+bool SolarSystem::containsPlanet(const String& name) {
     return m_planetTable.containsKey(name);
 }
 
-bool SolarSystem::removePlanet(const String &name){
+bool SolarSystem::removePlanet(const String &name) {
     return m_planetTable.remove(name);
 }
 
-bool SolarSystem::printSolarSystemToScene(const String& save){
+bool SolarSystem::printSolarSystemToScene(const String& save) {
     try {
         m_scene.save(save + ".Scene.Any");
         return true;
-    } catch(...) {
+    }
+    catch (...) {
         return false;
     }
 }

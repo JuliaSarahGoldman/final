@@ -29,7 +29,6 @@ bool Planet::readSpec(const Any& planetSpec) {
         x.getIfPresent("landNoise", m_landNoise);
         x.getIfPresent("oceanNoise", m_oceanNoise);
 
-
         x.getIfPresent("scale", m_scale);
         x.getIfPresent("planetName", m_planetName);
         x.getIfPresent("orbitPlanet", m_objectToOrbit);
@@ -50,6 +49,7 @@ bool Planet::readSpec(const Any& planetSpec) {
         x.getIfPresent("landTexture", m_landTextureFile);
         x.getIfPresent("waterTexture", m_waterTextureFile);
         x.getIfPresent("hasClouds", m_hasClouds);
+        x.getIfPresent("useParticleClouds", m_useParticleClouds);
 
         float xPos, yPos, zPos;
         x.getIfPresent("xPos", xPos);
@@ -179,7 +179,7 @@ bool Planet::generatePlanet() {
         mountNoiseImage->save(m_planetName + "mountain.png");
         colorImage->save(m_planetName + "mountainColor.png");
         applyNoiseMountain(mountVertices, mountNoiseImage, testImage, m_waterMount, m_mountianDiversity, m_mountainHeight);
-        
+
         testImage->save(m_planetName + "mountainTest.png");
         Mesh mesh3(mountVertices, mountFaces);
         if (m_collapsingEnabled) {
@@ -192,7 +192,7 @@ bool Planet::generatePlanet() {
 
         findTreePositions(landMapImage, vertices, m_treePositions, m_treeNormals);
 
-        if (m_useMTexture){
+        if (m_useMTexture) {
             shared_ptr<Image> image = Image::fromFile(m_mountainTextureFile);
             width = image->width();
             height = image->height();
@@ -283,30 +283,54 @@ void Planet::createLandAnyFile(Any& landModel, Any& landEntity, const String& wa
 
 }
 
-void Planet::addCloudToPlanet(Any& cloudEntity, String& track, const String& name, const String& planetName, const Point3& position, const float scale) {
-
-    cloudEntity["canChange"] = true;
-    cloudEntity["particlesAreInWorldSpace"] = false;
-
-    int t[5] = { 2, 3, 5 };
-    int c[6] = {30, 45, 60, 75};
-
-    cloudEntity["model"] = name ;//+ (String)std::to_string(Random::threadCommon().integer(1, 3));
+void Planet::addCloudEntityToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed) {
+    String track;
+    cloudEntity["model"] = name;
     track = (String)
         "transform(" +
-        "Matrix4::rollDegrees(" +  (String)std::to_string(c[Random::threadCommon().integer(0, 3)])   + "), " +
+        "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
         "transform("
         "orbit(" +
-            (String)std::to_string(Random::threadCommon().integer(30, 40) * scale + 1) + ", " + (String)std::to_string(t[Random::threadCommon().integer(0, 2)]) +
+        (String)std::to_string(Random::threadCommon().integer(35, 40) * m_scale + 0.2f) + ", " + (String)std::to_string(orbitSpeed) +
         "), " +
         "transform(" +
-            "Matrix4::pitchDegrees(90)," + 
-            "entity(" + planetName + ")" +
+        "Matrix4::pitchDegrees(90)," +
+        "Point3" + position.toString() +
         ")"
         "), " +
         ");";
     cloudEntity["track"] = Any::parse(track);
 
+    if (m_useParticleClouds) {
+        cloudEntity["canChange"] = true;
+        cloudEntity["particlesAreInWorldSpace"] = false;
+    }
+
+}
+
+void Planet::createCloudModelAnyFile(Any& cloudModel, const String& name, const String& planetName) {
+    if (m_useParticleClouds) {
+        String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
+        cloudModel["angularVelocityMean"] = 0;
+        cloudModel["angularVelocityVariance"] = 0;
+        cloudModel["initialDensity"] = 30;
+        cloudModel["material"] = "material/smoke/smoke.png";
+        cloudModel["noisePower"] = 0;
+        cloudModel["radiusMean"] = 1.1;
+        cloudModel["radiusVariance"] = 0;
+        cloudModel["shape"] = Any::parse("ArticulatedModel::Specification{filename = \"model/cloud/cloud.zip/cumulus00.obj\"; scale = " + (String)std::to_string(max(0.001f, 0.06f * getScale())) + ";}; }");
+        cloudModel["location"] = "VOLUME";
+    } else {
+        String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
+        cloudModel["scale"] = 0.1f * getScale();
+        cloudModel["filename"] = "model/cloud/cloud.zip/cumulus00.obj";
+        cloudModel["preprocess"] = Any::parse(preprocess);
+    }
+}
+
+void Planet::createEntityModelAnyFile(Any& model, const String& name, const String& fileName) {
+    model["scale"] = 0.5f * getScale();
+    model["filename"] = "model/lowpolytree.obj";
 }
 
 void Planet::getMapping(const Vector3& vertex, int width, int height, Point2int32& map) {
@@ -319,7 +343,7 @@ void Planet::getMapping(const Vector3& vertex, int width, int height, Point2int3
     map.y = ((int)ny) % height;
 }
 
-void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals){
+void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals) {
     vertices = m_treePositions;
     normals = m_treeNormals;
 }
@@ -329,9 +353,9 @@ void Planet::findTreePositions(const shared_ptr<Image>& landMap, const Array<Vec
     Set<Vector3> treePoints;
     Array<Vector3> possiblePositions;
 
-    for(int i(0); i < vertices.size(); ++i) {
+    for (int i(0); i < vertices.size(); ++i) {
         Vector3 vertex = vertices[i];
-        
+
         Point2int32 map;
         getMapping(vertex, landMap->width(), landMap->height(), map);
         int ix = map.x;
@@ -344,10 +368,10 @@ void Planet::findTreePositions(const shared_ptr<Image>& landMap, const Array<Vec
         }
     }
 
-    while(numTrees > 0) {
+    while (numTrees > 0) {
         Vector3 vertex = possiblePositions[Random::threadCommon().integer(0, possiblePositions.length())];
 
-        if(!treePoints.contains(vertex)){
+        if (!treePoints.contains(vertex)) {
             treePoints.insert(vertex);
             positions.append(vertex);
             normals.append(vertex.unit());
@@ -433,7 +457,8 @@ void Planet::applyNoiseLand(Array<Vector3>& vertices, shared_ptr<Image> noise, s
         if (bump < oceanLevel) {
             bump = 0.0f;
             test->set(Point2int32(ix, iy), Color1(1.0f));
-        } else {
+        }
+        else {
             bump *= 4.0f;
             test->set(Point2int32(ix, iy), Color1(0.0f));
         }
@@ -570,6 +595,13 @@ String Planet::getName() {
     return m_planetName;
 }
 
+bool Planet::hasClouds() {
+    return m_hasClouds;
+}
+
+bool Planet::useParticleClouds(){
+    return m_useParticleClouds;
+}
 
 /*cloud["canChange"] = false;
 cloud["particlesAreInWorldSpace"] = true;
