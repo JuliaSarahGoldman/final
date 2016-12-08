@@ -155,10 +155,10 @@ void SolarSystem::initializeEntityTable(Any& entities) {
     //Create the light source
     Any light(Any::TABLE, "Light");
     light["attenuation"] = Vector3(0, 0, 1);
-    light["bulbPower"] = Color3(1e+06, 1e+06, 0);
+    light["bulbPower"] = Color3(1e+06, 1e+06, 1e+04);
     light["castsShadows"] = true;
     light["shadowMapBias"] = 0.05f;
-    light["track"] = Any::parse("lookAt(Point3(0, -50, 300), Point3(0, 0, 0));");
+    light["track"] = Any::parse("lookAt(Point3(0, -50, 350), Point3(0, 0, 0));");
     light["shadowMapSize"] = Vector2int16(2048, 2048);
     light["spotHalfAngleDegrees"] = 8;
     light["spotSquare"] = true;
