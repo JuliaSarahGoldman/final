@@ -579,7 +579,6 @@ void Planet::applyNoiseMountain(Array<Vector3>& vertices, shared_ptr<Image> nois
     }
 }
 
-//Creates an initial icohedron with the given radius to be tessellated to create a sphere
 void Planet::makeIcohedron(float radius, Array<Vector3>& vertices, Array<Vector3int32>& faces) {
     float t = (1.0f + sqrt(5.0f)) / 2.0f;
 

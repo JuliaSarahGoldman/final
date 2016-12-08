@@ -19,7 +19,6 @@ protected:
     Any m_entities;
 
     void addPlanetToScene(Any& entities, Any& models, const String& name, Planet& planet);
-
     void initializeEntityTable(Any& entities);
     void initializeModelsTable(Any& models);
     void initializeSceneTable(Any& scene);
@@ -30,11 +29,11 @@ public:
     SolarSystem();
     ~SolarSystem();
 
-    bool printSolarSystemToScene(const String& save);
+    void onInit();
     bool addPlanet(const String& name, Planet& planet);
     bool containsPlanet(const String& name);
     bool removePlanet(const String &name);
-    void onInit();
+    bool printSolarSystemToScene(const String& save);
     bool reset();
     inline bool resetTables();
 };
