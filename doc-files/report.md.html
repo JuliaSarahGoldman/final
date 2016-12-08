@@ -11,9 +11,9 @@
 Introduction
 ============================================================================================
 
-Our project was to procedurally generate low-poly planets using triangle meshes and noise functions.  By specifying different noise functions, textures, object placements, destruction and bevlling algorithms, and height ratios, we can generate an infinite number of low-poly planets that look amazing and are stuctually diverse and interesting.
+Our project was to procedurally generate low-poly planets using triangle meshes and noise functions.  By allowing the use of different noise functions, textures, object placements, destruction and bevelling algorithms, and height ratios, we can generate an infinite number of low-poly planets that are stuctually diverse and look amazing.
 
-Low-poly planets both allow and beg for one to apply a certain style to them in order to create interesting and beautiful images withour the worry of them appearing to not look "realistic".  They can be throught of three different polygon, sphere heightfields placed ontop of each other with noise applied to it: one for water, one for land, and one for mountains.  You can then color each of these planes, add a texture to it, decimate triangles to make it even less poly, and bevel edges to improve shading to make for a nice looking planet.  From here, you can also place objects around and on the planet to add more diversity. You can then keep mapping different noise functions to create different planets that continue to be interesting and beautiful.
+Low-poly planets are great since they require one to apply a certain style to them in order to create interesting and beautiful images without the worry of them appearing to not look "realistic".  They can be throught of three different polygon, sphere heightfields placed ontop of each other with noise applied to each: one for water, one for land, and one for mountains.  You can then add a texture to each, decimate triangles, and bevel edges to improve shading to make for a nice looking planet.  From here, you can also place objects on and around the planet to add more diversity. You can then keep mapping different noise functions to create different planets that continue to be interesting and beautiful.
 
 Specification
 ============================================================================================
@@ -32,7 +32,7 @@ Specification
 		2. Birds
         3. Clouds
 	7. Make the planet rotate on its axis
-	8. Make the clouds and birds move along predetermined paths 
+	8. Make the clouds and birds orbit our planet arbitrary
 	9. Use a gradient background for better aesthetic.
     10. Map textures onto the planet.
 
@@ -55,9 +55,10 @@ Specification
 	2. A scene of a planet with a moon rotating around it
 	3. A unique scene emphasizing our planets' beauty
   
-5. Stretch Goals
-	1. Add detailed buildings to the planets
-	2. Have one planet revolve around another like a moon
+5. Additional Features
+	1. Have multiple planets in the same scene
+    2. Have one planet orbit another
+    3. Have a dragon model that can orbit a planet
   
 Topic Overview
 =====================================================================================
@@ -221,7 +222,7 @@ Justification
 
 [Planet](class_planet.html) is responsible for building the spheres that make up our different heightfields, map noise onto the sphere, and allows for the mapping of entities onto or over the planet. While each individual planet does not have control of the scene, it helps the SolarSystem class create the any files for the models and entities relative to the planet. This allows us to isolate the information and entities that make up one planet from the others that may be in the SolarSystem scene file.
 
-[NoiseGen](class_noise_gen.html) Applies different Perlin noise functions to 2-dimensional images that are used to apply to heightfields and place objects on and around the planet.  We abstracted this code from our Planet class to keep Planet clean.
+[NoiseGen](class_noise_gen.html) Applies different Perlin noise functions to 2-dimensional images that are used to map to heightfields and decide where to place objects on and around the planet.  We abstracted this code from our Plaet class, even though it is the only class to call it, since the NoiseGen functions are independent of any single planet nad is shared by all. We designed the Planet class to only contain information required for one planet in our Solar System Scene.
 
 [Mesh](class_mesh.html) defines methods to compute adjacency and normal information of the input Mesh, and methods to edit the Mesh. It is used by Planet, which passes in the vertex array and the tri array of faces of the original heightfields into Mesh. Planet then invokes the methods defined in Mesh to collapse mesh edges, to bevel the mesh, and to output it to [G3D::ArticulatedModel](http://g3d.cs.williams.edu/g3d/G3D10/build/manual/class_g3_d_1_1_articulated_model.html) or to OBJ files to be used in our scenes. Collapsing edges simplifies the mesh and makes the faces look less uniform which makes the low polyness more interesting. Bevelling smoothes the edges between faces and gives more of a polygon effect to the mesh. This design choice abstracts mesh editting from mesh creation and allowed us to to work on introducing low polyness separately from generating nice planets.
     
