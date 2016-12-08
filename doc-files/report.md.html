@@ -155,7 +155,9 @@ Flow
                         2. Mesh::computeNormals()
                     8. NoiseGen::landMapImage()
                     9. Planet::findTreePositions()
-                4. SolarSystem::addPlanet()
+                4. Planet::generatePlanet()
+                    1. Planet::findAirPositions()   
+                5. SolarSystem::addPlanet()
                     1. Planet::getPlanetOrbit()
                     2. SolarSystem::addPlanetToScene()
                         1. Planet::createWaterAnyFile()
@@ -163,8 +165,21 @@ Flow
                         3. Planet::createMountainAnyFile()
                         4. Planet::addCloudToPlanet()
                         5. Planet::getTreePositions()
-                        6. SolarSystem::MakeSceneTable()
-                5. SolarSystem::printSolarSystemToScene()
+                        6. Planet::addAirEntityToPlanet()
+                        7. Planet::addCloudEntityToPlanet()
+                        8. Planet::addLandEntityToPlanet()
+                        9. Planet::getBirdPositions()
+                        10. Planet::getCloudPositions() 
+                        11. Planet::getDragonPositions() 
+                        12. Planet::getLandPositions() 
+                        13. Planet::getPositions() 
+                        14. Planet::getScale() 
+                        15. Planet::hasBirds()                            
+                        16. Planet::hasCloud()
+                        17. Planet::hasDrago()
+                        18. Planet::hasTrees()
+                        19. SolarSystem::MakeSceneTable()
+                6. SolarSystem::printSolarSystemToScene()
 
 
 Class Descriptions
@@ -210,29 +225,29 @@ Class Descriptions
 |[writeSphere](class_planet.html#a4e6161f7106c7800e162213210cc23bb) | Constructs a sphere of a given recursion depth |
 |[getMiddle](class_planet.html#a9264b1a5ed9484f6de3a802b674ccd3e) | Finds the middle between two points |
 |[makeIcohedron](class_planet.html#a73f0047f85c0d7138283e9006cc5b729) | Makes an icohedron |
-|[subdivideIcoHedron](class_planet.html#a8da7fb007fbfb344c150382ab774629a) | Does one tesselation of the current icohedron mesh |
-|[addAirElementToPlanet](class_planet.html#ae947830bd5cb7d1251acb70cee7495c1) | Adds an entity to orbit the planet |
-|[addCloudEntityToPlanet](class_planet.html#a23cf56bc77e2500e5a8b22bede18f012) | Adds a cloud entity to orbit the planet |
-|[addLandEntityToPlanet](class_planet.html#a624dd989a61669d86be4073425d2cbe9) | Adds an entity to the land plane of the planet |
-|[createLandAnyFile](class_planet.html#a4c3ef3a0febd7598780d8037ddd3a141) | Creates model and entity Any table for land field |
-|[createWaterAnyFile](class_planet.html#ac83d0ff9a042d5036ca51bfb812a5d0f) | Creates model and entity Any table for water field |
-|[createMountainAnyFile](class_planet.html#aa464225900c48221093ba744d4547f47) | Creates model and entity Any table for Mountain field |
-|[findAirPositions](class_planet.html#aa464225900c48221093ba744d4547f47) | Generates a list of positions to place orbiting entities |  
-|[generatePlanet](class_planet.html#a39b9bfe9ab935da483e3ad867578450c) | Adds a planet to the solar system scene with given parameters |   
-|[getBirdPositions](class_planet.html#a7bbc69cbe55ef86d1fe3611c70796fb8) | Returns positions where bird entities should be placed |
-|[getCloudPositions](class_planet.html#a3d6de3d163c554504d4deb1cd0811a6f) | Returns positions where cloud entities should be placed | 
-|[getDragonPosition](class_planet.html#af6ec78155a1aa22b8784dffd7e40e052) | Returns position where dragon entity should be placed |   
-|[getLandPositions](class_planet.html#aaa8b834613893e8555d1727c87619222) | Generates a list of positions to place entities to land plane |   
-|[getName](class_planet.html#a94d87c025a8de03a572f0b1eb0f0a4aa) | Returns planet's name |   
-|[getPlanetOrbit](class_planet.html#ad168a654dfe4ade4fbdf3833f21ca9dd) | Returns the planet's orbital trajectory | 
-|[getScale](class_planet.html#a77ac11f7df6e717f88d8a5de39aa05c1) | Returns plant's scale | 
-|[hasBirds](class_planet.html#ac989404907a51988071caede6ae568d0) | Returns if there should be bird entities |   
-|[hasClouds](class_planet.html#af2191123df35d8797e473d18f1779611) | Returns if there should be cloud entities |
-|[hasDragon](class_planet.html#a60244e947878446ac40f961396d52a32) | Return if a planet should have an orbiting dragon |   
-|[hasTrees](class_planet.html#a8c3fb71b9f90f0a0c618629ab1fe33e8) | Returns if there should be tree entities |
-|[toAny](class_planet.html#a8e9379d13de79745efffb4c4f45a00c0) | Returns the plant's specification in Any format | 
-|[useParticleClouds](class_planet.html#ab95bb0f862a0e4479eda4cf248ad5c11) | Returns if we should use particle clouds instead of poly cloud model |   
-|[readSpec](class_planet.html#aa3ff7b71b662ee6a9c6a19c8663f58b8) | Reads the planet's specification and saves state |   
+|[subdivideIcoHedron](class_planet.html#a8da7fb007fbfb344c150382ab774629a) | |
+|[addAirEntityToPlanet](class_planet.html#ae947830bd5cb7d1251acb70cee7495c1) |  |
+|[addCloudEntityToPlanet](class_planet.html#a23cf56bc77e2500e5a8b22bede18f012) |  |
+|[addLandEntityToPlanet](class_planet.html#a624dd989a61669d86be4073425d2cbe9) |  |
+|[createLandAnyFile](class_planet.html#a4c3ef3a0febd7598780d8037ddd3a141) |  |
+|[createWaterAnyFile](class_planet.html#ac83d0ff9a042d5036ca51bfb812a5d0f) |  |
+|[createWaterAnyFile](class_planet.html#aa464225900c48221093ba744d4547f47) |  |
+|[findAirPositions](class_planet.html#aa464225900c48221093ba744d4547f47) |  |  
+|[generatePlanet](class_planet.html#a39b9bfe9ab935da483e3ad867578450c) |  |   
+|[getBirdPositions](class_planet.html#a7bbc69cbe55ef86d1fe3611c70796fb8) |  |
+|[getCloudPositions](class_planet.html#a3d6de3d163c554504d4deb1cd0811a6f) |  | 
+|[getDragonPosition](class_planet.html#af6ec78155a1aa22b8784dffd7e40e052) |  |   
+|[getLandPositions](class_planet.html#aaa8b834613893e8555d1727c87619222) |  |   
+|[getName](class_planet.html#a94d87c025a8de03a572f0b1eb0f0a4aa) |  |   
+|[getPlanetOrbit](class_planet.html#ad168a654dfe4ade4fbdf3833f21ca9dd) |  |
+|[getScale](class_planet.html#a77ac11f7df6e717f88d8a5de39aa05c1) |  | 
+|[hasBirds](class_planet.html#ac989404907a51988071caede6ae568d0) |  |   
+|[hasClouds](class_planet.html#af2191123df35d8797e473d18f1779611) |  |
+|[hasDragon](class_planet.html#a60244e947878446ac40f961396d52a32) |  |   
+|[hasTrees](class_planet.html#a8c3fb71b9f90f0a0c618629ab1fe33e8) |  |
+|[toAny](class_planet.html#a8e9379d13de79745efffb4c4f45a00c0) |  | 
+|[useParticleClouds](class_planet.html#ab95bb0f862a0e4479eda4cf248ad5c11) |  |   
+|[readSpec](class_planet.html#aa3ff7b71b662ee6a9c6a19c8663f58b8) |  |   
 
 |[SolarSystem](class_solar_system.html): | |
 |------------|---|
@@ -316,6 +331,11 @@ Evocative Results
 ![Planetside Image](johnWork_closeUp.jpg)
 
 ![Nicely Shaded Mountain](mountain_closeUp.jpg)
+
+
+![Dragon's flight](2016-12-07_DragonPlanet.jpg)
+
+![Ice video](2016-12-07_056_starter_r2827_g3d_r981__Barbie_s_ice_planet_with_clouds_video.mp4 width = 550px)
 
 ![Danger Zone video](2016-12-07_060_starter_r2849_g3d_r981__Danger_Zone_video.mp4 width = 200px) ![Danger Zone bird's perspective video](2016-12-07_062_starter_r2849_g3d_r981__Danger_Zone_bird_s_perspective_video.mp4 width = 200px)
 
