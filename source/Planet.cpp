@@ -335,10 +335,10 @@ void Planet::addAirEntityToPlanet(Any& airEntity, const String& name, const Stri
     
     track = (String)
         "transform(" +
-            "Matrix4::rollDegrees(" + (String)std::to_string(40) + "), " +
-            "transform(orbit(1," +  (String)std::to_string(orbitSpeed) + ")," +
-                //"transform(Matrix4::rollDegrees(" + (String)std::to_string(0) + "), " 
-         CoordinateFrame::fromYAxis((position - m_position).unit(), (position + (position - m_position).unit() * (Random::threadCommon().uniform(minHeight, maxHeight)))*m_scale).toXYZYPRDegreesString() + "))";
+            "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
+            "transform(orbit(0," +  (String)std::to_string(orbitSpeed) + "), " + 
+            "lookAt(" 
+                + CoordinateFrame::fromYAxis((position - m_position).unit(), (position + (position - m_position).unit() * (Random::threadCommon().uniform(minHeight, maxHeight)))*m_scale).toXYZYPRDegreesString() + "," + "Matrix4::rollDegrees(" + (String) std::to_string(orbitAngle) + ") )))";
 
     airEntity["track"] = Any::parse(track);
 }

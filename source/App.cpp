@@ -437,7 +437,7 @@ void App::makePlanetGUI() {
             Any any(Any::TABLE, "Planet");
             any.load(m_planetSource);
             unpackagePlanetSpecs(any);
-
+            msgBox("Contents have been loaded into options.", "Succes");
         }
         catch (...) {
             msgBox("Failed to open file and load specs.");
@@ -450,6 +450,7 @@ void App::makePlanetGUI() {
             Any planetSpecs(Any::TABLE, "Planet");
             packagePlanetSpecs(planetSpecs);
             planetSpecs.save(m_planetSave);
+            msgBox("Contents saved to "+ m_planetSave, "Success");
         }
     });
 
@@ -519,7 +520,11 @@ void App::makePlanetGUI() {
 
                 if (m_solarSystem.printSolarSystemToScene("SolarSystem")) {
                     ArticulatedModel::clearCache();
-                    loadScene("Solar System");
+                    try {
+                        loadScene("Solar System");
+                    } catch(...){
+                        msgBox("The Scene failed to load");
+                    }
                 }
                 else {
                     msgBox("The Solar System Scene Failed to Print");

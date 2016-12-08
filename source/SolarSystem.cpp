@@ -155,16 +155,27 @@ void SolarSystem::initializeEntityTable(Any& entities) {
     //Create the light source
     Any light(Any::TABLE, "Light");
     light["attenuation"] = Vector3(0, 0, 1);
-    light["bulbPower"] = Color3(1e+04, 1e+04, 0);
-    light["castsShadows"] = false;
-    //light["shadowMapBias"] = 0.05f;
-    light["track"] = Any::parse("lookAt(Point3(0, -50, 250), Point3(0, 0, 0));");
+    light["bulbPower"] = Color3(1e+06, 1e+06, 0);
+    light["castsShadows"] = true;
+    light["shadowMapBias"] = 0.05f;
+    light["track"] = Any::parse("lookAt(Point3(0, -50, 300), Point3(0, 0, 0));");
     light["shadowMapSize"] = Vector2int16(2048, 2048);
     light["spotHalfAngleDegrees"] = 8;
     light["spotSquare"] = true;
     light["type"] = "SPOT";
-    //light["varianceShadowSettings"] = Any::parse("VSMSettings {enabled = true; filterRadius = 11; blurMultiplier = 5.0f; downsampleFactor = 1; }");
+    light["varianceShadowSettings"] = Any::parse("VSMSettings {enabled = true; filterRadius = 11; blurMultiplier = 5.0f; downsampleFactor = 1; }");
     entities["sun"] = light;
+
+    Any fillLight(Any::TABLE, "Light");
+    fillLight["attenuation"] = Vector3(0, 0, 1);
+    fillLight["bulbPower"] = Color3(0, 1e+04, 1e+04);
+    fillLight["castsShadows"] = false;
+    fillLight["track"] = Any::parse("lookAt(Point3(0, -150, -150), Point3(0, 0, 0));");
+    fillLight["spotHalfAngleDegrees"] = 8;
+    fillLight["spotSquare"] = true;
+    fillLight["type"] = "SPOT";
+    fillLight["varianceShadowSettings"] = Any::parse("VSMSettings {enabled = true; filterRadius = 11; blurMultiplier = 5.0f; downsampleFactor = 1; }");
+    entities["fillLight"] = fillLight;
 
     Any camera(Any::TABLE, "Camera");
     camera["frame"] = CFrame::fromXYZYPRDegrees(0.90151, 1.8599, 63.627, -0.39264, -1.1459, 0);
