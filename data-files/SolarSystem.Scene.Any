@@ -26,6 +26,18 @@
             
         }; 
         
+        dragon0 = VisibleEntity { 
+            model = "dragon"; 
+            track = transform(
+                Matrix4::rollDegrees(-40.8808 ), 
+                transform(
+                    orbit(0, 4 ), 
+                    lookAt(
+                        CFrame::fromXYZYPRDegrees(4.5227, -12.414, 21.79, 98.906, -5.0404, 119.28 ), 
+                        Matrix4::rollDegrees(-81.7616 ) ) ) ); 
+            
+        }; 
+        
         fillLight = Light { 
             attenuation = Vector3(0, 0, 1 ); 
             bulbPower = Color3(0, 10000, 10000 ); 
@@ -53,46 +65,1223 @@
             model = "boardModel"; 
         }; 
         
-        moon = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(91.7045, 70.5384, 4.48216 ); 
-            model = "moon"; 
-            track = transform(
-                transform(
-                    entity("planet"), 
-                    orbit(15.1791, 10 ) ), 
-                orbit(0, 7 ) ); 
-            
-        }; 
-        
-        moonland = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(91.7045, 70.5384, 4.48216 ); 
-            model = "moonland"; 
-            track = entity("moon"); 
-        }; 
-        
-        moonmountain = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(91.7045, 70.5384, 4.48216 ); 
-            model = "moonmountain"; 
-            track = entity("moon"); 
-        }; 
-        
         planet = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 0, 4.59093e-41 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 4.47505e-39, 0 ); 
             model = "planet"; 
             track = combine(
                 orbit(0, 10 ), 
-                Point3(0, 0, 4.59093e-41 ) ); 
+                Point3(0, 4.47505e-39, 0 ) ); 
+            
+        }; 
+        
+        planetcloud0 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-9.3732, -21.572, 4.801, 84.736, 22.405, 166.41 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud1 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(1.6066, -23.33, 5.9691, 90.947, -3.6975, 165.62 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud10 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-15.136, -6.6298, 17.462, 52.853, 12.913, 106.43 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud11 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(1.4336, -15.154, 17.931, 92.67, -2.2547, 130.15 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud12 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-10.584, -7.5185, 20.173, 65.267, 8.863, 108.49 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud13 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(6.1063, 19.591, -13.818, 81.648, 11.637, -36.049 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud14 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-16.391, -16.198, 1.8628, 83.448, 44.775, 170.74 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud15 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-20.292, 12.623, 5.0054, 61.152, -50.585, 35.489 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud16 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-12.116, -1.1954, 18.865, 57.394, 1.9557, 93.054 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud17 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-11.928, 18.034, -6.5898, 102.04, -29.712, -23.276 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud18 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(19.768, 14.017, 3.1035, 106.58, 52.186, 20.646 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud19 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-17.934, -16.409, 4.2995, 74.999, 44.651, 159.13 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud2 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-3.3159, -6.9187, 21.925, 82.169, 2.4621, 107.35 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud20 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(11.507, 17.398, -6.3573, 77.964, 29.712, -23.276 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud21 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(3.0477, 20.419, 10.51, 93.476, 6.7172, 27.44 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud22 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(16.679, -16.206, -4.6208, 74.816, -42.571, -158.14 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud23 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-3.7503, 20.938, 12.515, 85.49, -7.4947, 31.163 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud24 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-17.652, -15.561, 1.9114, 82.184, 47.91, 169.52 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud25 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(17.634, 12.703, -10.898, 55.55, 33.4, -51.255 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud26 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-10.963, -9.0963, 18.665, 64.609, 11.803, 113.31 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud27 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-14.416, 6.9669, -18.038, 124.82, -12.436, -72.795 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud28 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(14.107, 17.941, -8.7188, 72.822, 31.288, -30.763 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud29 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(13.863, 17.075, -6.2001, 75.4, 34.767, -24.55 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud3 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-11.79, -19.076, 1.7649, 86.755, 31.459, 173.8 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud30 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-7.9926, 6.2858, 21.575, 71.146, -5.3784, 74.651 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud31 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(13.367, -19.008, -2.7869, 84.236, -34.409, -169.87 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud32 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-22.013, -3.7603, 6.0844, -74.55, -80.65, -180 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud33 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-4.0221, 18.498, 14.768, 83.948, -7.5226, 39.002 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud34 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-14.694, -6.1377, 18.026, 53.852, 11.357, 105.09 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud35 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(8.2283, -20.163, 11.341, 99.891, -16.983, 149.16 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud36 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-3.3785, 7.0494, 22.339, 82.169, -2.4621, 72.655 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud37 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(2.8628, -4.6321, 22.681, 96.908, -1.4072, 101.46 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud38 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(4.854, 18.696, -14.616, 82.82, 9.0834, -38.588 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud39 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-15.613, -3.2585, -16.731, 131.96, 7.4187, -98.173 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud4 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-0.47428, -6.8962, 21.881, 88.87, 0.35597, 107.49 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud40 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-3.1721, -22.679, -6.9373, 92.24, 7.2831, -162.85 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud41 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(16.887, -8.3248, 16.254, 129.45, -18.028, 110.61 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud42 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-9.1634, 20.406, 8.1296, 81.223, -20.957, 23.348 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud43 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-13.226, 18.469, 7.3481, 76.181, -30.979, 25.542 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud44 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-1.5092, 5.728, 23.846, 86.576, -0.82202, 76.518 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud45 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-22.564, 5.7731, 1.5538, 93.939, -75.681, 4.315e-07 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud46 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(0.75003, 20.26, 10.382, 90.861, 1.6793, 27.144 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud47 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-12.426, -3.7236, -20.789, 120.08, 5.1294, -98.776 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud48 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-0.89461, -1.4475, -21.621, 92.359, 0.15787, -93.827 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud49 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-1.2297, -19.406, -12.463, 91.65, 2.5677, -147.25 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud5 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-18.852, -15.687, 2.4941, 79.443, 49.048, 166.14 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud50 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-21.027, -6.7743, -10.961, 144.23, 26.632, -107.9 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud51 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-13.516, 14.927, 7.608, 69.88, -34.015, 33.219 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud52 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-15.879, -14.334, 11.835, 61.46, 30.057, 132.64 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud53 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(19.896, 4.541, -10.406, 31.907, 20.327, -77.796 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud54 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-12.692, -14.261, 13.662, 66.031, 22.98, 131.29 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud55 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(9.3389, -10.679, 18.588, 110.69, -11.476, 117.78 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud56 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(2.9841, -20.313, -9.5666, 86.759, -6.8454, -154.59 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud57 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-13.752, 14.834, 9.4213, 67.239, -31.348, 38.886 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud58 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-5.3024, 3.1988, -23.279, 102.6, -1.7171, -82.366 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud59 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-8.1496, -20.563, -5.8286, 95.936, 20.046, -163.12 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud6 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-11.407, -20.005, 2.2955, 86.305, 29.321, 172.49 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud60 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-13.049, 13.966, 9.842, 66.252, -29.746, 41.565 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud61 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(17.996, -11.326, 9.5103, 128.04, -36.275, 127.09 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud62 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-5.6472, 9.1373, 21.081, 77.292, -5.4466, 67.174 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud63 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-15.381, 13.663, 7.9788, 63.885, -37.007, 39.161 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud64 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-19.562, 12.755, 3.2922, 69.638, -53.431, 24.803 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud65 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-14.848, 18.677, 0.96962, 87.643, -38.385, 3.7923 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud66 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(2.8379, 14.566, -18.295, 84.577, 4.3034, -51.678 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud67 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-0.77605, -23.058, 2.889, 89.762, 1.8978, 172.85 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud68 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(13.982, -7.7167, 17.854, 123.42, -13.39, 109.34 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud69 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-4.5287, -22.061, -3.5885, 91.863, 11.303, -170.58 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud7 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-9.9754, -16.141, 12.678, 73.289, 20.106, 138.87 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud70 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-12.03, 21.092, -1.4577, 92.247, -29.563, -4.5465 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud71 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(16.987, 11.44, -9.7136, 53.772, 34.838, -52.055 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud72 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(4.7161, 22.613, -5.3794, 87.312, 11.154, -13.644 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud73 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-22.258, 7.384, -3.9382, 79.966, -71.909, 0 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud74 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(22.018, -7.8893, -4.7341, 102.13, -70.694, 180 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud75 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-16.81, 12.622, -5.847, 116.93, -44.351, -36.001 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud76 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(13.718, -1.7959, 20.095, 124.11, -2.8691, 94.227 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud77 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(1.4242, 19.322, 9.6371, 91.686, 3.3765, 26.558 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud78 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(18.892, -6.973, -7.6619, 36.556, -36.169, -113.63 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud79 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-20.453, 7.2811, 6.6954, 108.13, -71.308, 1.332e-06 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud8 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-16.253, -7.3568, 14.477, 48.259, 18.692, 109.76 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud80 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-16.222, -15.869, 7.5461, 68.374, 37.777, 147.09 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud81 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-20.219, 6.346, 6.5471, 107.94, -73.374, -1.492e-06 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud82 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-14.148, 13.751, 11.581, 63.12, -28.231, 46.98 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud83 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(11.766, 17.475, 10.163, 106.31, 25.775, 33.937 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud84 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(12.83, 2.4758, -19.229, 56.722, 4.0411, -83.871 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud85 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-19.391, 13.677, 6.0441, 62.337, -46.412, 35.893 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud86 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(10.894, -17.627, -9.5529, 75.485, -24.819, -148.33 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud87 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(23.104, -0.49058, -5.5511, 103.51, -88.817, 180 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud88 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-20.018, -6.7683, -9.6509, 144.27, 29.655, -109.59 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud89 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(0, 21.31, 11.213, 90, -0, 27.753 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud9 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-0.76667, 19.943, 12.032, 89.026, -1.6141, 31.118 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud90 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(14.16, 18.553, -7.0637, 75.759, 32.867, -25.064 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud91 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(18.726, -8.7694, 12.573, 135.06, -26.275, 113.84 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud92 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(3.5905, -3.1571, -23.205, 81.362, -1.1707, -97.659 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud93 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-13.54, 19.262, -1.8882, 93.905, -34.786, -6.8221 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud94 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(6.4349, 14.187, -16.183, 77.328, 10.885, -49.974 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud95 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(11.473, 13.77, 15.886, 112.41, 18.286, 52.734 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud96 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-19.174, 12.705, 5.3192, 61.738, -48.518, 35.663 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud97 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(-20.692, 7.1098, 5.2037, 104.12, -71.57, -1.3503e-06 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud98 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(15.349, -2.0216, 19.542, 127.85, -3.632, 94.66 ) ) ) ); 
+            
+        }; 
+        
+        planetcloud99 = VisibleEntity { 
+            model = "planetcloud1"; 
+            track = transform(
+                Matrix4::rollDegrees(35 ), 
+                transform(
+                    orbit(1, 15 ), 
+                    transform(
+                        Matrix4::rollDegrees(35 ), 
+                        CFrame::fromXYZYPRDegrees(4.8716, 19.073, 10.845, 96.263, 10.861, 30.219 ) ) ) ); 
             
         }; 
         
         planetland = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 0, 4.59093e-41 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 4.47505e-39, 0 ); 
             model = "planetland"; 
             track = entity("planet"); 
         }; 
         
         planetmountain = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 0, 4.59093e-41 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 4.47505e-39, 0 ); 
             model = "planetmountain"; 
             track = entity("planet"); 
         }; 
@@ -184,58 +1373,68 @@
             scale = 300; 
         }; 
         
-        moon = ArticulatedModel::Specification { 
-            filename = "moonwater.obj"; 
+        dragon = ArticulatedModel::Specification { 
+            filename = "model/dragon.zip/dragon.obj"; 
             preprocess = { 
+                setCFrame("root", CoordinateFrame::fromXYZYPRDegrees(0, 0, 0, 180, -30, 0 ) ); 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(1.33777e-27, 1.33777e-27, 1.33777e-27, 4.59107e-41 ); 
-                        lambertian = Color3(1, 1, 1 ); 
-                    } ); 
-                transformGeometry(all(), Matrix4::scale(0.272626, 0.272626, 0.272626 ) ) }; 
+                        glossy = Color4(
+                            Color3(0.23, 0.62, 0.45 ), 
+                            0.24 ); 
+                        
+                        lambertian = Color3(0.245, 0.542, 0.365 ); 
+                    } ) }; 
             
-        }; 
-        
-        moonland = ArticulatedModel::Specification { 
-            filename = "moonland.obj"; 
-            preprocess = { 
-                setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(7.80698e-39, 7.80698e-39, 7.80698e-39, 0 ); 
-                        lambertian = Color3(0, 0, 1.33698e-27 ); 
-                    } ); 
-                transformGeometry(all(), Matrix4::scale(0.272626, 0.272626, 0.272626 ) ) }; 
-            
-        }; 
-        
-        moonmountain = ArticulatedModel::Specification { 
-            filename = "moonmountain.obj"; 
-            preprocess = { 
-                setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(7.81463e-39, 7.81463e-39, 7.81463e-39, 0 ); 
-                        lambertian = Color3(1, 1, 1 ); 
-                    } ); 
-                transformGeometry(all(), Matrix4::scale(0.272626, 0.272626, 0.272626 ) ) }; 
-            
+            scale = 0.163718; 
         }; 
         
         planet = ArticulatedModel::Specification { 
             filename = "planetwater.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.138889, 0.138889, 0.138889, 1 ); 
-                        lambertian = Color3(0.430556, 0.416667, 1 ); 
+                        glossy = Color4(0.194444, 0.194444, 0.194444, 0.180556 ); 
+                        lambertian = Texture::Specification { 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color3(1, 0.291667, 3.171e-41 ); 
+                            }; 
+                            
+                            filename = "Shinemountain.png"; 
+                        }; 
+                        
                     } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.654871, 0.654871, 0.654871 ) ) }; 
             
+        }; 
+        
+        planetcloud1 = ArticulatedModel::Specification { 
+            filename = "model/cloud/cloud.zip/cumulus00.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        emissive = Color3(0.1 ); 
+                        lambertian = Color4(
+                            Color3(0.8 ), 
+                            1 ); 
+                        
+                    } ) }; 
+            
+            scale = 0.0523896; 
         }; 
         
         planetland = ArticulatedModel::Specification { 
             filename = "planetland.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.375, 0.375, 0.375, 0.430556 ); 
-                        lambertian = Color3(1, 1, 1 ); 
+                        glossy = Color4(0.138889, 0.138889, 0.138889, 0.0416667 ); 
+                        lambertian = Texture::Specification { 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color3(0.430556, 0.388889, 0.388889 ); 
+                            }; 
+                            
+                            filename = "desertRock2.jpg"; 
+                        }; 
+                        
                     } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.654871, 0.654871, 0.654871 ) ) }; 
             
         }; 
         
@@ -243,10 +1442,17 @@
             filename = "planetmountain.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.305556, 0.305556, 0.305556, 0.319444 ); 
-                        lambertian = Color3(1, 0.427586, 1 ); 
+                        glossy = Color4(0.166667, 0.166667, 0.166667, 0.486111 ); 
+                        lambertian = Texture::Specification { 
+                            encoding = Texture::Encoding { 
+                                readMultiplyFirst = Color3(0.144828, 0.17931, 0.22069 ); 
+                            }; 
+                            
+                            filename = "waterTexture.jpg"; 
+                        }; 
+                        
                     } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.654871, 0.654871, 0.654871 ) ) }; 
             
         }; 
         
