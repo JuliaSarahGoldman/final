@@ -1,11 +1,11 @@
 /**
   \file Planet.h
-http://blog.coredumping.com/subdivision-of-icosahedrons/
+    Class for each planet. This class holds all of the information necessary to create a planet, and uses a modified version of the icosohedron tesellation algorithm described by Ken Larsen at http://blog.coredumping.com/subdivision-of-icosahedrons/.
   */
 #pragma once
 #include <G3D/G3DAll.h>
 
-  /** \brief Application framework. */
+  /**  */
 class Planet {
 
 protected:

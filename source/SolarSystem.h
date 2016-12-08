@@ -2,7 +2,7 @@
 /**
   \file SolarSystem.h
 
-  Container Class for the Solar System being created.
+   Class for the Solar System scene being created. The class has direct control of the scene any table.
  */
  /*
      John Freeman
