@@ -103,7 +103,7 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
 
     Any birdModel(Any::TABLE, "ArticulatedModel::Specification");
     planet.createEntityModelAnyFile(birdModel, "bird", "model/swallow.obj", 0.01f);
-    birdModel["preprocess"] = Any::parse("{ setCFrame(\"root\", CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 40, 0)); setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color3(0.0f); }); }");
+    birdModel["preprocess"] = Any::parse("{ setCFrame(\"root\", CFrame::fromXYZYPRDegrees(0, 0, 0, -40, 0, 0)); setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color3(0.0f); }); }");
     models["bird"] = birdModel;
 
     Array<Vector3> birdPositions;

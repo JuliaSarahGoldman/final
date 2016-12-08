@@ -128,7 +128,6 @@
             model = "boardModel";
             frame = CFrame::fromXYZYPRDegrees(0, 0, -50, 0, 0, 0);
             castsShadows = false;
-            //receiveShadows = false;
             canChange = false;
         };
         
