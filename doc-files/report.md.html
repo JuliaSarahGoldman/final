@@ -100,6 +100,12 @@ In order to create a smooth transition between triangles, we used a bevelling fu
 
 The result is a more cartoon-like feel for the planet, because it gets rid of extremely sharp edges to allow for better shading.
 
+Animation
+------------------------------------------------------------
+The animation was done using G3D's entity tracking feature ((G3D::Entity::Track)[http://g3d.cs.williams.edu/g3d/G3D10/build/manual/class_g3_d_1_1_entity_1_1_track.html#ae2e76f1d9cae33a68b4d6e1db947a364]), which allows for indirect manipulation of each entity. These tracks are created by expanding a BNF grammar that describes the various possible transformations for the entity's position. The expanded grammar creates a new 4D matrix for each frame that is applied to the entity's position. For example, the water field, as the bottom-most layer of the planet, has a simple track causing it to orbit around its own axis. On the other hand, the birds and dragon follow a much more complex track, which starts by applying a rotation matrix to each entity's position, applying a transformation to make it look towards its next position, applying another transformation to make it orbit the planet, and finally a final transformation to rotate the entity's orbit along the x axis. 
+
+Finally, the tracking feature allows an entity to depend on another entity to determine its position. As an example, the upper two layers of the planet depend on the water layer to determine their next position. This was especially useful when creating moon's and satellites, because only the water field needs to calculate the orbit, and the other two layers simply follow it.
+
 Design
 =====================================================================================
 
@@ -304,6 +310,7 @@ Evocative Results
 
 ![Swallow's flight](evocative.jpg width = 550px) 
 
+
 ![Planetside Image](johnWork_closeUp.jpg)
 
 ![Nicely Shaded Mountain](mountain_closeUp.jpg)
@@ -312,7 +319,21 @@ Evocative Results
 
 ![Danger Zone video](2016-12-07_060_starter_r2849_g3d_r981__Danger_Zone_video.mp4 width = 200px) ![Danger Zone bird's perspective video](2016-12-07_062_starter_r2849_g3d_r981__Danger_Zone_bird_s_perspective_video.mp4 width = 200px)
 
-![](moon.mp4)
+![Planetside Image](johnWork_closeUp.jpg)
+
+![Nicely Shaded Mountain](mountain_closeUp.jpg)
+
+
+![Danger Zone video](2016-12-07_060_starter_r2849_g3d_r981__Danger_Zone_video.mp4 width = 200px) ![Danger Zone bird's perspective video](2016-12-07_062_starter_r2849_g3d_r981__Danger_Zone_bird_s_perspective_video.mp4 width = 200px)
+
+
+![A moon ](moon.mp4)
+    
+![A still from our dragon video](evocativeDragon.jpg)
+
+![](dragon2.mp4)
+
+
 
 Schedule
 ===================================================================
