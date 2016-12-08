@@ -266,7 +266,8 @@ inline bool SolarSystem::resetTables(){
 
 bool SolarSystem::reset(){
     m_planetTable.clear();
-    return resetTables();
+    resetTables();
+    return printSolarSystemToScene("Solar System");
 }
 
 SolarSystem::~SolarSystem(){
