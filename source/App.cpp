@@ -280,7 +280,6 @@ void App::makePlanetGUI() {
     planPane->addNumberBox("Orbit Distance", &m_orbitDistance, "",
         GuiTheme::LINEAR_SLIDER, 50.0f, 500.0f)->setUnitsSize(0.01f);
 
-    planPane->addCheckBox("Has Clouds", &m_hasClouds);
     planPane->addCheckBox("Particle Clouds", &m_useParticleClouds);
     planPane->addCheckBox("Dragon?", &m_hasDragon);
 
@@ -562,7 +561,6 @@ void App::unpackagePlanetSpecs(Any& any) {
         x.getIfPresent("oceanBevel", m_oceanBevel);
         x.getIfPresent("landNoise", m_landNoise);
         x.getIfPresent("oceanNoise", m_oceanNoise);
-        x.getIfPresent("hasClouds", m_hasClouds);
         x.getIfPresent("useParticleClouds", m_useParticleClouds);
         x.getIfPresent("hasDragon", m_hasDragon);
 
@@ -631,7 +629,6 @@ void App::packagePlanetSpecs(Any& x) {
         x["oceanCollapsing"] = m_oceanEdgesToCollapse;
         x["landCollapsing"] = m_landEdgesToCollapse;
         x["mountainCollapsing"] = m_mountainEdgesToCollapse;
-        x["hasClouds"] = m_hasClouds;
         x["useParticleClouds"] = m_useParticleClouds;
         x["hasDragon"] = m_hasDragon;
 

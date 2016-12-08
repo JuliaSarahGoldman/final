@@ -18,14 +18,9 @@ protected:
     int m_oceanEdgesToCollapse;
     int m_angleLengthWeight;
     bool m_collapsingEnabled;
-    bool m_hasClouds;
-    bool m_hasDragon;
 
-    //variables to use for the mesh
+    //variables to use for creating the mesh and planet vertices
     int m_recursionLevel;
-    int m_numberOfTrees;
-    int m_numberOfClouds;
-    int m_numberOfBirds;
     float m_frequency;
     float m_landBevel;
     float m_mountainBevel;
@@ -36,6 +31,11 @@ protected:
     float m_mountianNoise3;
     float m_oceanLevel;
     float m_oceanBevel;
+
+    int m_numberOfTrees;
+    int m_numberOfClouds;
+    int m_numberOfBirds;
+    bool m_hasDragon;
 
     String m_planetSource;
     String m_planetSave;
@@ -64,10 +64,8 @@ protected:
     String m_landObjFile;
     String m_mountainObjFile;
 
-    Array<Point3> m_treePositions;
-    Array<Vector3> m_treeNormals;
+    Array<Point3> m_landPositions;
     Array<Point3> m_cloudPositions;
-    Array<Vector3> m_cloudNormals;
     Array<Point3> m_birdPositions;
     Array<Point3> m_dragonPositions;
 
@@ -102,8 +100,8 @@ public:
 
     void addAirEntityToPlanet(Any& airEntity, const String& name, const Point3& position, const float orbitAngle, const float orbitSpeed, const int minHeight, const int maxHeight);
     void addCloudEntityToPlanet(Any& cloudEntity, const String& name, const Point3& position, const float orbitAngle, const float orbitSpeed);
-    void findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
-    void getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals);
+    void findLandPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions);
+    void getLandPositions(Array<Vector3>& vertices);
     void addLandEntityToPlanet(Any& landEntity, const String& name, const Point3& position, const String& trackObject);
 
     Point3 getPosition();

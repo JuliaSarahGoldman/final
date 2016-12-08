@@ -88,13 +88,11 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
         models["tree"] = treeModel;
 
         Array<Vector3> treePositions;
-        Array<Vector3> treeNormals;
-        planet.getTreePositions(treePositions, treeNormals);
+        planet.getLandPositions(treePositions);
 
         for (int i(0); i < treePositions.length(); ++i) {
             Any treeEntity(Any::TABLE, "VisibleEntity");
             Vector3 position = treePositions[i];
-            Vector3 normal = treeNormals[i];
             planet.addLandEntityToPlanet(treeEntity, "tree", position, levelName);
             entities["tree" + (String)std::to_string(i)] = treeEntity;
         }

@@ -50,7 +50,6 @@ bool Planet::readSpec(const Any& planetSpec) {
         x.getIfPresent("mountainTexture", m_mountainTextureFile);
         x.getIfPresent("landTexture", m_landTextureFile);
         x.getIfPresent("waterTexture", m_waterTextureFile);
-        x.getIfPresent("hasClouds", m_hasClouds);
         x.getIfPresent("useParticleClouds", m_useParticleClouds);
         x.getIfPresent("hasDragon", m_hasDragon);
 
@@ -191,7 +190,7 @@ bool Planet::generatePlanet() {
 
         noise.landMapImage(landNoiseImage, mountNoiseImage, landMapImage, m_oceanLevel, m_mountianDiversity, m_mountainHeight);
 
-        findTreePositions(landMapImage, vertices, m_treePositions, m_treeNormals);
+        findLandPositions(landMapImage, vertices, m_landPositions);
 
         if (m_useMTexture) {
             shared_ptr<Image> image = Image::fromFile(m_mountainTextureFile);
@@ -384,9 +383,8 @@ void Planet::getMapping(const Vector3& vertex, int width, int height, Point2int3
     map.y = ((int)ny) % height;
 }
 
-void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals) {
-    vertices = m_treePositions;
-    normals = m_treeNormals;
+void Planet::getLandPositions(Array<Vector3>& vertices) {
+    vertices = m_landPositions;
 }
 
 void Planet::findAirPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, const String type) {
@@ -437,9 +435,9 @@ void Planet::findAirPositions(const shared_ptr<Image>& landMap, const Array<Vect
     }
 }
 
-void Planet::findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals) {
-    int numTrees = m_numberOfTrees;
-    Set<Vector3> treePoints;
+void Planet::findLandPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions) {
+    int numEntities = m_numberOfTrees;
+    Set<Vector3> landPoints;
     Array<Vector3> possiblePositions;
 
     for (int i(0); i < vertices.size(); ++i) {
@@ -457,15 +455,14 @@ void Planet::findTreePositions(const shared_ptr<Image>& landMap, const Array<Vec
         }
     }
 
-    while (numTrees > 0 && possiblePositions.length() > 0) {
+    while (numEntities > 0 && possiblePositions.length() > 0) {
         int check = Random::threadCommon().integer(0, possiblePositions.length());
         Vector3 vertex = possiblePositions[check];
         possiblePositions.remove(check);
-        if (!treePoints.contains(vertex)) {
-            treePoints.insert(vertex);
+        if (!landPoints.contains(vertex)) {
+            landPoints.insert(vertex);
             positions.append(vertex);
-            normals.append(vertex.unit());
-            --numTrees;
+            --numEntities;
         }
     }
 }
@@ -686,7 +683,7 @@ String Planet::getName() {
 }
 
 bool Planet::hasClouds() {
-    return m_hasClouds;
+    return m_numberOfClouds > 0;
 }
 
 bool Planet::useParticleClouds() {
