@@ -11,7 +11,9 @@
 Introduction
 ============================================================================================
 
+Our project was to procedurally generate low-poly planets using triangle meshes and noise functions.  By specifying different noise functions, textures, object placements, destruction and bevlling algorithms, and height ratios, we can generate an infinite number of low-poly planets that look amazing and are stuctually diverse and interesting.
 
+Low-poly planets both allow and beg for one to apply a certain style to them in order to create interesting and beautiful images withour the worry of them appearing to not look "realistic".  They can be throught of three different polygon, sphere heightfields placed ontop of each other with noise applied to it: one for water, one for land, and one for mountains.  You can then color each of these planes, add a texture to it, decimate triangles to make it even less poly, and bevel edges to improve shading to make for a nice looking planet.  From here, you can also place objects around and on the planet to add more diversity. You can then keep mapping different noise functions to create different planets that continue to be interesting and beautiful.
 
 Specification
 ============================================================================================
@@ -25,14 +27,14 @@ Specification
 	3. Use an edge-collapse algorithm to reduce the number of triangles
 	4. Bevel the edges of the heightfields' triangles for smoother transitions
 	5. Get all parameters based on constants from a file.
-	5. Add low-poly objects on the planet:
+	6. Add low-poly objects on the planet:
 		1. Fir Trees
 		2. Birds
         3. Clouds
-	6. Make the planet rotate on its axis
-	7. Make the clouds and birds move along predetermined paths 
-	8. Use a gradient background for better aesthetic.
-    9. Map textures onto the planet.
+	7. Make the planet rotate on its axis
+	8. Make the clouds and birds move along predetermined paths 
+	9. Use a gradient background for better aesthetic.
+    10. Map textures onto the planet.
 
 2. Provide the capability to change the planet's following paramenters:
 	1. Water heightfield's minimum and maximum height
@@ -62,7 +64,7 @@ Topic Overview
 
 Heightfields
 -----------------------------------------------------------
-The planets are represented through a combination of layered, spherical heightfields. From top to bottom, these spheres represent the mountains, land, and water planes of our planet. We generate these spheres using the icosagon tesselation algorithm and apply the algorithm recursively for some number of times to generate more detailed spheres.  We then apply appply noise mapping, decimation, and bevelling algorithms to each sphere to create the base of our planet.
+The planets are represented through a combination of layered, spherical heightfields. From top to bottom, these spheres represent the mountains, land, and water planes of our planet. We generate these spheres using the icosagon tesselation algorithm [#Larsen] and apply the algorithm recursively for some number of times to generate more detailed spheres.  We then apply appply noise mapping, decimation, and bevelling algorithms to each sphere to create the base of our planet.
 
 ![Example of a sphere after 5 recursions](5-sphere.png width=400px) ![Wireframe of a sphere 5 recursions](5-sphere-wire.png width=400px)
 
@@ -70,7 +72,7 @@ The planets are represented through a combination of layered, spherical heightfi
 
 Noise
 -----------------------------------------------------------
-We use Perling noise to generate a series of 2-dimensional images that are used to generate the heights of our three heightfields and place object on and around our planet. Each field has it's own noise image that is used to gererate it's heights by mapping the image to the sphere and raising the vertex based on the pixel value of the image it cooresponds to. The water and land heightfields are based on one noise function applied to their respective images, but the mountain plane is a composite image based on three seperate noise functions being applied to the same image, which results in more interesting and complex mountain ranges for our planets.
+We use Perlin noise [#Perlin] to generate a series of 2-dimensional images that are used to generate the heights of our three heightfields and place object on and around our planet. Each field has it's own noise image that is used to gererate it's heights by mapping the image to the sphere and raising the vertex based on the pixel value of the image it cooresponds to. The water and land heightfields are based on one noise function applied to their respective images, but the mountain plane is a composite image based on three seperate noise functions being applied to the same image, which results in more interesting and complex mountain ranges for our planets.
 
 ![Example of noise used for planet water](noiseExampleOcean.png width=200px) ![Example of noise used for planet land](noiseExampleLand.png width=200px) ![Example of noise used for planet mountains](noiseExampleMount.png width=200px)
 
@@ -87,7 +89,7 @@ The decimation algorithm we chose is edge collapsing as outlined by [#Stanford_G
 The main purpose of edge collapsing in our project, however, was not to merely simplify the mesh, but to make the low polyness aesthetic of our planets more evident by making the polygon subdivision less uniform. 
 
 An edge collapsed sphere: 
-![4000 edges collapsed with angle weight, but no random start point](2016-12-02_002_starter_r2639_g3d_r981__4000_-_edges_collapsed.jpg width=300px)![Same sphere as previous picture](2016-12-02_003_starter_r2639_g3d_r981__4000_edges_collapsed.jpg width=300px)![4000 edges collapsed with no angle weight, but with random start point](2016-12-03_000_starter_r2642_g3d_r981__4000_edges_collapsed.jpg width=300px)
+![4000 edges collapsed with angle weight, but no random start point](2016-12-02_002_starter_r2639_g3d_r981__4000_-_edges_collapsed.jpg height=180px width=320px) ![4000 edges collapsed with no angle weight, but with random start point](2016-12-03_000_starter_r2642_g3d_r981__4000_edges_collapsed.jpg height=180px width=320px)
 
 Bevelling
 -----------------------------------------------------------
@@ -95,7 +97,7 @@ In order to create a smooth transition between triangles, we used a bevelling fu
 
 ![A planet with shrunken faces](beveling1.jpg width=300px)![A beveled surface](beveling.jpg width=300px)![Close-up shot](bevelingclose.jpg width=300px)
 
-The result is a more cartoon-like feel for the planet, because it gets rid of extremely sharp edges.
+The result is a more cartoon-like feel for the planet, because it gets rid of extremely sharp edges to allow for better shading.
 
 Design
 =====================================================================================
@@ -217,9 +219,9 @@ Class Descriptions
 Justification
 ------------------------------------------------------------------------------------------------------------------------------
 
-[Planet](class_planet.html) is responsible for building the actual layout of the planet and uses our Mesh class to create its 3D mesh. We build our own sphere from an icohedron so we can make it as low or high poly as we desire.Our planet class is used for creating spherical heightfield using noise, which are then modified and outputted from inside our mesh class. Our planet heightfield is built by applying noise to a sphere. 
+[Planet](class_planet.html) is responsible for building the spheres that make up our different heightfields, map noise onto the sphere, and allows for the mapping of entities onto or over the planet. While each individual planet does not have control of the scene, it helps the SolarSystem class create the any files for the models and entities relative to the planet. This allows us to isolate the information and entities that make up one planet from the others that may be in the SolarSystem scene file.
 
-[NoiseGen](class_noise_gen.html) generates noise bump maps for the mountain, land and ocean planet heightfields through separate methods.
+[NoiseGen](class_noise_gen.html) Applies different Perlin noise functions to 2-dimensional images that are used to apply to heightfields and place objects on and around the planet.  We abstracted this code from our Planet class to keep Planet clean.
 
 [Mesh](class_mesh.html) defines methods to compute adjacency and normal information of the input Mesh, and methods to edit the Mesh. It is used by Planet, which passes in the vertex array and the tri array of faces of the original heightfields into Mesh. Planet then invokes the methods defined in Mesh to collapse mesh edges, to bevel the mesh, and to output it to [G3D::ArticulatedModel](http://g3d.cs.williams.edu/g3d/G3D10/build/manual/class_g3_d_1_1_articulated_model.html) or to OBJ files to be used in our scenes. Collapsing edges simplifies the mesh and makes the faces look less uniform which makes the low polyness more interesting. Bevelling smoothes the edges between faces and gives more of a polygon effect to the mesh. This design choice abstracts mesh editting from mesh creation and allowed us to to work on introducing low polyness separately from generating nice planets.
     
@@ -231,8 +233,7 @@ Correctness Results
 Procedural Sphere generation
 ---------------------------------------------------------------------------------------
 
-
-![Icosahedron 1 recursion level](2016-12-07_051_starter_r2819_g3d_r981__1_recursion_level.jpg width=200px) ![Icosahedron 8 recursion levels](2016-12-07_052_starter_r2819_g3d_r981__8_recursion_levels.jpg width=200px) ![Icosahedron 8 recursion levels wireframe close-up](2016-12-07_053_starter_r2819_g3d_r981__8_recursion_levels_wireframe_close-up.jpg width=200px) 
+![Icosahedron 1 recursion level](2016-12-07_051_starter_r2819_g3d_r981__1_recursion_level.jpg height=144px width=256px) ![Icosahedron 8 recursion levels](2016-12-07_052_starter_r2819_g3d_r981__8_recursion_levels.jpg height=144px width=256px) ![Icosahedron 8 recursion levels wireframe](2016-12-07_053_starter_r2819_g3d_r981__8_recursion_levels_wireframe_close-up.jpg height=144px width=256px) 
 
 Texture Mapping
 ---------------------------------------------------------------------------------------
@@ -327,23 +328,50 @@ Acknowledgements and Bibliography
 
 [#Larsen]: Larsen, Ken.  "Subdivision of Icosahedrons". CoreDumping, 15 April 2012. Web. 13, Nov. 2016. http://blog.coredumping.com/subdivision-of-icosahedrons/
 
+
+<b>Noise Information:</b>
+
+[#Perlin]: Perlin, Ken.  "Improving Noise". July 2002. ACM Transactions on Graphics. 17, Nov. 2016. http://mrl.nyu.edu/~perlin/paper445.pdf
+
+
 <b>Edge Collapsing:</b>
 
 [#Shertler]: [Shertler, Nico](http://stackoverflow.com/users/1210053/nico-schertler) Answer to forum "Mesh Simplification: Edge Collapse Conditions" created by [jaykumarark](http://stackoverflow.com/users/500318/jaykumarark). Stack Overflow, 20 November 2014. Web 27, Nov. 2016. http://stackoverflow.com/questions/27049163/mesh-simplification-edge-collapse-conditions
 
 [#Stanford_Graphics]: "Simplification". Stanford Graphics - CS486, Fall 2010. Web. 14, Nov. 2016. http://graphics.stanford.edu/courses/cs468-10-fall/LectureSlides/08_Simplification.pdf
 
-<b>Textures<b>:
+
+<b>Textures:</b>
+    
     - https://secure.static.tumblr.com/b8a76b636ec84b7a2dacc8cae300b183/j7ljv7f/Udsmyk31s/tumblr_static_rainbowchecker.png
+
     - http://cdn.designinstruct.com/files/234-colored_vintage_paper_textures/colored_vintage_paper_texture_01_aqua.jpg
+
     - http://www.nextlnk8.com/?tp=iw&cid=5697&v=27&gnum=6&clickid=00136393p043071489064&cachecode=QcpSxqmifoqo6paTGwt7Xw&preload=pre1&ctag=298611
+
     - http://telias.free.fr/textures_tex/fire/fire_le.jpg
+    
     - https://t0.rbxcdn.com/88a3dfcf5bf667ca89721a7f85c1e9ee
+    
     - http://wallpoper.com/images/00/30/58/74/desert-textures_00305874.jpg
+    
     - https://s-media-cache-ak0.pinimg.com/564x/c5/a9/a7/c5a9a7294bf985fc9622e3bd264ad3e6.jpg
+    
     - http://www.texturex.com/albums/Fire-Textures/fire%20texture%20coals%20red%20hot%20orange%20glowing%20dark%20wallpaper.jpg
+    
     - http://www.gbyzea.com/data/out/11/462642-sand-wallpapers.jpg
 
+
+<b>3D Models:</b>
+
+    [#Clouds]: Morgan McGuire. <I>G3D Clouds and Particle Clouds.</I> G3D
+
+    [#Bird]: Brian Butler. <I>Swallow.</I> TurboSquid, 29 Jan. 2012. Web. 7 Dec. 2016. http://www.turbosquid.com/3d-models/swallow-3d-model/651912
+
+    [#Dragon]: RazzMattazz. <I>Dragoncell shaded.max.</I> TurboSquid, 27 May 2007. Web. 8 Dec. 2016. http://www.turbosquid.com/3d-models/3ds-max-cell-shaded-dragon/355183
+
+
+Special thanks to Morgan Mcguire for the backgound image of our planet Scenes.
 
 <!-- Markdeep: -->
 <style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace;}</style><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
