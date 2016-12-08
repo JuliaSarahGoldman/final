@@ -90,6 +90,9 @@
     <None Include="data-files\EdgeCollapsed6.Scene.Any">
       <Filter>Scene Files</Filter>
     </None>
+    <None Include="data-files\EdgeCollapsedBarbie.Scene.Any">
+      <Filter>Scene Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

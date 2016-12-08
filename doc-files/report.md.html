@@ -68,7 +68,7 @@ Noise
 -----------------------------------------------------------
 Perling noise is used to generate the heights at varying locations of our three heightfields. Each field has its own unique noise functions, which rely on each other, in order to make sure the three do not interfere with one another.
 
-![Example of noise used for planet land](no.jpg) ![Example of noise used for planet mountains](no.jpg)
+![Example of noise used for planet land](noiseExampleLand.png width=200px) ![Example of noise used for planet mountains](noiseExampleMount.png width=200px)
 
 Meshes
 ----------------------------------------------------------
@@ -101,55 +101,55 @@ The following is a description of our design.
 Flowchart
 -------------------------------------------------------------------------------------
 
-- APP::makePlanetGUI()
-       - Get Constants Button
-                - App::unpackagePlanetSpecs()
-       - Save Constants Button
-                - App::packagePlanetSpecs
-       - Generate Button
-                - SolarSystem::containsPlanet()
-                - App::packagePlanetSpecs()
-                - Planet::generatePlanet()
-                    - Planet::writeSphere()
-                        - Planet::makeIcohedron()
-                        - Planet::subdivideIcohedron()
-                    - Mesh::collapseEdges()
-                        - Mesh::computeAdjacency()
-                        - Mesh::computeFaceNormals
-                        - Mesh::isCollapsable()
-                            - isManifoldPreserved()
-                            - normalsFlipped()
-                                - computeCurNormal()
-                                - computeNewNormal()
-                                - isSignOpposite()
-                        - isMoreCollapsable()
-                            - cosAnge()
-                            - squaredEdgeLength()
-                        - collapseOneEdge()
-                            - remapIndices()
-                            - removeDegenerateFaces()
-                                - isDegenerate()
-                    - Mesh::bevelEdges()
-                        - Mesh::computeAdjacency()
-                        - Mesh::computeNormals()
-                    - Mesh::toObj()
-                        - Mesh::computeAdjacency()
-                        - Mesh::computeNormals()
-                    - NoiseGen::generateLandImage()
-                    - NoiseGen::generateWaterImage()
-                    - NoiseGen::generateMountainImage()
-                    - NoiseGen::landMapImage()
-                    - Planet::findTreePositions()
-                - SolarSystem::addPlanet()
-                    - Planet::getPlanetOrbit()
-                    - SolarSystem::addPlanetToScene()
-                        - Planet::createWaterAnyFile()
-                        - Planet::createLandAnyFile()
-                        - Planet::createMountainAnyFile()
-                        - Planet::addCloudToPlanet()
-                        - Planet::getTreePositions()
-                        - SolarSystem::MakeSceneTable()
-                - SolarSystem::printSolarSystemToScene()
+1. APP::makePlanetGUI()
+       1. Get Constants Button
+                1. App::unpackagePlanetSpecs()
+       2. Save Constants Button
+                1. App::packagePlanetSpecs
+       3. Generate Button
+                1. SolarSystem::containsPlanet()
+                2. App::packagePlanetSpecs()
+                3. Planet::generatePlanet()
+                    1. Planet::writeSphere()
+                        1. Planet::makeIcohedron()
+                        2. Planet::subdivideIcohedron()
+                    2. NoiseGen::generateLandImage()
+                    3. NoiseGen::generateWaterImage()
+                    4. NoiseGen::generateMountainImage()
+                    5. Mesh::collapseEdges()
+                        1. Mesh::computeAdjacency()
+                        2. Mesh::computeFaceNormals
+                        3.  Mesh::isCollapsable()
+                            1. isManifoldPreserved()
+                            2. normalsFlipped()
+                                1. computeCurNormal()
+                                2. computeNewNormal()
+                                3. isSignOpposite()
+                        4. isMoreCollapsable()
+                            1. cosAnge()
+                            2. squaredEdgeLength()
+                        5. collapseOneEdge()
+                            1. remapIndices()
+                            2. removeDegenerateFaces()
+                                1. isDegenerate()
+                    6. Mesh::bevelEdges()
+                        1. Mesh::computeAdjacency()
+                        2. Mesh::computeNormals()
+                    7. Mesh::toObj()
+                        1. Mesh::computeAdjacency()
+                        2. Mesh::computeNormals()
+                    8. NoiseGen::landMapImage()
+                    9. Planet::findTreePositions()
+                4. SolarSystem::addPlanet()
+                    1. Planet::getPlanetOrbit()
+                    2. SolarSystem::addPlanetToScene()
+                        1. Planet::createWaterAnyFile()
+                        2. Planet::createLandAnyFile()
+                        3. Planet::createMountainAnyFile()
+                        4. Planet::addCloudToPlanet()
+                        5. Planet::getTreePositions()
+                        6. SolarSystem::MakeSceneTable()
+                5. SolarSystem::printSolarSystemToScene()
 
 
 Class Descriptions
@@ -224,9 +224,11 @@ Justification
 Correctness Results
 =====================================================================================
 
-Correctness Results
+Procedural Sphere generation
 ---------------------------------------------------------------------------------------
-    The correctness of <b>Heightfields from noise</b> is also evident by the following images.
+
+
+![Icosahedron 1 recursion level](2016-12-07_051_starter_r2819_g3d_r981__1_recursion_level.jpg width=200px) ![Icosahedron 8 recursion levels](2016-12-07_052_starter_r2819_g3d_r981__8_recursion_levels.jpg width=200px) ![Icosahedron 8 recursion levels wireframe close-up](2016-12-07_053_starter_r2819_g3d_r981__8_recursion_levels_wireframe_close-up.jpg width=200px) 
 
 Edge Collapsing
 ---------------------------------------------------------------------------------------
@@ -256,7 +258,24 @@ Put together into planet
 
 Quality Results
 =====================================================================================
-Here, we show high quality images that show both the advantages and limitations of our project.  
+
+We created different planets: 
+
+![Planet1](2016-12-07_006_starter_r2797_g3d_r981__P1_after_collapsing.jpg)
+
+![Planet2](2016-12-07_012_starter_r2797_g3d_r981__P2_after_collapsing.jpg)
+
+![Planet3](2016-12-07_016_starter_r2797_g3d_r981__P3_after_collapsing.jpg)
+
+![Planet4](2016-12-07_025_starter_r2803_g3d_r981__P5_after_collapsing.jpg)
+
+![Planet5](2016-12-07_029_starter_r2803_g3d_r981__P6_after_collapsing.jpg)
+
+![Barbie's Ice Planet Edge collapsed](2016-12-07_054_starter_r2825_g3d_r981__barbie_ice_planet_edge_collapsed.jpg)
+
+![Danger Zone](2016-12-07_059_starter_r2827_g3d_r981__Danger_Zone.jpg)
+
+![Dry Land](2016-12-07_058_starter_r2827_g3d_r981__Dry_Land.jpg)
 
 ![](low-poly.jpg)
 ![](quality2.jpg)
@@ -266,7 +285,9 @@ Here, we show high quality images that show both the advantages and limitations 
 Evocative Results
 =====================================================================================
 Here, we demonstrate how our planets could be used to create with various models to create interesting scenes and beautiful images. 
-    
+
+![Sparrow's flight](evocative.jpg)
+
 ![](video.mp4)
 
 ![](qualityTex.jpg)
