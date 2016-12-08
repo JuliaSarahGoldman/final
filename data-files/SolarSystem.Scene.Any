@@ -1,26 +1,5 @@
 { 
     entities = { 
-        Test = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 0, 0 ); 
-            model = "Test"; 
-            track = combine(
-                orbit(0, 10 ), 
-                Point3(0, 0, 0 ) ); 
-            
-        }; 
-        
-        Testland = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 0, 0 ); 
-            model = "Testland"; 
-            track = entity("Test"); 
-        }; 
-        
-        Testmountain = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 0, 0 ); 
-            model = "Testmountain"; 
-            track = entity("Test"); 
-        }; 
-        
         camera = Camera { 
             filmSettings = FilmSettings { 
                 antialiasingEnabled = true; 
@@ -44,18 +23,6 @@
                 fovDirection = "VERTICAL"; 
                 nearPlaneZ = -0.1; 
             }; 
-            
-        }; 
-        
-        dragon0 = VisibleEntity { 
-            model = "dragon"; 
-            track = transform(
-                Matrix4::rollDegrees(20.7986 ), 
-                transform(
-                    orbit(0, 4 ), 
-                    lookAt(
-                        CFrame::fromXYZYPRDegrees(-8.1279, 8.4058, 40.736, 79.166, -2.2211, 78.552 ), 
-                        Matrix4::rollDegrees(41.5971 ) ) ) ); 
             
         }; 
         
@@ -84,6 +51,50 @@
             castsShadows = false; 
             frame = CFrame::fromXYZYPRDegrees(-4, 0, -50 ); 
             model = "boardModel"; 
+        }; 
+        
+        moon = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(91.7045, 70.5384, 4.48216 ); 
+            model = "moon"; 
+            track = transform(
+                transform(
+                    entity("planet"), 
+                    orbit(15.1791, 10 ) ), 
+                orbit(0, 7 ) ); 
+            
+        }; 
+        
+        moonland = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(91.7045, 70.5384, 4.48216 ); 
+            model = "moonland"; 
+            track = entity("moon"); 
+        }; 
+        
+        moonmountain = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(91.7045, 70.5384, 4.48216 ); 
+            model = "moonmountain"; 
+            track = entity("moon"); 
+        }; 
+        
+        planet = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 4.59093e-41 ); 
+            model = "planet"; 
+            track = combine(
+                orbit(0, 10 ), 
+                Point3(0, 0, 4.59093e-41 ) ); 
+            
+        }; 
+        
+        planetland = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 4.59093e-41 ); 
+            model = "planetland"; 
+            track = entity("planet"); 
+        }; 
+        
+        planetmountain = VisibleEntity { 
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 4.59093e-41 ); 
+            model = "planetmountain"; 
+            track = entity("planet"); 
         }; 
         
         skybox = Skybox { 
@@ -149,53 +160,6 @@
     }; 
     
     models = { 
-        Test = ArticulatedModel::Specification { 
-            filename = "Testwater.obj"; 
-            preprocess = { 
-                setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.0972222, 0.0972222, 0.0972222, 1 ); 
-                        lambertian = Color3(0.763889, 0.763889, 1 ); 
-                    } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
-            
-        }; 
-        
-        Testland = ArticulatedModel::Specification { 
-            filename = "Testland.obj"; 
-            preprocess = { 
-                setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.375, 0.375, 0.375, 0.333333 ); 
-                        lambertian = Texture::Specification { 
-                            encoding = Texture::Encoding { 
-                                readMultiplyFirst = Color3(0.388889, 0.458333, 0.486111 ); 
-                            }; 
-                            
-                            filename = "plain.jpg"; 
-                        }; 
-                        
-                    } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
-            
-        }; 
-        
-        Testmountain = ArticulatedModel::Specification { 
-            filename = "Testmountain.obj"; 
-            preprocess = { 
-                setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.236111, 0.236111, 0.236111, 0.375 ); 
-                        lambertian = Texture::Specification { 
-                            encoding = Texture::Encoding { 
-                                readMultiplyFirst = Color3(0.475862, 5.76214e-42, 0.524138 ); 
-                            }; 
-                            
-                            filename = "plain.jpg"; 
-                        }; 
-                        
-                    } ); 
-                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
-            
-        }; 
-        
         boardModel = ArticulatedModel::Specification { 
             filename = "ifs/square.ifs"; 
             preprocess = { 
@@ -220,19 +184,70 @@
             scale = 300; 
         }; 
         
-        dragon = ArticulatedModel::Specification { 
-            filename = "model/dragon.zip/dragon.obj"; 
+        moon = ArticulatedModel::Specification { 
+            filename = "moonwater.obj"; 
             preprocess = { 
-                setCFrame("root", CoordinateFrame::fromXYZYPRDegrees(0, 0, 0, 180, -30, 0 ) ); 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(
-                            Color3(0.23, 0.62, 0.45 ), 
-                            0.24 ); 
-                        
-                        lambertian = Color3(0.245, 0.542, 0.365 ); 
-                    } ) }; 
+                        glossy = Color4(1.33777e-27, 1.33777e-27, 1.33777e-27, 4.59107e-41 ); 
+                        lambertian = Color3(1, 1, 1 ); 
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.272626, 0.272626, 0.272626 ) ) }; 
             
-            scale = 0.25; 
+        }; 
+        
+        moonland = ArticulatedModel::Specification { 
+            filename = "moonland.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(7.80698e-39, 7.80698e-39, 7.80698e-39, 0 ); 
+                        lambertian = Color3(0, 0, 1.33698e-27 ); 
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.272626, 0.272626, 0.272626 ) ) }; 
+            
+        }; 
+        
+        moonmountain = ArticulatedModel::Specification { 
+            filename = "moonmountain.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(7.81463e-39, 7.81463e-39, 7.81463e-39, 0 ); 
+                        lambertian = Color3(1, 1, 1 ); 
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(0.272626, 0.272626, 0.272626 ) ) }; 
+            
+        }; 
+        
+        planet = ArticulatedModel::Specification { 
+            filename = "planetwater.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(0.138889, 0.138889, 0.138889, 1 ); 
+                        lambertian = Color3(0.430556, 0.416667, 1 ); 
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
+            
+        }; 
+        
+        planetland = ArticulatedModel::Specification { 
+            filename = "planetland.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(0.375, 0.375, 0.375, 0.430556 ); 
+                        lambertian = Color3(1, 1, 1 ); 
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
+            
+        }; 
+        
+        planetmountain = ArticulatedModel::Specification { 
+            filename = "planetmountain.obj"; 
+            preprocess = { 
+                setMaterial(all(), UniversalMaterial::Specification { 
+                        glossy = Color4(0.305556, 0.305556, 0.305556, 0.319444 ); 
+                        lambertian = Color3(1, 0.427586, 1 ); 
+                    } ); 
+                transformGeometry(all(), Matrix4::scale(1, 1, 1 ) ) }; 
+            
         }; 
         
     }; 
