@@ -293,6 +293,7 @@ static void collapseOneEdge(const MeshAlg::Edge& edge, const Array<MeshAlg::Vert
 
 void Mesh::collapseEdges(int numEdges, float angleWeight) {
     for (int x(0); x < numEdges; ++x) {
+        debugPrintf("edge %d of %d\n", x, numEdges);
         Array<MeshAlg::Edge> edges;
         Array<MeshAlg::Face> faces;
         Array<MeshAlg::Vertex> vertices;
