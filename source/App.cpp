@@ -110,7 +110,7 @@ void App::makePentagon() {
 
     pentPane->addButton("Collapse!", [this]() {
         m_myMesh->collapseEdges(m_edgesToCollapse, m_angleLengthWeight);
-        m_myMesh->bevelEdges2(0.2);
+        m_myMesh->bevelEdges(0.2);
         scene()->typedEntity<VisibleEntity>("Pentagon")->setModel(m_myMesh->toArticulatedModel("pentagon", Color3(.5, .7, .2)));
     });
 

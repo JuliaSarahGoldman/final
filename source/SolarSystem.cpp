@@ -261,11 +261,12 @@ inline bool SolarSystem::resetTables(){
     m_entities.clear();
     m_models.clear();
     onInit();
+    return true;
 }
 
 bool SolarSystem::reset(){
     m_planetTable.clear();
-    resetTables();
+    return resetTables();
 }
 
 SolarSystem::~SolarSystem(){

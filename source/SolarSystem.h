@@ -28,6 +28,7 @@ protected:
 public:
 
     SolarSystem();
+    ~SolarSystem();
 
     bool printSolarSystemToScene(const String& save);
     bool addPlanet(const String& name, Planet& planet);
@@ -35,6 +36,5 @@ public:
     bool removePlanet(const String &name);
     void onInit();
     bool reset();
-    inline bool resetTables()
-    virtual ~SolarSystem();
+    inline bool resetTables();
 };
