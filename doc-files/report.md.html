@@ -68,7 +68,7 @@ Noise
 -----------------------------------------------------------
 Perling noise is used to generate the heights at varying locations of our three heightfields. Each field has its own unique noise functions, which rely on each other, in order to make sure the three do not interfere with one another.
 
-![Example of noise used for planet land]() ![Example of noise used for planet mountains]()
+![Example of noise used for planet land](no.jpg) ![Example of noise used for planet mountains](no.jpg)
 
 Meshes
 ----------------------------------------------------------
@@ -78,9 +78,9 @@ Decimation Algorithms
 ----------------------------------------------------------
 Decimation algorithms are used to simplify meshes by reducing the number of faces while still keeping its underlying shape and topology. 
 
-The decimation algorithm we chose is edge collapsing as outlined by [#Stanford_Graphics] and [#Shertler], which consists of taking the $n$ least important edges away from the mesh, which effectifely removes its adjacent faces. For our purposes we chose the least important edge to be the edge whose anlge between its adjacent face normals is closest to 180 degrees, weighted by the edge length.
+The decimation algorithm we chose is edge collapsing as outlined by [#Stanford_Graphics] and [#Shertler], which consists of taking the $n$ least important edges away from the mesh, which effectifely removes its adjacent faces. For our purposes we chose the least important edge to be the edge whose angle between its adjacent face normals is closest to 180 degrees, weighted by the edge length.
 
-The main purpose of edge collapsing in our porject, however, was not to merely simplify the mesh, but to make the low polyness aesthetic of our planets more evident by making the polygon subdivision less uniform. 
+The main purpose of edge collapsing in our project, however, was not to merely simplify the mesh, but to make the low polyness aesthetic of our planets more evident by making the polygon subdivision less uniform. 
 
 An edge collapsed sphere: 
 ![4000 edges collapsed with angle weight, but no random start point](2016-12-02_002_starter_r2639_g3d_r981__4000_-_edges_collapsed.jpg width=300px)![Same sphere as previous picture](2016-12-02_003_starter_r2639_g3d_r981__4000_edges_collapsed.jpg width=300px)![4000 edges collapsed with no angle weight, but with random start point](2016-12-03_000_starter_r2642_g3d_r981__4000_edges_collapsed.jpg width=300px)
@@ -251,9 +251,9 @@ Put together into planet
 
 ![Planet put together](2016-12-07_049_starter_r2803_g3d_r981__Planet_put_together.jpg width = 300px) ![Planet 360](2016-12-07_050_starter_r2803_g3d_r981__Planet_360.mp4 width = 300px)
 
-        ![](landDepth3.jpg width=200px) ![](landDepth5.jpg width=200px) ![](landDepth7.jpg width=200px)
-        ![](mountainDepth3.jpg width=200px) ![](mountainDepth5.jpg width=200px) ![](mountainDepth7.jpg width=200px)
-        ![](depth3.jpg width=200px) ![](depth5.jpg width=200px) ![](depth7.jpg width=200px)
+        ![Land - recursion depth 3](landDepth3.jpg width=200px) ![Land - recursion depth 5](landDepth5.jpg width=200px) ![Land - recursion depth 7](landDepth7.jpg width=200px)
+        ![Mountain - recursion depth 3](mountainDepth3.jpg width=200px) ![Mountain - recursion depth 5](mountainDepth5.jpg width=200px) ![Mountain - recursion depth 7](mountainDepth7.jpg width=200px)
+        ![Planet - recursion depth 3](depth3.jpg width=200px) ![Planet - recursion depth 5](depth5.jpg width=200px) ![Planet - recursion depth 3](depth7.jpg width=200px)
 
 
 Quality Results
