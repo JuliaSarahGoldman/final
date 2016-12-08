@@ -81,43 +81,69 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
         }
     }
 
-    Any treeModel(Any::TABLE, "ArticulatedModel::Specification");
-    planet.createEntityModelAnyFile(treeModel, "tree", "model/lowpolytree.obj", 0.5f);
-    models["tree"] = treeModel;
+    if (planet.hasTrees()) {
+        Any treeModel(Any::TABLE, "ArticulatedModel::Specification");
+        planet.createEntityModelAnyFile(treeModel, "tree", "model/lowpolytree.obj", 0.5f);
+        models["tree"] = treeModel;
 
-    Array<Vector3> treePositions;
-    Array<Vector3> treeNormals;
-    planet.getTreePositions(treePositions, treeNormals);
+        Array<Vector3> treePositions;
+        Array<Vector3> treeNormals;
+        planet.getTreePositions(treePositions, treeNormals);
 
-    for (int i(0); i < treePositions.length(); ++i) {
-        Any treeEntity(Any::TABLE, "VisibleEntity");
-        Vector3 position = treePositions[i];
-        Vector3 normal = treeNormals[i];
-        treeEntity["model"] = "tree";
+        for (int i(0); i < treePositions.length(); ++i) {
+            Any treeEntity(Any::TABLE, "VisibleEntity");
+            Vector3 position = treePositions[i];
+            Vector3 normal = treeNormals[i];
+            treeEntity["model"] = "tree";
 
-        treeEntity["frame"] = CoordinateFrame::fromYAxis(normal, position);
+            treeEntity["frame"] = CoordinateFrame::fromYAxis(normal, position);
 
-        treeEntity["track"] = Any::parse("transform(entity(" + levelName + "), " + CoordinateFrame::fromYAxis(normal, (position + normal * 0.75f)*planet.getScale()).toXYZYPRDegreesString() + ")");
-        entities["tree" + (String)std::to_string(i)] = treeEntity;
+            treeEntity["track"] = Any::parse("transform(entity(" + levelName + "), " + CoordinateFrame::fromYAxis(normal, (position + normal * 0.75f)*planet.getScale()).toXYZYPRDegreesString() + ")");
+            entities["tree" + (String)std::to_string(i)] = treeEntity;
+        }
     }
 
-    Any birdModel(Any::TABLE, "ArticulatedModel::Specification");
-    planet.createEntityModelAnyFile(birdModel, "bird", "model/swallow.obj", 0.01f);
-    birdModel["preprocess"] = Any::parse("{ setCFrame(\"root\", CFrame::fromXYZYPRDegrees(0, 0, 0, -40, 0, 0)); setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color3(0.0f); }); }");
-    models["bird"] = birdModel;
+    if (planet.hasBirds()) {
+        Any birdModel(Any::TABLE, "ArticulatedModel::Specification");
+        planet.createEntityModelAnyFile(birdModel, "bird", "model/swallow.obj", 0.02f);
+        birdModel["preprocess"] = Any::parse("{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color3(0.0f); }); }");
+        models["bird"] = birdModel;
 
-    Array<Vector3> birdPositions;
-    planet.getBirdPositions(birdPositions);
+        Array<Vector3> birdPositions;
+        planet.getBirdPositions(birdPositions);
 
-    float orbitSpeed = 4.0f;
-    for (int j(0); j < birdPositions.length(); ++j) {
-         Point3 placement = birdPositions[j];
+        float orbitSpeed = 7.0f;
+        for (int j(0); j < birdPositions.length(); ++j) {
+            Point3 placement = birdPositions[j];
+            birdPositions.remove(j);
 
-         float orbitAngle = Random::threadCommon().uniform(-60.0f, 60.0f);
+            float orbitAngle = Random::threadCommon().uniform(-60.0f, 60.0f);
 
-         Any birdEntityDescription = Any(Any::TABLE, "VisibleEntity");
-         planet.addAirEntityToPlanet(birdEntityDescription, "bird", levelName, placement, orbitAngle, orbitSpeed, 9, 14);
-         entities["bird" + (String)std::to_string(j)] = birdEntityDescription;
+            Any birdEntityDescription = Any(Any::TABLE, "VisibleEntity");
+            planet.addAirEntityToPlanet(birdEntityDescription, "bird", levelName, placement, orbitAngle, orbitSpeed, 9, 14);
+            entities["bird" + (String)std::to_string(j)] = birdEntityDescription;
+        }
+    }
+
+    if (planet.hasDragon()) {
+        Any dragonModel(Any::TABLE, "ArticulatedModel::Specification");
+        planet.createEntityModelAnyFile(dragonModel, "dragon", "model/dragon.zip/dragon.obj", 0.25f);
+        dragonModel["preprocess"] = Any::parse("{ transformGeometry(all(), Matrix4::yawDegrees(180)); setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color3(0.245f, 0.542f, 0.365f); glossy = Color4(Color3(0.23, 0.62, 0.45), 0.24); }); }");
+        models["dragon"] = dragonModel;
+
+        Array<Vector3> dragonPositions;
+        planet.getDragonPositions(dragonPositions);
+
+        float orbitSpeed = 4.0f;
+        for (int j(0); j < dragonPositions.length(); ++j) {
+            Point3 placement = dragonPositions[j];
+            dragonPositions.remove(j);
+            float orbitAngle = Random::threadCommon().uniform(-60.0f, 60.0f);
+
+            Any dragonEntityDescription = Any(Any::TABLE, "VisibleEntity");
+            planet.addAirEntityToPlanet(dragonEntityDescription, "dragon", levelName, placement, orbitAngle, orbitSpeed, 11, 16);
+            entities["dragon" + (String)std::to_string(j)] = dragonEntityDescription;
+        }
     }
 
     makeSceneTable(m_scene, models, entities, name);

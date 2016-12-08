@@ -111,7 +111,10 @@ public:
     String getName();
     bool hasClouds();
     bool useParticleClouds();
-    
+    bool hasDragon();
+    bool hasBirds();
+    bool hasTrees();
+
     void findAirPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, const String type);
     void getCloudPositions(Array<Point3>& cloudPositions);
     void getBirdPositions(Array<Point3>& birdPositions);

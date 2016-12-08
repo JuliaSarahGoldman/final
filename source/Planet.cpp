@@ -338,7 +338,8 @@ void Planet::addAirEntityToPlanet(Any& airEntity, const String& name, const Stri
             "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
             "transform(orbit(0," +  (String)std::to_string(orbitSpeed) + "), " + 
             "lookAt(" 
-                + CoordinateFrame::fromYAxis((position - m_position).unit(), (position + (position - m_position).unit() * (Random::threadCommon().uniform(minHeight, maxHeight)))*m_scale).toXYZYPRDegreesString() + "," + "Matrix4::rollDegrees(" + (String) std::to_string(orbitAngle) + ") )))";
+                + CoordinateFrame::fromYAxis((position - m_position).unit(), ((position - m_position) + (position - m_position).unit() * (Random::threadCommon().uniform(minHeight, maxHeight)))*m_scale).toXYZYPRDegreesString() + 
+                "," + "Matrix4::rollDegrees(" + (String) std::to_string(orbitAngle*2.0f) + ") )))";
 
     airEntity["track"] = Any::parse(track);
 }
@@ -395,6 +396,8 @@ void Planet::findAirPositions(const shared_ptr<Image>& landMap, const Array<Vect
         numEntities = 1;
     }
 
+    if(numEntities == 0) return;
+
     Set<Vector3> cloudPoints;
     Array<Vector3> possiblePositions;
     int ix, iy;
@@ -414,11 +417,12 @@ void Planet::findAirPositions(const shared_ptr<Image>& landMap, const Array<Vect
         }
     }
 
-    while (numEntities > 0) {
-        Vector3 vertex = possiblePositions[Random::threadCommon().integer(0, possiblePositions.length())];
+    while (numEntities > 0 && possiblePositions.length() > 0) {
+        int check = Random::threadCommon().integer(0, possiblePositions.length());
+        Vector3 vertex = possiblePositions[check];
         Point2int32 map;
         getMapping(vertex, landMap->width(), landMap->height(), map);
-
+        possiblePositions.remove(check);
         if (!cloudPoints.contains(vertex)) {
             cloudPoints.insert(vertex);
             positions.append(vertex);
@@ -448,9 +452,10 @@ void Planet::findTreePositions(const shared_ptr<Image>& landMap, const Array<Vec
         }
     }
 
-    while (numTrees > 0) {
-        Vector3 vertex = possiblePositions[Random::threadCommon().integer(0, possiblePositions.length())];
-
+    while (numTrees > 0 && possiblePositions.length() > 0) {
+        int check = Random::threadCommon().integer(0, possiblePositions.length());
+        Vector3 vertex = possiblePositions[check];
+        possiblePositions.remove(check);
         if (!treePoints.contains(vertex)) {
             treePoints.insert(vertex);
             positions.append(vertex);
@@ -681,4 +686,16 @@ bool Planet::hasClouds() {
 
 bool Planet::useParticleClouds() {
     return m_useParticleClouds;
+}
+
+bool Planet::hasDragon(){
+    return m_hasDragon;
+}
+
+bool Planet::hasTrees(){
+    return m_numberOfTrees > 0;
+}
+
+bool Planet::hasBirds(){
+    return m_numberOfBirds > 0;
 }
