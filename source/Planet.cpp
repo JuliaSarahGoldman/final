@@ -1,3 +1,9 @@
+ /*  John Freeman
+     Jose Rivas-Garcia
+     Julia Goldman
+     Matheus de Carvalho Souza
+ */
+
 #include "Planet.h"
 #include "Mesh.h"
 #include "NoiseGen.h"

@@ -3,6 +3,12 @@
 
   Creates noise for the heightfields and colors used in terrain creation.
  */
+ /*
+     John Freeman
+     Jose Rivas-Garcia
+     Julia Goldman
+     Matheus de Carvalho Souza
+ */
 #pragma once
 #include <G3D/G3DAll.h>
 

@@ -1,4 +1,11 @@
 /** \file Mesh.cpp */
+ /*
+     John Freeman
+     Jose Rivas-Garcia
+     Julia Goldman
+     Matheus de Carvalho Souza
+ */
+
 #include "Mesh.h"
 #include "Planet.h"
 
@@ -200,48 +207,6 @@ static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, co
     }
 }
 
-static void remapIndices(Array<Vector3>& vertexArray, Array<int>& indexArray, const Array<MeshAlg::Vertex>& vertices, const int oldIndex, const int newIndex) {
-    // Remove vertex at oldIndex from vertex Array
-    vertexArray[oldIndex] = vertexArray.last();
-    vertexArray.pop();
-
-    const int oldIndexToLast(vertexArray.size());
-
-    // Collapse Edges in indexArray
-    if (newIndex != oldIndexToLast) { // Otherwise, by updating the indexArray to accomodate the vertex removal from vertexArray also deals with collapsing the edge
-
-        // Only faces adjacent to the vertex removed by the collapse are affected
-        const MeshAlg::Vertex& toReplace(vertices[oldIndex]);
-        const SmallArray<int, 6>& adjacentToCollapsed(toReplace.faceIndex);
-
-        for (int i(0); i < adjacentToCollapsed.size(); ++i) { // For each such face
-            const int af(adjacentToCollapsed[i]);
-            const int x(3 * af); // Find its vertex indices in the indexArray and replace the oldIndex by the newIndex
-            for (int j(x); j < x + 3; ++j) {
-                if (indexArray[j] == oldIndex) {
-                    indexArray[j] = newIndex;
-                }
-                else if (indexArray[j] == oldIndexToLast) {
-                    indexArray[j] = oldIndex;
-                }
-            }
-        }
-    }
-
-    // Only faces adjacent to what used to be the Last vertex in the array are affected
-    const MeshAlg::Vertex& vertexMoved(vertices[oldIndexToLast]);
-    const SmallArray<int, 6>& adjacentToMoved(vertexMoved.faceIndex);
-
-    for (int i(0); i < adjacentToMoved.size(); ++i) { // For each such face
-        const int x(3 * adjacentToMoved[i]); // Find its vertex indices in the indexArray and replace the oldIndexToLat by oldIndex
-        for (int j(x); j < x + 3; ++j) {
-            if (indexArray[j] == oldIndexToLast) {
-                indexArray[j] = oldIndex;
-            }
-        }
-    }
-}
-
 static void removeDegenerateFaces(Array<int>& indexArray) {
     for (int i(0); i < indexArray.size(); i += 3) {
         if (isDegenerate(indexArray[i], indexArray[i + 1], indexArray[i + 2])) {
@@ -258,27 +223,6 @@ static void removeDegenerateFaces(Array<int>& indexArray) {
     }
 }
 
-inline static void removeFace(Array<int>& indexArray, const int i) {
-    if (i != indexArray.size() - 3) {
-        indexArray[i] = indexArray[indexArray.size() - 3];
-        indexArray[i + 1] = indexArray[indexArray.size() - 2];
-        indexArray[i + 2] = indexArray[indexArray.size() - 1];
-    }
-
-    indexArray.pop();
-    indexArray.pop();
-    indexArray.pop();
-}
-
-static void removeDegenerateFaces(Array<int>& indexArray, const MeshAlg::Edge& edge) {
-    // only the faces adjacent to the collapsed edge are degenerate
-    // for each of such faces
-    const int i0(3 * edge.faceIndex[0]); // Find the location of the face in the indexArray
-    const int i1(3 * edge.faceIndex[1]);
-
-    removeFace(indexArray, i0);
-    removeFace(indexArray, i1);
-}
 
 static void collapseOneEdge(const MeshAlg::Edge& edge, const Array<MeshAlg::Vertex>& vertices, Array<Vector3>& vertexArray, Array<int>& indexArray) {
     const int index0(edge.vertexIndex[0]);
@@ -286,8 +230,6 @@ static void collapseOneEdge(const MeshAlg::Edge& edge, const Array<MeshAlg::Vert
 
     remapIndices(vertexArray, indexArray, index0, index1);
     removeDegenerateFaces(indexArray);
-    //remapIndices(vertexArray, indexArray, vertices, index0, index1);
-    //removeDegenerateFaces(indexArray, edge);
 }
 
 void Mesh::collapseEdges(int numEdges, float angleWeight) {
@@ -301,7 +243,7 @@ void Mesh::collapseEdges(int numEdges, float angleWeight) {
         computeAdjacency(faces, edges, vertices);
         computeFaceNormals(faces, faceNormals);
 
-        MeshAlg::Edge& edge(edges[Random::threadCommon().integer(0, edges.size() - 1)]);
+        MeshAlg::Edge& edge(edges[0]);
         int collapsable(0);
         for (int i(0); i < edges.size(); ++i) {
             if (isCollapsable(edges[i], faces, edges, vertices)) {

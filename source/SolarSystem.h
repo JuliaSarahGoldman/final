@@ -4,7 +4,12 @@
 
   Container Class for the Solar System being created.
  */
-
+ /*
+     John Freeman
+     Jose Rivas-Garcia
+     Julia Goldman
+     Matheus de Carvalho Souza
+ */
 #include <G3D/G3DAll.h>
 #include "Mesh.h"
 #include "Planet.h"
