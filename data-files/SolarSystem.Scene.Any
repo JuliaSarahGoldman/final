@@ -26,6 +26,26 @@
             
         }; 
         
+        fillLight = Light { 
+            attenuation = Vector3(0, 0, 1 ); 
+            bulbPower = Color3(0, 10000, 10000 ); 
+            castsShadows = false; 
+            spotHalfAngleDegrees = 8; 
+            spotSquare = true; 
+            track = lookAt(
+                Point3(0, -150, -150 ), 
+                Point3(0, 0, 0 ) ); 
+            
+            type = "SPOT"; 
+            varianceShadowSettings = VSMSettings { 
+                blurMultiplier = 5; 
+                downsampleFactor = 1; 
+                enabled = true; 
+                filterRadius = 11; 
+            }; 
+            
+        }; 
+        
         gradient = VisibleEntity { 
             canChange = false; 
             castsShadows = false; 
@@ -34,22 +54,22 @@
         }; 
         
         planet = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 4.47505e-39, 0 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 3.35697e-39, 0 ); 
             model = "planet"; 
             track = combine(
                 orbit(0, 10 ), 
-                Point3(0, 4.47505e-39, 0 ) ); 
+                Point3(0, 3.35697e-39, 0 ) ); 
             
         }; 
         
         planetland = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 4.47505e-39, 0 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 3.35697e-39, 0 ); 
             model = "planetland"; 
             track = entity("planet"); 
         }; 
         
         planetmountain = VisibleEntity { 
-            frame = CFrame::fromXYZYPRDegrees(0, 4.47505e-39, 0 ); 
+            frame = CFrame::fromXYZYPRDegrees(0, 3.35697e-39, 0 ); 
             model = "planetmountain"; 
             track = entity("planet"); 
         }; 
@@ -60,16 +80,24 @@
         
         sun = Light { 
             attenuation = Vector3(0, 0, 1 ); 
-            bulbPower = Color3(10000, 10000, 0 ); 
-            castsShadows = false; 
+            bulbPower = Color3(1e+06, 1e+06, 10000 ); 
+            castsShadows = true; 
+            shadowMapBias = 0.05; 
             shadowMapSize = Vector2int16(2048, 2048 ); 
             spotHalfAngleDegrees = 8; 
             spotSquare = true; 
             track = lookAt(
-                Point3(0, -50, 250 ), 
+                Point3(0, -50, 350 ), 
                 Point3(0, 0, 0 ) ); 
             
             type = "SPOT"; 
+            varianceShadowSettings = VSMSettings { 
+                blurMultiplier = 5; 
+                downsampleFactor = 1; 
+                enabled = true; 
+                filterRadius = 11; 
+            }; 
+            
         }; 
         
     }; 
@@ -117,7 +145,7 @@
                         lambertian = Color3(0 ); 
                     } ) }; 
             
-            scale = 0.00593218; 
+            scale = 0.00765845; 
         }; 
         
         boardModel = ArticulatedModel::Specification { 
@@ -148,17 +176,10 @@
             filename = "planetwater.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.180556, 0.180556, 0.180556, 0.277778 ); 
-                        lambertian = Texture::Specification { 
-                            encoding = Texture::Encoding { 
-                                readMultiplyFirst = Color3(1, 0.0416667, 3.171e-41 ); 
-                            }; 
-                            
-                            filename = "hot.jpg"; 
-                        }; 
-                        
+                        glossy = Color4(0, 0, 0, 4.59163e-41 ); 
+                        lambertian = Color3(4.59163e-41, 0, 1 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(0.593218, 0.593218, 0.593218 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.765845, 0.765845, 0.765845 ) ) }; 
             
         }; 
         
@@ -166,17 +187,10 @@
             filename = "planetland.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.138889, 0.138889, 0.138889, 0.0416667 ); 
-                        lambertian = Texture::Specification { 
-                            encoding = Texture::Encoding { 
-                                readMultiplyFirst = Color3(0.25, 0.25, 0.25 ); 
-                            }; 
-                            
-                            filename = "desertRock2.jpg"; 
-                        }; 
-                        
+                        glossy = Color4(2.20502e-39, 2.20502e-39, 2.20502e-39, 0 ); 
+                        lambertian = Color3(3.28437e-39, 1, 0 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(0.593218, 0.593218, 0.593218 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.765845, 0.765845, 0.765845 ) ) }; 
             
         }; 
         
@@ -184,23 +198,16 @@
             filename = "planetmountain.obj"; 
             preprocess = { 
                 setMaterial(all(), UniversalMaterial::Specification { 
-                        glossy = Color4(0.166667, 0.166667, 0.166667, 0.486111 ); 
-                        lambertian = Texture::Specification { 
-                            encoding = Texture::Encoding { 
-                                readMultiplyFirst = Color3(0.144828, 0.17931, 0.22069 ); 
-                            }; 
-                            
-                            filename = "waterTexture.jpg"; 
-                        }; 
-                        
+                        glossy = Color4(2.21159e-39, 2.21159e-39, 2.21159e-39, 0 ); 
+                        lambertian = Color3(0.503448, 0.524138, 0.496552 ); 
                     } ); 
-                transformGeometry(all(), Matrix4::scale(0.593218, 0.593218, 0.593218 ) ) }; 
+                transformGeometry(all(), Matrix4::scale(0.765845, 0.765845, 0.765845 ) ) }; 
             
         }; 
         
         tree = ArticulatedModel::Specification { 
             filename = "model/lowpolytree.obj"; 
-            scale = 0.296609; 
+            scale = 0.382922; 
         }; 
         
     }; 

@@ -6,12 +6,12 @@
         **and Matheus de Carvalho Souza (mc13@williams.edu)** 
 
 
-    ![A unique, procedually generated low-poly planet.](quality1.jpg border=1)
+    ![A unique, procedually generated, low-poly planet.](teaser.png border=1)
 
 Introduction
 ============================================================================================
 
-Despite their lack of realism, low-poly planets, such as the one above, have the ability to be aesthetically beautiful and awe-inspiring. There are a plethora of different styles that these planets can take, but for this project, we endeavored to create a low-poly planet generator that can procedurally generate cartoon-like planets reminiscent of those from Super Mario Galaxy. The cartoon-like feel of these planets allowed us to generate planets that do not have to conform to "real-world" physics, but still have an aesthetically pleasing feel to them.
+
 
 Specification
 ============================================================================================
@@ -62,13 +62,17 @@ Topic Overview
 
 Heightfields
 -----------------------------------------------------------
-The planets are represented through a combination of layered, spherical heightfields. From top to bottom, these spheres represent the mountains, land, and water planes of our planet. Each has a unique noise algorithm, which creates the variation in their heights. 
+The planets are represented through a combination of layered, spherical heightfields. From top to bottom, these spheres represent the mountains, land, and water planes of our planet. We generate these spheres using the icosagon tesselation algorithm and apply the algorithm recursively for some number of times to generate more detailed spheres.  We then apply appply noise mapping, decimation, and bevelling algorithms to each sphere to create the base of our planet.
+
+![Example of a sphere after 5 recursions](5-sphere.png width=400px) ![Wireframe of a sphere 5 recursions](5-sphere-wire.png width=400px)
+
+![Example of a simple planet](planet-layers-together.png height=90px width=160px) ![Water plane of the planet](water-layer.png height=90px width=160px) ![Land plane of the planet](land-layer.png height=90px width=160px) ![Mountain plane of the planet](mountain-layer.png height=90px width=160px)
 
 Noise
 -----------------------------------------------------------
-Perling noise is used to generate the heights at varying locations of our three heightfields. Each field has its own unique noise functions, which rely on each other, in order to make sure the three do not interfere with one another.
+We use Perling noise to generate a series of 2-dimensional images that are used to generate the heights of our three heightfields and place object on and around our planet. Each field has it's own noise image that is used to gererate it's heights by mapping the image to the sphere and raising the vertex based on the pixel value of the image it cooresponds to. The water and land heightfields are based on one noise function applied to their respective images, but the mountain plane is a composite image based on three seperate noise functions being applied to the same image, which results in more interesting and complex mountain ranges for our planets.
 
-![Example of noise used for planet land](noiseExampleLand.png width=200px) ![Example of noise used for planet mountains](noiseExampleMount.png width=200px)
+![Example of noise used for planet water](noiseExampleOcean.png width=200px) ![Example of noise used for planet land](noiseExampleLand.png width=200px) ![Example of noise used for planet mountains](noiseExampleMount.png width=200px)
 
 Meshes
 ----------------------------------------------------------
