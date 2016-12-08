@@ -34,4 +34,7 @@ public:
     bool containsPlanet(const String& name);
     bool removePlanet(const String &name);
     void onInit();
+    bool reset();
+    inline bool resetTables()
+    virtual ~SolarSystem();
 };

@@ -98,13 +98,13 @@ public:
     void createLandAnyFile(Any& landModel, Any& landEntity, const String& waterEntity);
     void createMountainAnyFile(Any& mountainModel, Any& mountainEntity, const String& waterEntity);
     void createCloudModelAnyFile(Any& cloudModel, const String& name, const String& planetName);
-    void createEntityModelAnyFile(Any& model, const String& name, const String& fileName, float modifier);
+    void createEntityModelAnyFile(Any& model, const String& name, const String& fileName, const String& preprocess, float modifier);
 
-    void addAirEntityToPlanet(Any& airEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed, const int minHeight, const int maxHeight);
-    void addCloudEntityToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed);
+    void addAirEntityToPlanet(Any& airEntity, const String& name, const Point3& position, const float orbitAngle, const float orbitSpeed, const int minHeight, const int maxHeight);
+    void addCloudEntityToPlanet(Any& cloudEntity, const String& name, const Point3& position, const float orbitAngle, const float orbitSpeed);
     void findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
     void getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals);
-
+    void addLandEntityToPlanet(Any& landEntity, const String& name, const Point3& position, const String& trackObject);
 
     Point3 getPosition();
     float getScale();
@@ -121,6 +121,7 @@ public:
     void getDragonPositions(Array<Point3>& dragonPositions);
 
     void getPlanetOrbit(String& objectToOrbit, float& orbitDistance);
+    Any toAny();
 
     Planet();
 

@@ -335,7 +335,7 @@ public:
 };
 
 //Bevel Edges Without Blowing Out the planet
-void Mesh::bevelEdges2(float bump) {
+void Mesh::bevelEdges(float bump) {
 
     //Step 1: Explode the planet
     Array<Vector3> newVertices;

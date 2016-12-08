@@ -57,6 +57,7 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
     entities[levelName] = mountainEntityDescription;
     models[levelName] = mountainModelDescription;
 
+    String preprocess;
 
     if (planet.hasClouds()) {
         Any cloudModel = (planet.useParticleClouds()) ? Any(Any::TABLE, "ParticleSystemModel::Emitter::Specification") : Any(Any::TABLE, "ArticulatedModel::Specification");
@@ -76,14 +77,14 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
             float orbitAngle = 35;
 
             Any cloudEntityDescription = (planet.useParticleClouds()) ? Any(Any::TABLE, "ParticleSystem") : Any(Any::TABLE, "VisibleEntity");
-            planet.addCloudEntityToPlanet(cloudEntityDescription, cloudModelName, levelName, placement, orbitAngle, orbitSpeed);
+            planet.addCloudEntityToPlanet(cloudEntityDescription, cloudModelName, placement, orbitAngle, orbitSpeed);
             entities[name + "cloud" + (String)std::to_string(j)] = cloudEntityDescription;
         }
     }
 
     if (planet.hasTrees()) {
         Any treeModel(Any::TABLE, "ArticulatedModel::Specification");
-        planet.createEntityModelAnyFile(treeModel, "tree", "model/lowpolytree.obj", 0.5f);
+        planet.createEntityModelAnyFile(treeModel, "tree", "model/lowpolytree.obj", preprocess, 0.5f);
         models["tree"] = treeModel;
 
         Array<Vector3> treePositions;
@@ -94,19 +95,16 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
             Any treeEntity(Any::TABLE, "VisibleEntity");
             Vector3 position = treePositions[i];
             Vector3 normal = treeNormals[i];
-            treeEntity["model"] = "tree";
-
-            treeEntity["frame"] = CoordinateFrame::fromYAxis(normal, position);
-
-            treeEntity["track"] = Any::parse("transform(entity(" + levelName + "), " + CoordinateFrame::fromYAxis(normal, (position + normal * 0.75f)*planet.getScale()).toXYZYPRDegreesString() + ")");
+            planet.addLandEntityToPlanet(treeEntity, "tree", position, levelName);
             entities["tree" + (String)std::to_string(i)] = treeEntity;
         }
     }
 
     if (planet.hasBirds()) {
         Any birdModel(Any::TABLE, "ArticulatedModel::Specification");
-        planet.createEntityModelAnyFile(birdModel, "bird", "model/swallow.obj", 0.02f);
-        birdModel["preprocess"] = Any::parse("{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color3(0.0f); }); }");
+        
+        preprocess = "{setCFrame(\"root\",CoordinateFrame::fromXYZYPRDegrees(0,0,0,0, 30, 0));setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color3(0.546f, 0.15f, 0.15f); glossy = Color4(Color3(0.23), 0.14);  }); }";
+        planet.createEntityModelAnyFile(birdModel, "bird", "model/swallow.obj", preprocess, 0.02f);
         models["bird"] = birdModel;
 
         Array<Vector3> birdPositions;
@@ -120,15 +118,15 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
             float orbitAngle = Random::threadCommon().uniform(-60.0f, 60.0f);
 
             Any birdEntityDescription = Any(Any::TABLE, "VisibleEntity");
-            planet.addAirEntityToPlanet(birdEntityDescription, "bird", levelName, placement, orbitAngle, orbitSpeed, 9, 14);
+            planet.addAirEntityToPlanet(birdEntityDescription, "bird", placement, orbitAngle, orbitSpeed, 9, 14);
             entities["bird" + (String)std::to_string(j)] = birdEntityDescription;
         }
     }
 
     if (planet.hasDragon()) {
         Any dragonModel(Any::TABLE, "ArticulatedModel::Specification");
-        planet.createEntityModelAnyFile(dragonModel, "dragon", "model/dragon.zip/dragon.obj", 0.25f);
-        dragonModel["preprocess"] = Any::parse("{ transformGeometry(all(), Matrix4::yawDegrees(180)); setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color3(0.245f, 0.542f, 0.365f); glossy = Color4(Color3(0.23, 0.62, 0.45), 0.24); }); }");
+        preprocess = "{ setCFrame(\"root\",CoordinateFrame::fromXYZYPRDegrees(0,0,0,180, -30, 0)); setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color3(0.245f, 0.542f, 0.365f); glossy = Color4(Color3(0.23, 0.62, 0.45), 0.24); }); }";
+        planet.createEntityModelAnyFile(dragonModel, "dragon", "model/dragon.zip/dragon.obj", preprocess, 0.25f);
         models["dragon"] = dragonModel;
 
         Array<Vector3> dragonPositions;
@@ -138,10 +136,10 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
         for (int j(0); j < dragonPositions.length(); ++j) {
             Point3 placement = dragonPositions[j];
             dragonPositions.remove(j);
-            float orbitAngle = Random::threadCommon().uniform(-60.0f, 60.0f);
+            float orbitAngle = Random::threadCommon().uniform(-45.0f, 45.0f);
 
             Any dragonEntityDescription = Any(Any::TABLE, "VisibleEntity");
-            planet.addAirEntityToPlanet(dragonEntityDescription, "dragon", levelName, placement, orbitAngle, orbitSpeed, 11, 16);
+            planet.addAirEntityToPlanet(dragonEntityDescription, "dragon", placement, orbitAngle, orbitSpeed, 14, 18);
             entities["dragon" + (String)std::to_string(j)] = dragonEntityDescription;
         }
     }
@@ -155,7 +153,6 @@ void SolarSystem::makeSceneTable(Any& scene, const Any& models, const Any& entit
 }
 
 void SolarSystem::initializeSceneTable(Any& scene) {
-
     scene["name"] = "Solar System";
 
     Any lightingEnvironment(Any::TABLE, "LightingEnvironment");
@@ -204,8 +201,7 @@ void SolarSystem::initializeEntityTable(Any& entities) {
     entities["fillLight"] = fillLight;
 
     Any camera(Any::TABLE, "Camera");
-    camera["frame"] = CFrame::fromXYZYPRDegrees(0.90151, 1.8599, 63.627, -0.39264, -1.1459, 0);
-    //camera["frame"] = CFrame::fromXYZYPRDegrees(0.90151, 1.8599, 125.627, -0.39264, -1.1459, 0);
+    camera["frame"] = CFrame::fromXYZYPRDegrees(0.90151, 1.8599, 63.627, 0);
     camera["projection"] = Any::parse("Projection { farPlaneZ = -inf; fovDegrees = 50; fovDirection = \"VERTICAL\"; nearPlaneZ = -0.1; }");
 
     String filmSettings = (String) "FilmSettings{" +
@@ -231,7 +227,7 @@ void SolarSystem::initializeModelsTable(Any& models) {
     String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ emissive = Texture::Specification{ filename = \"background.png\"; encoding = Texture::Encoding { readMultiplyFirst = Color4(Color3(0.5f), 1.0f);  }; }; lambertian = Color4(Color3(0.0f), 1.0f); }); }";
     Any boardModel(Any::TABLE, "ArticulatedModel::Specification");
     boardModel["filename"] = "ifs/square.ifs";
-    boardModel["scale"] = 200;
+    boardModel["scale"] = 300;
     boardModel["preprocess"] = Any::parse(preprocess);
     models["boardModel"] = boardModel;
 }
@@ -241,7 +237,15 @@ bool SolarSystem::containsPlanet(const String& name) {
 }
 
 bool SolarSystem::removePlanet(const String &name) {
-    return m_planetTable.remove(name);
+    resetTables();
+    m_planetTable.remove(name);
+    Array<String> planetNames = m_planetTable.getKeys();
+    for(int i(0); i < planetNames.length(); ++i) {
+        Planet planet = m_planetTable[planetNames[i]];
+        planet.generatePlanet();
+        addPlanet(planetNames[i], planet);
+    }
+    return true;
 }
 
 bool SolarSystem::printSolarSystemToScene(const String& save) {
@@ -252,4 +256,20 @@ bool SolarSystem::printSolarSystemToScene(const String& save) {
     catch (...) {
         return false;
     }
+}
+
+inline bool SolarSystem::resetTables(){
+    m_scene.clear();
+    m_entities.clear();
+    m_models.clear();
+    onInit();
+}
+
+bool SolarSystem::reset(){
+    m_planetTable.clear();
+    resetTables();
+}
+
+SolarSystem::~SolarSystem(){
+    
 }

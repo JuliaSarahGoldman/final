@@ -121,7 +121,7 @@ bool Planet::generatePlanet() {
         if (m_collapsingEnabled) {
             mesh.collapseEdges(m_oceanEdgesToCollapse);
         }
-       mesh.bevelEdges2(m_oceanBevel);
+        mesh.bevelEdges(m_oceanBevel);
         m_waterObjFile = m_planetName + "water";
 
         int width, height;
@@ -152,7 +152,7 @@ bool Planet::generatePlanet() {
         if (m_collapsingEnabled) {
             mesh2.collapseEdges(m_landEdgesToCollapse);
         }
-        mesh2.bevelEdges2(m_landBevel);
+        mesh2.bevelEdges(m_landBevel);
         m_landObjFile = m_planetName + "land";
 
         if (m_useLTexture) {
@@ -186,7 +186,7 @@ bool Planet::generatePlanet() {
         if (m_collapsingEnabled) {
             mesh3.collapseEdges(m_mountainEdgesToCollapse);
         }
-        mesh3.bevelEdges2(m_mountainBevel);
+        mesh3.bevelEdges(m_mountainBevel);
         m_mountainObjFile = m_planetName + "mountain";
 
         noise.landMapImage(landNoiseImage, mountNoiseImage, landMapImage, m_oceanLevel, m_mountianDiversity, m_mountainHeight);
@@ -211,11 +211,11 @@ bool Planet::generatePlanet() {
         noise.generateMountainImage(mountNoiseImage, 0.25, 0.5f);
         noise.generateMountainImage(mountNoiseImage, 0.25, 0.25f);
         noise.colorMountainImage(mountNoiseImage, colorImage);
-        
+
         findAirPositions(colorImage, vertices, m_cloudPositions, "clouds");
         findAirPositions(colorImage, vertices, m_birdPositions, "birds");
         findAirPositions(colorImage, vertices, m_dragonPositions, "dragon");
-        
+
         colorImage->save(m_planetName + "cloudNoise.png");
     }
     catch (...) {
@@ -242,11 +242,6 @@ void Planet::createWaterAnyFile(Any& waterModel, Any& waterEntity) {
         "lambertian = Texture::Specification{ filename = \"" +
         m_waterTextureFile + "\"; encoding = Texture::Encoding { readMultiplyFirst = Color3" + m_waterColor.toString() + "}; }; }" :
         "UniversalMaterial::Specification { lambertian = Color3" + m_waterColor.toString() + "; glossy = Color4" + m_waterGloss.toString() + "; }";
-
-    /*String anyStr = (m_useWTexture && !m_waterTextureFile.empty()) ? (String) "UniversalMaterial::Specification { glossy = Color4" + m_waterGloss.toString() + "; "
-        "lambertian = Texture::Specification{ filename = \"" +
-        m_waterTextureFile + "\"; encoding = Texture::Encoding { readMultiplyFirst = " + m_waterColor.toString() + "}; }; }" :
-        "UniversalMaterial::Specification { lambertian = Color3" + m_waterColor.toString() + "; glossy = Color4" + m_waterGloss.toString() + "; }";*/
 
     String preprocess = "{ setMaterial(all()," + anyStr + ");" +
         "transformGeometry(all(), Matrix4::scale(" +
@@ -308,17 +303,16 @@ void Planet::createLandAnyFile(Any& landModel, Any& landEntity, const String& wa
 
 }
 
-void Planet::addCloudEntityToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed) {
-    //addAirEntityToPlanet(cloudEntity, name, planetName, position, orbitAngle, orbitSpeed, 10, 13);
+void Planet::addCloudEntityToPlanet(Any& cloudEntity, const String& name, const Point3& position, const float orbitAngle, const float orbitSpeed) {
 
     String track;
     cloudEntity["model"] = name;
 
     track = (String)
         "transform(" +
-            "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
-            "transform(orbit(1," +  (String)std::to_string(orbitSpeed) + ")," +
-                "transform(Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " + CoordinateFrame::fromYAxis((position - m_position).unit(), (position + (position - m_position).unit() * (Random::threadCommon().uniform(10, 13)))*m_scale).toXYZYPRDegreesString() + ")))";
+        "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
+        "transform(orbit(1," + (String)std::to_string(orbitSpeed) + ")," +
+        "transform(Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " + CoordinateFrame::fromYAxis((position - m_position).unit(), ((position - m_position) + (position - m_position).unit() * (Random::threadCommon().uniform(10, 13)))*m_scale).toXYZYPRDegreesString() + ")))";
 
     cloudEntity["track"] = Any::parse(track);
 
@@ -329,19 +323,26 @@ void Planet::addCloudEntityToPlanet(Any& cloudEntity, const String& name, const 
 
 }
 
-void Planet::addAirEntityToPlanet(Any& airEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed, const int minHeight, const int maxHeight) {
+void Planet::addAirEntityToPlanet(Any& airEntity, const String& name, const Point3& position, const float orbitAngle, const float orbitSpeed, const int minHeight, const int maxHeight) {
     String track;
     airEntity["model"] = name;
-    
+
     track = (String)
         "transform(" +
-            "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
-            "transform(orbit(0," +  (String)std::to_string(orbitSpeed) + "), " + 
-            "lookAt(" 
-                + CoordinateFrame::fromYAxis((position - m_position).unit(), ((position - m_position) + (position - m_position).unit() * (Random::threadCommon().uniform(minHeight, maxHeight)))*m_scale).toXYZYPRDegreesString() + 
-                "," + "Matrix4::rollDegrees(" + (String) std::to_string(orbitAngle*2.0f) + ") )))";
+        "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
+        "transform(orbit(0," + (String)std::to_string(orbitSpeed) + "), " +
+        "lookAt("
+        + CoordinateFrame::fromYAxis((position - m_position).unit(), ((position - m_position) + (position - m_position).unit() * (Random::threadCommon().uniform(minHeight, maxHeight)))*m_scale).toXYZYPRDegreesString() +
+        "," + "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle*2.0f) + ") )))";
 
     airEntity["track"] = Any::parse(track);
+}
+
+void Planet::addLandEntityToPlanet(Any& landEntity, const String& modelName, const Point3& position, const String& trackObject) {
+    landEntity["model"] = modelName;
+    Vector3 normal = (position-m_position).unit();
+    landEntity["frame"] = CoordinateFrame::fromYAxis(normal, position);
+    landEntity["track"] = Any::parse("transform(entity(" + trackObject + "), " + CoordinateFrame::fromYAxis(normal, (position + normal * 0.75f)* m_scale).toXYZYPRDegreesString() + ")");
 }
 
 void Planet::createCloudModelAnyFile(Any& cloudModel, const String& name, const String& planetName) {
@@ -359,15 +360,18 @@ void Planet::createCloudModelAnyFile(Any& cloudModel, const String& name, const 
     }
     else {
         String preprocess = "{setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color4(Color3(0.8), 1.0); emissive = Color3(0.1); } ); }";
-        cloudModel["scale"] = 0.1f * getScale();
+        cloudModel["scale"] = 0.08f * getScale();
         cloudModel["filename"] = "model/cloud/cloud.zip/cumulus00.obj";
         cloudModel["preprocess"] = Any::parse(preprocess);
     }
 }
 
-void Planet::createEntityModelAnyFile(Any& model, const String& name, const String& fileName, float modifier) {
+void Planet::createEntityModelAnyFile(Any& model, const String& name, const String& fileName, const String& preprocess, float modifier) {
     model["scale"] = modifier * getScale();
     model["filename"] = fileName;
+    if(!preprocess.empty()) {
+        model["preprocess"] = Any::parse(preprocess);
+    }
 }
 
 void Planet::getMapping(const Vector3& vertex, int width, int height, Point2int32& map) {
@@ -388,15 +392,17 @@ void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals)
 void Planet::findAirPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, const String type) {
 
     int numEntities = 0;
-    if(type == "clouds") { 
+    if (type == "clouds") {
         numEntities = m_numberOfClouds;
-    } else if( type == "birds") {
+    }
+    else if (type == "birds") {
         numEntities = m_numberOfBirds;
-    } else if( type == "dragon") {
+    }
+    else if (type == "dragon") {
         numEntities = 1;
     }
 
-    if(numEntities == 0) return;
+    if (numEntities == 0) return;
 
     Set<Vector3> cloudPoints;
     Array<Vector3> possiblePositions;
@@ -411,7 +417,7 @@ void Planet::findAirPositions(const shared_ptr<Image>& landMap, const Array<Vect
 
         Color3 color;
         landMap->get(Point2int32(ix, iy), color);
-        
+
         if (color.average() > 0.8f) {
             possiblePositions.append(vertex);
         }
@@ -430,7 +436,6 @@ void Planet::findAirPositions(const shared_ptr<Image>& landMap, const Array<Vect
         }
     }
 }
-
 
 void Planet::findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals) {
     int numTrees = m_numberOfTrees;
@@ -688,14 +693,18 @@ bool Planet::useParticleClouds() {
     return m_useParticleClouds;
 }
 
-bool Planet::hasDragon(){
+bool Planet::hasDragon() {
     return m_hasDragon;
 }
 
-bool Planet::hasTrees(){
+bool Planet::hasTrees() {
     return m_numberOfTrees > 0;
 }
 
-bool Planet::hasBirds(){
+bool Planet::hasBirds() {
     return m_numberOfBirds > 0;
+}
+
+Any Planet::toAny() {
+    return m_planetSpec;
 }

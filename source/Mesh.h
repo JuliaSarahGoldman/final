@@ -56,7 +56,6 @@ public:
     //bump is how much we expand the panet's radius by
     //Only works on completely closed and welded meshes.
     void bevelEdges(float bump);
-    void bevelEdges2(float bump);
 
     void toObj(String filename, int width, int height);
 

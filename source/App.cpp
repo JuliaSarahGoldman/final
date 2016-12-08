@@ -278,7 +278,7 @@ void App::makePlanetGUI() {
     planPane->addTextBox("Orbit Planet:", &m_orbitPlanet);
 
     planPane->addNumberBox("Orbit Distance", &m_orbitDistance, "",
-        GuiTheme::LOG_SLIDER, 10.0f, 100.0f)->setUnitsSize(0.01f);
+        GuiTheme::LINEAR_SLIDER, 50.0f, 500.0f)->setUnitsSize(0.01f);
 
     planPane->addCheckBox("Has Clouds", &m_hasClouds);
     planPane->addCheckBox("Particle Clouds", &m_useParticleClouds);
@@ -501,6 +501,10 @@ void App::makePlanetGUI() {
             msgBox("Unable to load the image.");
         }
     });
+
+    planetPane->addButton("Reset All", [this](){
+        m_solarSystem.reset();
+    } );
 
     planetPane->addButton("Generate", [this]() {
         try {
