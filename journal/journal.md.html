@@ -7,6 +7,31 @@
         **and Matheus de Carvalho Souza (mc13@williams.edu)**
 
 
+2016-12-07: Old Code from Bevel Edges
+=============================================================
+FRom back when we used to push the faces out in the direction of the face normal.
+
+    for (int i = 0; i < m_indexArray.size(); i += 3) {
+        Vector3 normal(faceNormalArray[i / 3]);
+        Vector3 v1(m_vertexPositions[m_indexArray[i]] + bump*normal);
+        Vector3 v2(m_vertexPositions[m_indexArray[i + 1]] + bump*normal);
+        Vector3 v3(m_vertexPositions[m_indexArray[i + 2]] + bump*normal);
+        newVertices.append(v1, v2, v3);
+        newIndices.append(i, i + 1, i + 2);
+
+        //Save vertex mapping
+        indexMap[m_indexArray[i]].append(i);
+        indexMap[m_indexArray[i + 1]].append(i + 1);
+        indexMap[m_indexArray[i + 2]].append(i + 2);
+
+        //Face index is i%3
+        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i], i);
+        faceIndexMap[i / 3].set(m_indexArray[i], i);
+        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 1], i + 1);
+        faceIndexMap[i / 3].set(m_indexArray[i + 1], i + 1);
+        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 2], i + 2);
+        faceIndexMap[i / 3].set(m_indexArray[i + 2], i + 2);
+    }
 
 2016-12-07: ???
 =============================================================

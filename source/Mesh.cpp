@@ -33,7 +33,6 @@ std::shared_ptr<Mesh> Mesh::create(const String& filename) {
 }
 
 void Mesh::computeAdjacency(Array<MeshAlg::Face>& faceArray, Array<MeshAlg::Edge>& edgeArray, Array<MeshAlg::Vertex>& vertexArray) {
-    //debugPrintf(STR(%d %d \n), m_indexArray.size(), m_vertexPositions.size());
     MeshAlg::computeAdjacency(m_vertexPositions, m_indexArray, faceArray, edgeArray, vertexArray);
 };
 
@@ -334,10 +333,9 @@ public:
     }
 };
 
-//Bevel Edges Without Blowing Out the planet
+
 void Mesh::bevelEdges(float bump) {
 
-    //Step 1: Explode the planet
     Array<Vector3> newVertices;
     Array<int> newIndices;
 
@@ -362,7 +360,7 @@ void Mesh::bevelEdges(float bump) {
 
     faceIndexMap.resize(m_indexArray.size());
 
-    //Iterate through the faces, creating new vertices and a new face using those vertices for each one
+    //Iterate through the faces, creating new vertices and a new face made of those vertices for each one
     for (int i = 0; i < m_indexArray.size(); i += 3) {
         Vector3 normal(faceNormalArray[i / 3]);
         Vector3 v1(m_vertexPositions[m_indexArray[i]]);
@@ -394,23 +392,17 @@ void Mesh::bevelEdges(float bump) {
         indexMap[m_indexArray[i + 2]].append(i + 2);
 
         //Face index is i%3
-        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i], i);
         faceIndexMap[i / 3].set(m_indexArray[i], i);
-        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 1], i + 1);
         faceIndexMap[i / 3].set(m_indexArray[i + 1], i + 1);
-        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 2], i + 2);
         faceIndexMap[i / 3].set(m_indexArray[i + 2], i + 2);
     }
 
     //Iterate through edges. For each edge, find the 4 points associated with it, via indexing. Construct 2 new triangles. 
     for (int i = 0; i < edgeArray.size(); ++i) {
 
-        //get the faceIndexes:
         int face1 = edgeArray[i].faceIndex[0];
         int face2 = edgeArray[i].faceIndex[1];
 
-        //debugPrintf(STR(Checking face %d at original vertex %d\n), face1, edgeArray[i].vertexIndex[0]);
-        //Problem- we have the vertex index, not the index index. Oh, vertexIndex is the index index.... That's hwo they're labeled
         int v1 = faceIndexMap[face1][edgeArray[i].vertexIndex[0]];
         int v2 = faceIndexMap[face1][edgeArray[i].vertexIndex[1]];
         int v3 = faceIndexMap[face2][edgeArray[i].vertexIndex[0]];
@@ -422,17 +414,11 @@ void Mesh::bevelEdges(float bump) {
     }
 
 
-    //Now iterate through the vertices
-     //Assume that we're working with a topologicalically closed shape, and every vertex is in at least 3 triangles.
+    //Iterate through the old vertices
+    //Assumes that we started with a topologicalically closed shape, and every vertex is in at least 3 triangles.
     for (int i = 0; i < vertexArray.size(); ++i) {
-        //use indexMap[i]
 
-        //Draw polygon
-        //int iOff = newIndices.size();
-
-
-       //1. project them into the plane of the normal (i.e., generate an arbitrary coordinate from from the normal as the z axis; 
-       //G3D has several routines for this; and then call cframe::pointToObjectSpace and only keep the xy coordinates or whatever the permutation is)
+       //Project vertices into the plane of the normal
         Vector3 vNorm(vertexNormalArray[i]);
 
         Vector3 x(1, 0, 0);
@@ -443,7 +429,8 @@ void Mesh::bevelEdges(float bump) {
         x = y.cross(vNorm);
 
         Array<AngledVertex> angles;
-        //2. use atan2 to compute the angle in that plane to each point
+
+        //Compute the angle in that plane to each point
         Vector3 sum(0.0, 0, 0);
         for (int j = 0; j < indexMap[i].size(); ++j) {
             sum += newVertices[indexMap[i][j]];
@@ -457,10 +444,11 @@ void Mesh::bevelEdges(float bump) {
             av.index = myIndex;
             angles.append(av);
         }
-        //3. sort the points by angle
+
+        //Sort the points by angle
         angles.sort(SORT_INCREASING);
 
-        //4. connect them all in that order! 
+        //Connect them all in that order 
         if (angles.size() > 0) {
             int point1 = angles[0].index;
             for (int j = 1; j < indexMap[i].size() - 1; ++j) {
@@ -470,7 +458,7 @@ void Mesh::bevelEdges(float bump) {
     }
 
     //Fill the vertex normal array for the new vertices
-    //Since they're in order, each vertex index divided by 3 should give the appropriate face index
+    //Since they're in order, each vertex index divided by 3 gives the appropriate face index
     m_vertexNormals.resize(newVertices.size());
     for (int i = 0; i < newVertices.size(); ++i) {
         m_vertexNormals[i] = faceNormalArray[i / 3];
@@ -483,11 +471,8 @@ void Mesh::bevelEdges(float bump) {
 
 void Mesh::toObj(String filename, int width, int height) {
     TextOutput file(filename + ".obj");
-    //file.printf("g name\n");
-        //loop to make vertices
-    //debugPrintf(STR(%d\n), sizeof(m_vertexArray));
 
-    //Compute normals if we haven't faked them
+    //Compute normals if we have not faked them
     if (!m_hasFakeNormals){
         Array<MeshAlg::Face> faceArray;
         Array<MeshAlg::Edge> edgeArray;
@@ -516,12 +501,6 @@ void Mesh::toObj(String filename, int width, int height) {
     }
 
     //Loop for faces
-    //using m_triArray
-    /*
-    for (int i = 0; i < m_triArray.size(); ++i) {
-        file.printf(STR(f %d %d %d\n), m_triArray[i].x, m_triArray[i].y, m_triArray[i].z);
-    }*/
-    //using m_indexArray
     for (int i = 0; i < m_indexArray.size(); i += 3) {
         file.printf("f %d/%d/%d %d/%d/%d %d/%d/%d\n", m_indexArray[i] + 1, m_indexArray[i] + 1, m_indexArray[i] + 1, m_indexArray[i + 1] + 1, m_indexArray[i + 1] + 1, m_indexArray[i + 1] + 1, m_indexArray[i + 2] + 1, m_indexArray[i + 2] + 1, m_indexArray[i + 2] + 1);
     }
@@ -540,22 +519,9 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width
     ArticulatedModel::Geometry* geometry(model->addGeometry("geom"));
     ArticulatedModel::Mesh*     mesh(model->addMesh("mesh", part, geometry));
 
-    //Any any = Any::parse("UniversalMaterial::Specification { lambertian = Color3(" + String(color.r) + ", " + String(color.g) + ", " + String(color.b) + "); }");
-    //String test = (String) std::to_string(color.r);
-    //String anyStr = "UniversalMaterial::Specification { lambertian = Color3(" + (String)std::to_string(color.r) + ", " + (String)std::to_string(color.g) + ", " + (String)std::to_string(color.b) + "); }";
     const Any& any(Any::parse(anyStr));
     mesh->material = UniversalMaterial::create(any);
-    /*        PARSE_ANY(
-            UniversalMaterial::Specification {
-                /*lambertian = Texture::Specification {
-                    filename = "image/checker-32x32-1024x1024.png";
-                    // Orange
-                    encoding = Color3(1.0, 0.7, 0.15);
-                };
 
-                glossy     = Color4(Color3(0.01), 0.2);
-                lambertian = Color3(0,1,.2);
-            }));*/
 
     Array<CPUVertexArray::Vertex>& vertexArray(geometry->cpuVertexArray.vertex);
     Array<int>& indexArray(mesh->cpuIndexArray);
@@ -563,9 +529,6 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width
     for (int i = 0; i < m_vertexPositions.size(); ++i) {
         CPUVertexArray::Vertex& v(vertexArray.next());
         v.position = m_vertexPositions[i];
-
-        //fix
-        //v.texCoord0 = Vector2(0,0);
 
         // Set to NaN to trigger automatic vertex normal and tangent computation
         if (m_hasFakeNormals) {
@@ -596,131 +559,3 @@ shared_ptr<Model> Mesh::toArticulatedModel(String name, String anyStr, int width
     return model;
 }
 
-
-/*
-void Mesh::bevelEdges(float bump) {
-    //Step 1: Explode the planet
-    Array<Vector3> newVertices;
-    Array<int> newIndices;
-
-    //We need normals.
-    Array<MeshAlg::Face> faceArray;
-    Array<MeshAlg::Edge> edgeArray;
-
-    Array<MeshAlg::Vertex> vertexArray;
-    computeAdjacency(faceArray, edgeArray, vertexArray);
-
-
-    Array<Vector3> vertexNormalArray;
-    Array<Vector3> faceNormalArray;
-    computeNormals(faceArray, edgeArray, vertexArray, vertexNormalArray, faceNormalArray);
-
-    //Map from vertex index to all new indices
-    Array<SmallArray<int, 6>> indexMap;
-
-    indexMap.resize(m_vertexPositions.size());
-
-    //Map from face and old index to new index
-    Array<Table<int, int>> faceIndexMap;
-
-    faceIndexMap.resize(m_indexArray.size());
-
-    //Iterate through the faces, creating new vertices and a new face using those vertices for each one
-    for (int i = 0; i < m_indexArray.size(); i += 3) {
-        Vector3 normal(faceNormalArray[i / 3]);
-        Vector3 v1(m_vertexPositions[m_indexArray[i]] + bump*normal);
-        Vector3 v2(m_vertexPositions[m_indexArray[i + 1]] + bump*normal);
-        Vector3 v3(m_vertexPositions[m_indexArray[i + 2]] + bump*normal);
-        newVertices.append(v1, v2, v3);
-        newIndices.append(i, i + 1, i + 2);
-
-        //Save vertex mapping
-        indexMap[m_indexArray[i]].append(i);
-        indexMap[m_indexArray[i + 1]].append(i + 1);
-        indexMap[m_indexArray[i + 2]].append(i + 2);
-
-        //Face index is i%3
-        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i], i);
-        faceIndexMap[i / 3].set(m_indexArray[i], i);
-        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 1], i + 1);
-        faceIndexMap[i / 3].set(m_indexArray[i + 1], i + 1);
-        //debugPrintf(STR(Mapping face %d at original vertex %d to neww vertex %d\n), i / 3, m_indexArray[i + 2], i + 2);
-        faceIndexMap[i / 3].set(m_indexArray[i + 2], i + 2);
-    }
-
-    //Iterate through edges. For each edge, find the 4 points associated with it, via indexing. Construct 2 new triangles.
-    for (int i = 0; i < edgeArray.size(); ++i) {
-
-        //get the faceIndexes:
-        int face1 = edgeArray[i].faceIndex[0];
-        int face2 = edgeArray[i].faceIndex[1];
-
-        //debugPrintf(STR(Checking face %d at original vertex %d\n), face1, edgeArray[i].vertexIndex[0]);
-        //Problem- we have the vertex index, not the index index. Oh, vertexIndex is the index index.... That's hwo they're labeled
-        int v1 = faceIndexMap[face1][edgeArray[i].vertexIndex[0]];
-        int v2 = faceIndexMap[face1][edgeArray[i].vertexIndex[1]];
-        int v3 = faceIndexMap[face2][edgeArray[i].vertexIndex[0]];
-        int v4 = faceIndexMap[face2][edgeArray[i].vertexIndex[1]];
-
-        newIndices.append(v3, v2, v1);
-        newIndices.append(v4, v2, v3);
-
-    }
-
-
-    //Now iterate through the vertices
-     //Assume that we're working with a topologicalically closed shape, and every vertex is in at least 3 triangles.
-    for (int i = 0; i < vertexArray.size(); ++i) {
-        //use indexMap[i]
-        /*
-        //compute radius of sphere cap
-        Vector3 f1n(faceNormalArray[indexMap[i][0]/3]);
-        Vector3 f2n(faceNormalArray[indexMap[i][0]/3]);
-        float mag = f1n.magnitude()*f1n.magnitude();
-        float angle = acosf(dot(f1n,f2n)/mag)/2.0;
-        float radius = sin(angle)*bump;
-
-        //Draw polygon
-        //int iOff = newIndices.size();
-
-
-       //1. project them into the plane of the normal (i.e., generate an arbitrary coordinate from from the normal as the z axis;
-       //G3D has several routines for this; and then call cframe::pointToObjectSpace and only keep the xy coordinates or whatever the permutation is)
-        Vector3 vNorm(vertexNormalArray[i]);
-
-        Vector3 x(1, 0, 0);
-        if (abs(dot(x, vNorm) > .9)) {
-            x = Vector3(0, 1, 0);
-        }
-        Vector3 y = normalize(vNorm.cross(x));
-        x = y.cross(vNorm);
-
-        Array<AngledVertex> angles;
-        //2. use atan2 to compute the angle in that plane to each point
-        Vector3 sum(0.0, 0, 0);
-        for (int j = 0; j < indexMap[i].size(); ++j) {
-            sum += newVertices[indexMap[i][j]];
-        }
-        Vector3 C = (1.0 / indexMap[i].size())*sum;
-        for (int j = 0; j < indexMap[i].size(); ++j) {
-            int myIndex = indexMap[i][j];
-            Vector3 a(newVertices[myIndex] - C);
-            AngledVertex av;
-            av.angle = atan2(dot(y, a), dot(x, a));
-            av.index = myIndex;
-            angles.append(av);
-        }
-
-        //3. sort the points by angle
-        angles.sort(SORT_INCREASING);
-
-        //4. connect them all in that order!
-        int point1 = angles[0].index;
-        for (int j = 1; j < indexMap[i].size() - 1; ++j) {
-            newIndices.append(point1, angles[j].index, angles[j + 1].index);
-        }
-    }
-
-    m_vertexPositions = newVertices;
-    m_indexArray = newIndices;
-}*/
