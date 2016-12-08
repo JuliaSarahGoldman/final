@@ -212,7 +212,9 @@ bool Planet::generatePlanet() {
         noise.generateMountainImage(mountNoiseImage, 0.25, 0.25f);
         noise.colorMountainImage(mountNoiseImage, colorImage);
         
-        findCloudPositions(colorImage, vertices, m_cloudPositions);
+        findAirPositions(colorImage, vertices, m_cloudPositions, "clouds");
+        findAirPositions(colorImage, vertices, m_birdPositions, "birds");
+        findAirPositions(colorImage, vertices, m_dragonPositions, "dragon");
         
         colorImage->save(m_planetName + "cloudNoise.png");
     }
@@ -224,6 +226,14 @@ bool Planet::generatePlanet() {
 
 void Planet::getCloudPositions(Array<Point3>& cloudPositions) {
     cloudPositions = m_cloudPositions;
+}
+
+void Planet::getBirdPositions(Array<Point3>& birdPositions) {
+    birdPositions = m_birdPositions;
+}
+
+void Planet::getDragonPositions(Array<Point3>& dragonPositions) {
+    dragonPositions = m_dragonPositions;
 }
 
 void Planet::createWaterAnyFile(Any& waterModel, Any& waterEntity) {
@@ -299,14 +309,16 @@ void Planet::createLandAnyFile(Any& landModel, Any& landEntity, const String& wa
 }
 
 void Planet::addCloudEntityToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed) {
+    //addAirEntityToPlanet(cloudEntity, name, planetName, position, orbitAngle, orbitSpeed, 10, 13);
+
     String track;
     cloudEntity["model"] = name;
 
     track = (String)
         "transform(" +
             "Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " +
-            "transform(orbit(1,20)," +
-                CoordinateFrame::fromYAxis(position.unit(), (position + position.unit() * (Random::threadCommon().uniform(10,13)))*m_scale).toXYZYPRDegreesString() + "))";
+            "transform(orbit(1," +  (String)std::to_string(orbitSpeed) + ")," +
+                "transform(Matrix4::rollDegrees(" + (String)std::to_string(orbitAngle) + "), " + CoordinateFrame::fromYAxis((position - m_position).unit(), (position + (position - m_position).unit() * (Random::threadCommon().uniform(10, 13)))*m_scale).toXYZYPRDegreesString() + ")))";
 
     cloudEntity["track"] = Any::parse(track);
 
@@ -315,6 +327,20 @@ void Planet::addCloudEntityToPlanet(Any& cloudEntity, const String& name, const 
         cloudEntity["particlesAreInWorldSpace"] = false;
     }
 
+}
+
+void Planet::addAirEntityToPlanet(Any& airEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed, const int minHeight, const int maxHeight) {
+    String track;
+    airEntity["model"] = name;
+    
+    track = (String)
+        "transform(" +
+            "Matrix4::rollDegrees(" + (String)std::to_string(40) + "), " +
+            "transform(orbit(1," +  (String)std::to_string(orbitSpeed) + ")," +
+                //"transform(Matrix4::rollDegrees(" + (String)std::to_string(0) + "), " 
+         CoordinateFrame::fromYAxis((position - m_position).unit(), (position + (position - m_position).unit() * (Random::threadCommon().uniform(minHeight, maxHeight)))*m_scale).toXYZYPRDegreesString() + "))";
+
+    airEntity["track"] = Any::parse(track);
 }
 
 void Planet::createCloudModelAnyFile(Any& cloudModel, const String& name, const String& planetName) {
@@ -338,9 +364,9 @@ void Planet::createCloudModelAnyFile(Any& cloudModel, const String& name, const 
     }
 }
 
-void Planet::createEntityModelAnyFile(Any& model, const String& name, const String& fileName) {
-    model["scale"] = 0.5f * getScale();
-    model["filename"] = "model/lowpolytree.obj";
+void Planet::createEntityModelAnyFile(Any& model, const String& name, const String& fileName, float modifier) {
+    model["scale"] = modifier * getScale();
+    model["filename"] = fileName;
 }
 
 void Planet::getMapping(const Vector3& vertex, int width, int height, Point2int32& map) {
@@ -358,8 +384,17 @@ void Planet::getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals)
     normals = m_treeNormals;
 }
 
-void Planet::findCloudPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions) {
-    int numClouds = m_numberOfClouds;
+void Planet::findAirPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, const String type) {
+
+    int numEntities = 0;
+    if(type == "clouds") { 
+        numEntities = m_numberOfClouds;
+    } else if( type == "birds") {
+        numEntities = m_numberOfBirds;
+    } else if( type == "dragon") {
+        numEntities = 1;
+    }
+
     Set<Vector3> cloudPoints;
     Array<Vector3> possiblePositions;
     int ix, iy;
@@ -379,7 +414,7 @@ void Planet::findCloudPositions(const shared_ptr<Image>& landMap, const Array<Ve
         }
     }
 
-    while (numClouds > 0) {
+    while (numEntities > 0) {
         Vector3 vertex = possiblePositions[Random::threadCommon().integer(0, possiblePositions.length())];
         Point2int32 map;
         getMapping(vertex, landMap->width(), landMap->height(), map);
@@ -387,7 +422,7 @@ void Planet::findCloudPositions(const shared_ptr<Image>& landMap, const Array<Ve
         if (!cloudPoints.contains(vertex)) {
             cloudPoints.insert(vertex);
             positions.append(vertex);
-            --numClouds;
+            --numEntities;
         }
     }
 }

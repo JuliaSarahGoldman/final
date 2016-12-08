@@ -68,17 +68,12 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
 
         Array<Point3> cloudPositions;
         planet.getCloudPositions(cloudPositions);
-        //Array<Vector3> cloudNormals;
-        //planet.getTreePositions(cloudPositions, cloudNormals);
-        //Array<float> orbitAngles({ 15, 30, 45 });
 
         float orbitSpeed = 15.0f;
         for (int j(0); j < cloudPositions.length(); ++j) {
-            //int rand = Random::threadCommon().integer(0, cloudPositions.length()-1);
             Point3 placement = cloudPositions[j];
-            //cloudPositions.remove(rand);
 
-            float orbitAngle = 35; //orbitAngles[Random::threadCommon().integer(0, 2)];
+            float orbitAngle = 35;
 
             Any cloudEntityDescription = (planet.useParticleClouds()) ? Any(Any::TABLE, "ParticleSystem") : Any(Any::TABLE, "VisibleEntity");
             planet.addCloudEntityToPlanet(cloudEntityDescription, cloudModelName, levelName, placement, orbitAngle, orbitSpeed);
@@ -87,7 +82,7 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
     }
 
     Any treeModel(Any::TABLE, "ArticulatedModel::Specification");
-    planet.createEntityModelAnyFile(treeModel, "tree", "model/lowpolytree.obj");
+    planet.createEntityModelAnyFile(treeModel, "tree", "model/lowpolytree.obj", 0.5f);
     models["tree"] = treeModel;
 
     Array<Vector3> treePositions;
@@ -104,6 +99,25 @@ void SolarSystem::addPlanetToScene(Any& entities, Any& models, const String& nam
 
         treeEntity["track"] = Any::parse("transform(entity(" + levelName + "), " + CoordinateFrame::fromYAxis(normal, (position + normal * 0.75f)*planet.getScale()).toXYZYPRDegreesString() + ")");
         entities["tree" + (String)std::to_string(i)] = treeEntity;
+    }
+
+    Any birdModel(Any::TABLE, "ArticulatedModel::Specification");
+    planet.createEntityModelAnyFile(birdModel, "bird", "model/swallow.obj", 0.01f);
+    birdModel["preprocess"] = Any::parse("{ setCFrame(\"root\", CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 40, 0)); setMaterial(all(), UniversalMaterial::Specification{ lambertian = Color3(0.0f); }); }");
+    models["bird"] = birdModel;
+
+    Array<Vector3> birdPositions;
+    planet.getBirdPositions(birdPositions);
+
+    float orbitSpeed = 4.0f;
+    for (int j(0); j < birdPositions.length(); ++j) {
+         Point3 placement = birdPositions[j];
+
+         float orbitAngle = Random::threadCommon().uniform(-60.0f, 60.0f);
+
+         Any birdEntityDescription = Any(Any::TABLE, "VisibleEntity");
+         planet.addAirEntityToPlanet(birdEntityDescription, "bird", levelName, placement, orbitAngle, orbitSpeed, 9, 14);
+         entities["bird" + (String)std::to_string(j)] = birdEntityDescription;
     }
 
     makeSceneTable(m_scene, models, entities, name);

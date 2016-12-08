@@ -68,6 +68,8 @@ protected:
     Array<Vector3> m_treeNormals;
     Array<Point3> m_cloudPositions;
     Array<Vector3> m_cloudNormals;
+    Array<Point3> m_birdPositions;
+    Array<Point3> m_dragonPositions;
 
     // Options for Planet as a whole
     float m_scale;
@@ -96,8 +98,9 @@ public:
     void createLandAnyFile(Any& landModel, Any& landEntity, const String& waterEntity);
     void createMountainAnyFile(Any& mountainModel, Any& mountainEntity, const String& waterEntity);
     void createCloudModelAnyFile(Any& cloudModel, const String& name, const String& planetName);
-    void createEntityModelAnyFile(Any& model, const String& name, const String& fileName);
+    void createEntityModelAnyFile(Any& model, const String& name, const String& fileName, float modifier);
 
+    void addAirEntityToPlanet(Any& airEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed, const int minHeight, const int maxHeight);
     void addCloudEntityToPlanet(Any& cloudEntity, const String& name, const String& planetName, const Point3& position, const float orbitAngle, const float orbitSpeed);
     void findTreePositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, Array<Vector3>& normals);
     void getTreePositions(Array<Vector3>& vertices, Array<Vector3>& normals);
@@ -109,8 +112,10 @@ public:
     bool hasClouds();
     bool useParticleClouds();
     
-    void findCloudPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions);
+    void findAirPositions(const shared_ptr<Image>& landMap, const Array<Vector3>& vertices, Array<Vector3>& positions, const String type);
     void getCloudPositions(Array<Point3>& cloudPositions);
+    void getBirdPositions(Array<Point3>& birdPositions);
+    void getDragonPositions(Array<Point3>& dragonPositions);
 
     void getPlanetOrbit(String& objectToOrbit, float& orbitDistance);
 
